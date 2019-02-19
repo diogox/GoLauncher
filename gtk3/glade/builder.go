@@ -7,6 +7,8 @@ const BodyName = "body"
 const InputBoxName = "input-box"
 const InputName = "input"
 const PrefsBtnName = "prefs_btn"
+const ResultsBoxName = "result_box"
+const ResultFrameName = "item-frame"
 
 func BuildFromFile(fileName string) (*gtk.Builder, error) {
 	bldr, err := gtk.BuilderNew()
@@ -22,8 +24,8 @@ func BuildFromFile(fileName string) (*gtk.Builder, error) {
 	return bldr, nil
 }
 
-func GetWindow(app *gtk.Builder) (*gtk.Window, error) {
-	obj, err := app.GetObject(WindowName)
+func GetWindow(app *gtk.Builder, id string) (*gtk.Window, error) {
+	obj, err := app.GetObject(id)
 	if err != nil {
 		return nil, err
 	}
@@ -36,22 +38,8 @@ func GetWindow(app *gtk.Builder) (*gtk.Window, error) {
 	return win, nil
 }
 
-func GetBody(app *gtk.Builder) (*gtk.Box, error) {
-	obj, err := app.GetObject(BodyName)
-	if err != nil {
-		return nil, err
-	}
-
-	body, ok := obj.(*gtk.Box)
-	if !ok {
-		return nil, err
-	}
-
-	return body, nil
-}
-
-func GetInput(app *gtk.Builder) (*gtk.Entry, error) {
-	obj, err := app.GetObject(InputName)
+func GetEntry(app *gtk.Builder, id string) (*gtk.Entry, error) {
+	obj, err := app.GetObject(id)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +52,8 @@ func GetInput(app *gtk.Builder) (*gtk.Entry, error) {
 	return entry, nil
 }
 
-func GetBtn(app *gtk.Builder) (*gtk.Button, error) {
-	obj, err := app.GetObject(PrefsBtnName)
+func GetButton(app *gtk.Builder, id string) (*gtk.Button, error) {
+	obj, err := app.GetObject(id)
 	if err != nil {
 		return nil, err
 	}
@@ -76,4 +64,46 @@ func GetBtn(app *gtk.Builder) (*gtk.Button, error) {
 	}
 
 	return btn, nil
+}
+
+func GetBox(app *gtk.Builder, id string) (*gtk.Box, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	box, ok := obj.(*gtk.Box)
+	if !ok {
+		return nil, err
+	}
+
+	return box, nil
+}
+
+func GetEventBox(app *gtk.Builder, id string) (*gtk.EventBox, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	eventBox, ok := obj.(*gtk.EventBox)
+	if !ok {
+		return nil, err
+	}
+
+	return eventBox, nil
+}
+
+func GetLabel(app *gtk.Builder, id string) (*gtk.Label, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	label, ok := obj.(*gtk.Label)
+	if !ok {
+		return nil, err
+	}
+
+	return label, nil
 }

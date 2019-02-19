@@ -13,6 +13,13 @@ import (
 const GladeFile = "/home/diogox/go/src/github.com/diogox/raven/assets/launcher.glade"
 const CssFile = "/home/diogox/go/src/github.com/diogox/raven/assets/theme.css"
 
+const WindowName = "window"
+const BodyName = "body"
+const InputBoxName = "input-box"
+const InputName = "input"
+const PrefsBtnName = "prefs_btn"
+const ResultsBoxName = "result_box"
+
 func NewLauncher() Launcher {
 
 	// Initiate gtk (Must be here, so that it occurs before the hotkey binding)
@@ -31,13 +38,13 @@ func NewLauncher() Launcher {
 	}
 
 	// Get window
-	win, err := glade.GetWindow(bldr)
+	win, err := glade.GetWindow(bldr, WindowName)
 	if err != nil {
 		panic("Failed to get Window: " + err.Error())
 	}
 
 	// Get body
-	body, err := glade.GetBody(bldr)
+	body, err := glade.GetBox(bldr, BodyName)
 	if err != nil {
 		panic("Failed to get Body: " + err.Error())
 	}
@@ -46,7 +53,7 @@ func NewLauncher() Launcher {
 	setStyleClass(cssProvider, &body.Widget, "app")
 
 	// Get input
-	input, err := glade.GetInput(bldr)
+	input, err := glade.GetEntry(bldr, InputName)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
@@ -55,13 +62,27 @@ func NewLauncher() Launcher {
 	setStyleClass(cssProvider, &input.Widget, "input")
 
 	// Get preferences button
-	prefsBtn, err := glade.GetBtn(bldr)
+	prefsBtn, err := glade.GetButton(bldr, PrefsBtnName)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
 
 	// Set preferences button style
 	setStyleClass(cssProvider, &prefsBtn.Widget, "prefs-btn")
+
+
+	// TODO: Remove this!
+	resultsBox, err := glade.GetBox(bldr, ResultsBoxName)
+	if err != nil {
+		panic("Failed to get Input: " + err.Error())
+	}
+
+	res1 := NewResultItem("Item1", "Description for item 1.")
+	res2 := NewResultItem("Item2", "Description for item 2.")
+	res3 := NewResultItem("Item3", "Description for item 3.")
+	resultsBox.PackEnd(res1.frame, true, true, 2)
+	resultsBox.PackEnd(res2.frame, true, true, 2)
+	resultsBox.PackEnd(res3.frame, true, true, 2)
 
 	return Launcher{
 		window:    win,
@@ -144,7 +165,7 @@ func (l *Launcher) ClearInput() {
 }
 
 func (l *Launcher) ShowResults([]ResultItem) {
-	
+
 	// TODO
 }
 

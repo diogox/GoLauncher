@@ -14,7 +14,7 @@ func centerAtTopOfScreen(window *gtk.Window) {
 	// mouse is resting at. Therefore, we can just move it along the y axis
 	// to get it to be centered at the top half of the monitor.
 	newX := oldX
-	newY := screenHeight/5 + winHeight/4 - 6
+	newY := screenHeight/5 + winHeight/4 - 14
 
 	window.Move(newX, newY)
 }

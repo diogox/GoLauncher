@@ -115,6 +115,11 @@
     color: #333;
 }
 
+.item-icon {
+    color: #000000;
+    background-color: rgba(0, 0, 0, 1);
+}
+
 .item-shortcut {
     color: #777;
     text-shadow: 1px 1px 1px #fff;

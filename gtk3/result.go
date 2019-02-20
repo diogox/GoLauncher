@@ -1,7 +1,7 @@
 package gtk3
 
 import (
-	"github.com/diogox/raven/gtk3/glade"
+	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gtk"
 )
 

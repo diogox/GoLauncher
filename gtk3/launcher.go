@@ -2,7 +2,7 @@ package gtk3
 
 import (
 	kb "github.com/Isolus/go-keybinder"
-	"github.com/diogox/raven/gtk3/glade"
+	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"

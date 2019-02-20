@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/diogox/raven/gtk3"
+	"github.com/diogox/GoLauncher/gtk3"
 	"sync"
 )
 

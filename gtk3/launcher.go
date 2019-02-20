@@ -10,8 +10,8 @@ import (
 	"unsafe"
 )
 
-const GladeFile = "/home/diogox/go/src/github.com/diogox/raven/assets/launcher.glade"
-const CssFile = "/home/diogox/go/src/github.com/diogox/raven/assets/theme.css"
+const GladeFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/launcher.glade"
+const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/theme.css"
 
 const WindowName = "window"
 const BodyName = "body"

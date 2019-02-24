@@ -93,13 +93,14 @@
     background-color: alpha (   #999, 0.9);
     color: #fafafa;
 }
-.item-text {
-    color: #919191;
-}
 
 .item-name {
     color: #333;
     font-size: 120%;
+}
+
+.item-text {
+    color: #919191;
 }
 
 .selected.item-box {
@@ -117,7 +118,6 @@
 
 .item-icon {
     color: #000000;
-    background-color: rgba(0, 0, 0, 1);
 }
 
 .item-shortcut {

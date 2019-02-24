@@ -52,6 +52,7 @@ func setTransparent(w *gtk.Window, ctx *cairo.Context) {
 	}
 	ctx.SetOperator(cairo.OPERATOR_SOURCE)
 	ctx.Paint()
+	ctx.SetOperator(cairo.OPERATOR_OVER)
 }
 
 func screenChanged(window *gtk.Window) {

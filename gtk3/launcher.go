@@ -13,12 +13,12 @@ import (
 const GladeFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/launcher.glade"
 const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/theme.css"
 
-const WindowName = "window"
-const BodyName = "body"
-const InputBoxName = "input-box"
-const InputName = "input"
-const PrefsBtnName = "prefs_btn"
-const ResultsBoxName = "result_box"
+const WindowID = "window"
+const BodyID = "body"
+const InputBoxID = "input-box"
+const InputID = "input"
+const PrefsBtnID = "prefs_btn"
+const ResultsBoxID = "result_box"
 
 func NewLauncher() Launcher {
 
@@ -38,13 +38,13 @@ func NewLauncher() Launcher {
 	}
 
 	// Get window
-	win, err := glade.GetWindow(bldr, WindowName)
+	win, err := glade.GetWindow(bldr, WindowID)
 	if err != nil {
 		panic("Failed to get Window: " + err.Error())
 	}
 
 	// Get body
-	body, err := glade.GetBox(bldr, BodyName)
+	body, err := glade.GetBox(bldr, BodyID)
 	if err != nil {
 		panic("Failed to get Body: " + err.Error())
 	}
@@ -53,7 +53,7 @@ func NewLauncher() Launcher {
 	setStyleClass(cssProvider, &body.Widget, "app")
 
 	// Get input
-	input, err := glade.GetEntry(bldr, InputName)
+	input, err := glade.GetEntry(bldr, InputID)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
@@ -62,7 +62,7 @@ func NewLauncher() Launcher {
 	setStyleClass(cssProvider, &input.Widget, "input")
 
 	// Get preferences button
-	prefsBtn, err := glade.GetButton(bldr, PrefsBtnName)
+	prefsBtn, err := glade.GetButton(bldr, PrefsBtnID)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
@@ -70,16 +70,15 @@ func NewLauncher() Launcher {
 	// Set preferences button style
 	setStyleClass(cssProvider, &prefsBtn.Widget, "prefs-btn")
 
-
-	// TODO: Remove this!
-	resultsBox, err := glade.GetBox(bldr, ResultsBoxName)
+	resultsBox, err := glade.GetBox(bldr, ResultsBoxID)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	res1 := NewResultItem("Item1", "Description for item 1.")
-	res2 := NewResultItem("Item2", "Description for item 2.")
-	res3 := NewResultItem("Item3", "Description for item 3.")
+	// TODO: Remove this!
+	res1 := NewResultItem(cssProvider, "Item1", "Description for item 1.")
+	res2 := NewResultItem(cssProvider, "Item2", "Description for item 2.")
+	res3 := NewResultItem(cssProvider, "Item3", "Description for item 3.")
 	resultsBox.PackEnd(res1.frame, true, true, 2)
 	resultsBox.PackEnd(res2.frame, true, true, 2)
 	resultsBox.PackEnd(res3.frame, true, true, 2)
@@ -89,6 +88,7 @@ func NewLauncher() Launcher {
 		body:      body,
 		input:     input,
 		prefsBtn:  prefsBtn,
+		resultsBox: resultsBox,
 		isVisible: true,
 	}
 }
@@ -98,6 +98,7 @@ type Launcher struct {
 	body      *gtk.Box
 	input     *gtk.Entry
 	prefsBtn  *gtk.Button
+	resultsBox *gtk.Box
 	isVisible bool
 }
 

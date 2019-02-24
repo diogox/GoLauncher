@@ -2,14 +2,6 @@ package glade
 
 import "github.com/gotk3/gotk3/gtk"
 
-const WindowName = "window"
-const BodyName = "body"
-const InputBoxName = "input-box"
-const InputName = "input"
-const PrefsBtnName = "prefs_btn"
-const ResultsBoxName = "result_box"
-const ResultFrameName = "item-frame"
-
 func BuildFromFile(fileName string) (*gtk.Builder, error) {
 	bldr, err := gtk.BuilderNew()
 	if err != nil {
@@ -50,6 +42,20 @@ func GetEntry(app *gtk.Builder, id string) (*gtk.Entry, error) {
 	}
 
 	return entry, nil
+}
+
+func GetImage(app *gtk.Builder, id string) (*gtk.Image, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	icon, ok := obj.(*gtk.Image)
+	if !ok {
+		return nil, err
+	}
+
+	return icon, nil
 }
 
 func GetButton(app *gtk.Builder, id string) (*gtk.Button, error) {

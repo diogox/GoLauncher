@@ -8,8 +8,8 @@ import (
 var wg sync.WaitGroup
 var launcher gtk3.Launcher
 
-func main() {
-
+func main() { 
+	
 	wg.Add(1)
 
 	// Instantiate launcher

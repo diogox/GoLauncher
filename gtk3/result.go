@@ -5,7 +5,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const GladeResultFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/result_item.glade"
+const GladeResultFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/result_item.glade"
 
 const ResultFrameID = "item-frame"
 const IconID = "item-icon"

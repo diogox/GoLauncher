@@ -1,39 +1,33 @@
 package search
 
+import (
+	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/search/modes/app"
+)
+
 func NewSearch() Search {
-	return Search{}
+
+	searchModes := make([]SearchMode, 0)
+
+	appMode := SearchMode(app.NewAppSearchMode())
+	searchModes = append(searchModes, appMode)
+
+	return Search{
+		modes: searchModes,
+	}
 }
 
-type Search struct {}
+type Search struct {
+	modes []SearchMode
+}
 
-func (s *Search) HandleInput(input string) []SearchResult {
-	results := make([]SearchResult, 0)
-	for i := 0; i < 4; i++ {
-		results = append(results, SearchResult{
-			title: input,
-			description: "Description: " + input,
-			iconPath: "/",
-		})
+func (s *Search) HandleInput(input string) []common.Result {
+
+	for _, mode := range s.modes {
+		if mode.IsEnabled(input) {
+			return mode.HandleInput(input)
+		}
 	}
 
-	return results
+	return make([]common.Result, 0)
 }
-
-type SearchResult struct {
-	iconPath string
-	title string
-	description string
-}
-
-func (r SearchResult) Title() string {
-	return r.title
-}
-
-func (r SearchResult) Description() string {
-	return r.description
-}
-
-func (r SearchResult) IconPath() string {
-	return r.iconPath
-}
-

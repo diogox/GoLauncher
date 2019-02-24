@@ -2,8 +2,8 @@ package gtk3
 
 import (
 	kb "github.com/Isolus/go-keybinder"
+	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3/glade"
-	"github.com/diogox/GoLauncher/search"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -11,8 +11,8 @@ import (
 	"unsafe"
 )
 
-const GladeFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/launcher.glade"
-const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/assets/theme.css"
+const GladeFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/launcher.glade"
+const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/theme.css"
 
 const WindowID = "window"
 const BodyID = "body"
@@ -104,6 +104,12 @@ func (l *Launcher) HandleInput(callback func(string)) {
 			panic(err)
 		}
 
+		// TODO: Move this to external logic? (To main.go?)
+		if input == "" {
+			l.clearResults()
+			return
+		}
+
 		callback(input)
 	})
 }
@@ -171,7 +177,7 @@ func (l *Launcher) ClearInput() {
 	l.input.SetText("")
 }
 
-func (l *Launcher) ShowResults(searchResults []search.SearchResult) {
+func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 	results := make([]ResultItem, 0)
 
@@ -181,19 +187,26 @@ func (l *Launcher) ShowResults(searchResults []search.SearchResult) {
 		results = append(results, result)
 	}
 
-	// Clear Results
+	l.clearResults()
+
+	// Show New Results
+	for _, result := range results {
+		l.resultsBox.Add(result.frame)
+	}
+}
+
+func (l *Launcher) clearResults() {
+
+	// Get Children
 	previousResults := l.resultsBox.GetChildren()
+
+	// Remove Each From The Results
 	previousResults.Foreach(func(prev interface{}) {
 		item, ok := prev.(gtk.IWidget)
 		if ok {
 			l.resultsBox.Remove(item)
 		}
 	})
-
-	// Show New Results
-	for _, result := range results {
-		l.resultsBox.Add(result.frame)
-	}
 }
 
 func (l *Launcher) show() {
@@ -217,4 +230,5 @@ func (l *Launcher) hide() {
 	// Hide
 	l.window.Hide()
 	l.isVisible = false
+	l.clearResults()
 }

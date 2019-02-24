@@ -1,4 +1,4 @@
-package main
+package common
 
 type Result interface {
 	Title() string

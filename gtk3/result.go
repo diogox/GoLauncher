@@ -69,3 +69,4 @@ type ResultItem struct {
 	description *gtk.Label
 	shortcut *gtk.Label
 }
+

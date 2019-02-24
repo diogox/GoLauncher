@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/diogox/GoLauncher/gtk3"
+	"github.com/diogox/GoLauncher/search"
 	"sync"
 )
 
@@ -12,10 +13,18 @@ func main() {
 	
 	wg.Add(1)
 
-	// Instantiate launcher
-	launcher = gtk3.NewLauncher()
+	// Instantiate Search
+	search := search.NewSearch()
 
+	// Instantiate Launcher
+	launcher = gtk3.NewLauncher()
 	launcher.BindHotkey("<Ctrl>space")
+	launcher.HandleInput(func(input string) {
+
+		// TODO: Probably not thread-safe, use channels instead
+		searchResults := search.HandleInput(input)
+		launcher.ShowResults(searchResults)
+	})
 
 	// Start Launcher
 	launcher.Start()

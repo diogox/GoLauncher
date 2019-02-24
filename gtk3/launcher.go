@@ -3,6 +3,7 @@ package gtk3
 import (
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/gtk3/glade"
+	"github.com/diogox/GoLauncher/search"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -75,15 +76,8 @@ func NewLauncher() Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	// TODO: Remove this!
-	res1 := NewResultItem(cssProvider, "Item1", "Description for item 1.")
-	res2 := NewResultItem(cssProvider, "Item2", "Description for item 2.")
-	res3 := NewResultItem(cssProvider, "Item3", "Description for item 3.")
-	resultsBox.PackEnd(res1.frame, true, true, 2)
-	resultsBox.PackEnd(res2.frame, true, true, 2)
-	resultsBox.PackEnd(res3.frame, true, true, 2)
-
 	return Launcher{
+		cssProvider: cssProvider,
 		window:    win,
 		body:      body,
 		input:     input,
@@ -94,12 +88,24 @@ func NewLauncher() Launcher {
 }
 
 type Launcher struct {
+	cssProvider *gtk.CssProvider
 	window    *gtk.Window
 	body      *gtk.Box
 	input     *gtk.Entry
 	prefsBtn  *gtk.Button
 	resultsBox *gtk.Box
 	isVisible bool
+}
+
+func (l *Launcher) HandleInput(callback func(string)) {
+	_,_ = l.input.Connect("changed", func(entry *gtk.Entry) {
+		input, err := entry.GetText()
+		if err != nil {
+			panic(err)
+		}
+
+		callback(input)
+	})
 }
 
 func (l *Launcher) Start() {
@@ -165,9 +171,29 @@ func (l *Launcher) ClearInput() {
 	l.input.SetText("")
 }
 
-func (l *Launcher) ShowResults([]ResultItem) {
+func (l *Launcher) ShowResults(searchResults []search.SearchResult) {
 
-	// TODO
+	results := make([]ResultItem, 0)
+
+	// Convert results
+	for _, r := range searchResults {
+		result := NewResultItem(l.cssProvider, r.Title(), r.Description())
+		results = append(results, result)
+	}
+
+	// Clear Results
+	previousResults := l.resultsBox.GetChildren()
+	previousResults.Foreach(func(prev interface{}) {
+		item, ok := prev.(gtk.IWidget)
+		if ok {
+			l.resultsBox.Remove(item)
+		}
+	})
+
+	// Show New Results
+	for _, result := range results {
+		l.resultsBox.Add(result.frame)
+	}
 }
 
 func (l *Launcher) show() {

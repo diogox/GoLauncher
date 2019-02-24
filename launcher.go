@@ -6,5 +6,6 @@ type Launcher interface {
 	BindHotkey(hotkey string)
 	ToggleVisibility()
 	ClearInput()
+	HandleInput(func(input string))
 	ShowResults([]Result)
 }

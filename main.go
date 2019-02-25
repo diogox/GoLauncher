@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
+	"github.com/diogox/GoLauncher/sqlite"
 	"sync"
 )
 
@@ -13,8 +14,10 @@ func main() {
 	
 	wg.Add(1)
 
+	db := sqlite.NewLauncherDB()
+
 	// Instantiate Search
-	search := search.NewSearch()
+	search := search.NewSearch(&db)
 
 	// Instantiate Launcher
 	launcher = gtk3.NewLauncher()

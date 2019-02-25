@@ -3,14 +3,15 @@ package search
 import (
 	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/search/modes/app"
+	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewSearch() Search {
+func NewSearch(db *sqlite.LauncherDB) Search {
 
-	searchModes := make([]SearchMode, 0)
-
-	appMode := SearchMode(app.NewAppSearchMode())
-	searchModes = append(searchModes, appMode)
+	// Define available search modes
+	searchModes := []SearchMode {
+		app.NewAppSearchMode(db),
+	}
 
 	return Search{
 		modes: searchModes,

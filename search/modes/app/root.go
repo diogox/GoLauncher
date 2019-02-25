@@ -33,12 +33,12 @@ func (asm AppSearchMode) HandleInput(input string) []common.Result {
 		panic(err)
 	}
 
-	for _, appName := range apps {
+	for _, app := range apps {
 		if len(results) > 5 {
 			break
 		}
 
-		r := result.NewSearchResult(appName, "", "/")
+		r := result.NewSearchResult(app.Name, app.Description, app.IconName)
 		results = append(results, r)
 	}
 

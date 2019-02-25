@@ -13,7 +13,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(cssProvider *gtk.CssProvider, title string, description string) ResultItem {
+func NewResultItem(cssProvider *gtk.CssProvider, title string, description string, iconPath string) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -46,6 +46,7 @@ func NewResultItem(cssProvider *gtk.CssProvider, title string, description strin
 
 	nameLabel.SetText(title)
 	descrLabel.SetText(description)
+	iconImg.SetFromIconName(iconPath, 24)
 
 	// Set Styles
 	setStyleClass(cssProvider, &nameLabel.Widget, "item-name")

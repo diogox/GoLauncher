@@ -5,19 +5,19 @@ import (
 )
 
 func createAppsTable(db *sql.DB) error {
-	query := "CREATE TABLE IF NOT EXISTS apps (exec TEXT PRIMARY KEY, name TEXT, description TEXT)"
+	query := "CREATE TABLE IF NOT EXISTS apps (exec TEXT PRIMARY KEY, name TEXT, description TEXT, IconName TEXT)"
 	statement, _ := db.Prepare(query)
 	_, err := statement.Exec()
 
 	return err
 }
 
-func (ldb *LauncherDB) AddApp(exec string, name string, descr string) error {
-	statement, err := ldb.db.Prepare("INSERT INTO apps (exec, name, description) VALUES (?, ?, ?)")
+func (ldb *LauncherDB) AddApp(exec string, name string, descr string, _iconName string) error {
+	statement, err := ldb.db.Prepare("INSERT INTO apps (exec, name, description, IconName) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		panic(err)
 	}
-	_, err = statement.Exec(exec, name, descr)
+	_, err = statement.Exec(exec, name, descr, _iconName)
 
 	return err
 }
@@ -31,15 +31,16 @@ func (ldb *LauncherDB) FindAppByID(exec string) (string, error) {
 	var _exec string
 	var _name string
 	var _description string
+	var _iconName string
 
 	for rows.Next() {
-		rows.Scan(&_exec, &_name, &_description)
+		rows.Scan(&_exec, &_name, &_description, &_iconName)
 	}
 
 	return _name, nil
 }
 
-func (ldb *LauncherDB) FindAppByName(name string) ([]string, error) {
+func (ldb *LauncherDB) FindAppByName(name string) ([]AppInfo, error) {
 	query := "SELECT * FROM apps WHERE name LIKE '%" + name + "%'"
 	rows, err := ldb.db.Query(query)
 	if err != nil {
@@ -49,14 +50,21 @@ func (ldb *LauncherDB) FindAppByName(name string) ([]string, error) {
 	var _exec string
 	var _name string
 	var _description string
+	var _iconName string
 
-	apps := make([]string, 0)
+	apps := make([]AppInfo, 0)
 	for rows.Next() {
-		err := rows.Scan(&_exec, &_name, &_description)
+		err := rows.Scan(&_exec, &_name, &_description, &_iconName)
 		if err != nil {
 			panic(err)
 		}
-		apps = append(apps, _name)
+		appInfo := AppInfo{
+			Name: _name,
+			Description: _description,
+			Exec: _exec,
+			IconName: _iconName,
+		}
+		apps = append(apps, appInfo)
 	}
 
 	return apps, nil

@@ -183,7 +183,7 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 	// Convert results
 	for _, r := range searchResults {
-		result := NewResultItem(l.cssProvider, r.Title(), r.Description())
+		result := NewResultItem(l.cssProvider, r.Title(), r.Description(), r.IconPath())
 		results = append(results, result)
 	}
 

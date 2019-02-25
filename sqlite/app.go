@@ -1,8 +1,8 @@
-package finder
+package sqlite
 
 type AppInfo struct {
 	Exec string
 	Name string
 	Description string
-	IconPath string
+	IconName string
 }

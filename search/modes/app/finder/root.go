@@ -10,17 +10,17 @@ import (
 const BasePath = "/usr/share/applications/"
 
 // Finds all available '.desktop' file paths
-func FindApps(db *sqlite.LauncherDB) []AppInfo {
+func FindApps(db *sqlite.LauncherDB) []sqlite.AppInfo {
 	desktopFiles := getDesktopFiles()
 
-	apps := make([]AppInfo, 0)
+	apps := make([]sqlite.AppInfo, 0)
 	for _, file := range desktopFiles {
 		appInfo := getAppInfo(file)
 
 		// Check if exists
 		res, err := db.FindAppByID(appInfo.Exec)
 		if res == "" {
-			err = db.AddApp(appInfo.Exec, appInfo.Name, appInfo.Description)
+			err = db.AddApp(appInfo.Exec, appInfo.Name, appInfo.Description, appInfo.IconName)
 			if err != nil {
 				panic(err)
 			}
@@ -46,7 +46,7 @@ func getDesktopFiles() []string {
 	return files
 }
 
-func getAppInfo(filePath string) AppInfo {
+func getAppInfo(filePath string) sqlite.AppInfo {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -55,11 +55,11 @@ func getAppInfo(filePath string) AppInfo {
 	contents := string(data)
 	scanner := bufio.NewScanner(strings.NewReader(contents))
 
-	appInfo := AppInfo{
+	appInfo := sqlite.AppInfo{
 		Exec: "",
 		Name: "",
 		Description: "",
-		IconPath: "",
+		IconName: "",
 	}
 
 	isExcerpt := false
@@ -87,6 +87,8 @@ func getAppInfo(filePath string) AppInfo {
 				appInfo.Name = value
 			case "Comment":
 				appInfo.Description = value
+			case "Icon":
+				appInfo.IconName = value
 			}
 		}
 	}

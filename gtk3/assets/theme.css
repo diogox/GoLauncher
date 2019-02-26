@@ -81,6 +81,12 @@
     border-radius: 4px;
 }
 
+/*
+.app-box {
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.4);
+}
+ */
+
 .input {
     color: #555;
     font-size: 170%;
@@ -90,7 +96,7 @@
 .input *:selected,
 .input *:focus,
 *:selected:focus {
-    background-color: alpha (   #999, 0.9);
+    background-color: alpha (#999, 0.9);
     color: #fafafa;
 }
 
@@ -116,9 +122,7 @@
     color: #333;
 }
 
-.item-icon {
-    color: #000000;
-}
+.item-icon { }
 
 .item-shortcut {
     color: #777;

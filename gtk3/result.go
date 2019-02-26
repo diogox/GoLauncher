@@ -34,7 +34,7 @@ func NewResultItem(cssProvider *gtk.CssProvider, title string, description strin
 		panic(err)
 	}
 
-	shotcutLabel, err := glade.GetLabel(bldr, ShortcutLabelID)
+	shortcutLabel, err := glade.GetLabel(bldr, ShortcutLabelID)
 	if err != nil {
 		panic(err)
 	}
@@ -46,12 +46,15 @@ func NewResultItem(cssProvider *gtk.CssProvider, title string, description strin
 
 	nameLabel.SetText(title)
 	descrLabel.SetText(description)
-	iconImg.SetFromIconName(iconPath, 24)
+	iconImg.SetFromIconName(iconPath, gtk.ICON_SIZE_DND)
 
 	// Set Styles
 	setStyleClass(cssProvider, &nameLabel.Widget, "item-name")
+	setStyleClass(cssProvider, &nameLabel.Widget, "item-text")
+	setStyleClass(cssProvider, &descrLabel.Widget, "item-descr")
 	setStyleClass(cssProvider, &descrLabel.Widget, "item-text")
-	setStyleClass(cssProvider, &shotcutLabel.Widget, "item-shortcut")
+	setStyleClass(cssProvider, &shortcutLabel.Widget, "item-shortcut")
+	setStyleClass(cssProvider, &shortcutLabel.Widget, "item-text")
 	setStyleClass(cssProvider, &iconImg.Widget, "item-icon")
 
 	return ResultItem {
@@ -59,7 +62,7 @@ func NewResultItem(cssProvider *gtk.CssProvider, title string, description strin
 		icon: iconImg,
 		label: nameLabel,
 		description: descrLabel,
-		shortcut: shotcutLabel,
+		shortcut: shortcutLabel,
 	}
 }
 

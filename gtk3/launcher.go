@@ -76,6 +76,9 @@ func NewLauncher() Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
+	result := NewResultItem(cssProvider, "firefox", "Firefox description", "firefox")
+	resultsBox.Add(result.frame)
+
 	return Launcher{
 		cssProvider: cssProvider,
 		window:    win,
@@ -99,18 +102,20 @@ type Launcher struct {
 
 func (l *Launcher) HandleInput(callback func(string)) {
 	_,_ = l.input.Connect("changed", func(entry *gtk.Entry) {
-		input, err := entry.GetText()
-		if err != nil {
-			panic(err)
-		}
+		_, _ = glib.IdleAdd(func() {
+			input, err := entry.GetText()
+			if err != nil {
+				panic(err)
+			}
 
-		// TODO: Move this to external logic? (To main.go?)
-		if input == "" {
-			l.clearResults()
-			return
-		}
+			// TODO: Move this to external logic? (To main.go?)
+			if input == "" {
+				l.clearResults()
+				return
+			}
 
-		callback(input)
+			callback(input)
+		})
 	})
 }
 

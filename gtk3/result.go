@@ -62,6 +62,7 @@ func NewResultItem(title string, description string, iconName string, position i
 	iconImg.SetPixelSize(40)
 
 	resultItem := ResultItem{
+		action:      func(){},
 		frame:       resultEventFrame,
 		box:         resultEventBox,
 		icon:        iconImg,
@@ -74,6 +75,7 @@ func NewResultItem(title string, description string, iconName string, position i
 }
 
 type ResultItem struct {
+	action      func()
 	frame       *gtk.EventBox
 	box         *gtk.EventBox
 	icon        *gtk.Image
@@ -83,17 +85,17 @@ type ResultItem struct {
 }
 
 func (r *ResultItem) Title() string {
-	title, _ :=  r.label.GetText()
+	title, _ := r.label.GetText()
 	return title
 }
 
 func (r *ResultItem) Description() string {
-	description, _ :=  r.description.GetText()
+	description, _ := r.description.GetText()
 	return description
 }
 
 func (r *ResultItem) IconPath() string {
-	iconName, _ :=  r.icon.GetIconName()
+	iconName, _ := r.icon.GetIconName()
 	return iconName
 }
 
@@ -109,4 +111,11 @@ func (r *ResultItem) BindMouseOver(callback func()) {
 	_, _ = r.frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
+	_, _ = r.frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+		r.action()
+	})
+}
+
+func (r *ResultItem) SetAction(action func()) {
+	r.action = action
 }

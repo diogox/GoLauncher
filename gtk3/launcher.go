@@ -236,6 +236,13 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 				result.Select()
 			})
 		})
+		result.SetAction(func() {
+			_, _ = glib.IdleAdd(func() {
+				txt, _ := result.label.GetText()
+				l.hide()
+				fmt.Println("CHOSE: " + txt)
+			})
+		})
 		results = append(results, &result)
 	}
 

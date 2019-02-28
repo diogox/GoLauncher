@@ -1,9 +1,11 @@
 package gtk3
 
 import (
+	"fmt"
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3/glade"
+	"github.com/diogox/GoLauncher/navigation"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -67,25 +69,27 @@ func NewLauncher() Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
+	navigation := navigation.NewNavigation(make([]*common.Result, 0))
+
 	return Launcher{
-		window:      win,
-		body:        body,
-		input:       input,
-		prefsBtn:    prefsBtn,
-		resultsBox:  resultsBox,
-		results:     make([]*ResultItem, 0),
-		isVisible:   true,
+		window:     win,
+		body:       body,
+		input:      input,
+		prefsBtn:   prefsBtn,
+		resultsBox: resultsBox,
+		navigation: &navigation,
+		isVisible:  true,
 	}
 }
 
 type Launcher struct {
-	window      *gtk.Window
-	body        *gtk.Box
-	input       *gtk.Entry
-	prefsBtn    *gtk.Button
-	resultsBox  *gtk.Box
-	results     []*ResultItem
-	isVisible   bool
+	window     *gtk.Window
+	body       *gtk.Box
+	input      *gtk.Entry
+	prefsBtn   *gtk.Button
+	resultsBox *gtk.Box
+	navigation *navigation.Navigation
+	isVisible  bool
 }
 
 func (l *Launcher) HandleInput(callback func(string)) {
@@ -128,6 +132,52 @@ func (l *Launcher) Start() {
 	// When the window loses focus, hide it
 	_, _ = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
 		_, _ = glib.IdleAdd(l.hide)
+	})
+
+	// Detect navigation ('Up', 'Down', 'Enter')
+	_, _ = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {
+		keyEvent := &gdk.EventKey{
+			Event: event,
+		}
+
+		var result, prevResult *common.Result
+
+		// Resolve action
+		const KEY_Enter = 65293
+		switch keyEvent.KeyVal() {
+		case gdk.KEY_Up:
+			result, prevResult = l.navigation.Up()
+			if result == nil {
+				return
+			}
+		case gdk.KEY_Down:
+			result, prevResult = l.navigation.Down()
+			if result == nil {
+				return
+			}
+		case KEY_Enter:
+			item := l.navigation.Enter()
+			if item != nil {
+				result, _ := (*item).(*ResultItem)
+				l.window.Hide()
+				fmt.Println("CHOSE: " + result.Title())
+			}
+			return
+		default:
+			return
+		}
+
+		res, ok := (*result).(*ResultItem)
+		if !ok {
+			panic("Error in navigation logic!")
+		}
+		prevRes, ok := (*prevResult).(*ResultItem)
+		if !ok {
+			panic("Error in navigation logic!")
+		}
+
+		prevRes.Unselect()
+		res.Select()
 	})
 
 	// Show everything in the app
@@ -189,6 +239,9 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 	} else {
 		l.resultsBox.SetMarginTop(3)
+
+		// Select first one automatically
+		results[0].Select()
 	}
 
 	// Show New Results
@@ -197,11 +250,18 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 	}
 
 	// Update Launcher
-	l.results = results
-	l.results[0].Select()
+	resultItems := make([]*common.Result, 0)
+	for _, r := range results {
+		res := common.Result(r)
+		resultItems = append(resultItems, &res)
+	}
+	l.navigation.SetItems(resultItems)
+
 }
 
 func (l *Launcher) clearResults() {
+	// Clear navigation
+	l.navigation.SetItems(make([]*common.Result, 0))
 
 	// Get Children
 	previousResults := l.resultsBox.GetChildren()

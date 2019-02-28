@@ -79,6 +79,21 @@ type ResultItem struct {
 	shortcut    *gtk.Label
 }
 
+func (r *ResultItem) Title() string {
+	title, _ :=  r.label.GetText()
+	return title
+}
+
+func (r *ResultItem) Description() string {
+	description, _ :=  r.description.GetText()
+	return description
+}
+
+func (r *ResultItem) IconPath() string {
+	iconName, _ :=  r.icon.GetIconName()
+	return iconName
+}
+
 func (r *ResultItem) Select() {
 	setStyleClass(&r.box.Widget, "selected")
 }

@@ -65,6 +65,7 @@ func setTransparent(w *gtk.Window, ctx *cairo.Context) {
 	} else {
 		ctx.SetSourceRGB(0.0, 0.0, 0.0)
 	}
+
 	ctx.SetOperator(cairo.OPERATOR_SOURCE)
 	ctx.Paint()
 	ctx.SetOperator(cairo.OPERATOR_OVER)

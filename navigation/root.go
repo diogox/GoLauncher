@@ -77,3 +77,16 @@ func (n *Navigation) Enter() *common.Result {
 
 	return item
 }
+
+func (n *Navigation) SetSelected(item *common.Result) *common.Result {
+	prevSelected := n.items[n.currentIndex]
+
+	for i, it := range n.items {
+		if *it == *item {
+			n.currentIndex = i
+			break
+		}
+	}
+
+	return prevSelected
+}

@@ -3,6 +3,7 @@ package gtk3
 import (
 	"fmt"
 	"github.com/diogox/GoLauncher/gtk3/glade"
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -60,7 +61,7 @@ func NewResultItem(title string, description string, iconName string, position i
 	iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
 	iconImg.SetPixelSize(40)
 
-	return ResultItem{
+	resultItem := ResultItem{
 		frame:       resultEventFrame,
 		box:         resultEventBox,
 		icon:        iconImg,
@@ -68,6 +69,8 @@ func NewResultItem(title string, description string, iconName string, position i
 		description: descrLabel,
 		shortcut:    shortcutLabel,
 	}
+
+	return resultItem
 }
 
 type ResultItem struct {
@@ -100,4 +103,10 @@ func (r *ResultItem) Select() {
 
 func (r *ResultItem) Unselect() {
 	removeStyleClass(&r.box.Widget, "selected")
+}
+
+func (r *ResultItem) BindMouseOver(callback func()) {
+	_, _ = r.frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+		callback()
+	})
 }

@@ -69,7 +69,7 @@ func NewLauncher() Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	navigation := navigation.NewNavigation(make([]*common.Result, 0))
+	nav := navigation.NewNavigation(make([]*common.Result, 0))
 
 	return Launcher{
 		window:     win,
@@ -77,7 +77,7 @@ func NewLauncher() Launcher {
 		input:      input,
 		prefsBtn:   prefsBtn,
 		resultsBox: resultsBox,
-		navigation: &navigation,
+		navigation: &nav,
 		isVisible:  true,
 	}
 }
@@ -227,6 +227,15 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 	// Convert results
 	for i, r := range searchResults {
 		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1)
+		result.BindMouseOver(func() {
+			_, _ = glib.IdleAdd(func() {
+				res := common.Result(&result)
+				prevSelected := l.navigation.SetSelected(&res)
+				prevRes, _ := (*prevSelected).(*ResultItem)
+				prevRes.Unselect()
+				result.Select()
+			})
+		})
 		results = append(results, &result)
 	}
 
@@ -256,7 +265,6 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 		resultItems = append(resultItems, &res)
 	}
 	l.navigation.SetItems(resultItems)
-
 }
 
 func (l *Launcher) clearResults() {

@@ -81,12 +81,6 @@
     border-radius: 4px;
 }
 
-/*
-.app-box {
-    box-shadow: 0 0 7px rgba(0, 0, 0, 0.4);
-}
- */
-
 .input {
     color: #555;
     font-size: 170%;
@@ -101,12 +95,12 @@
 }
 
 .item-name {
-    color: #333;
+    color: #1a1a1a;
     font-size: 120%;
 }
 
 .item-text {
-    color: #919191;
+    color: #404040;
 }
 
 .selected.item-box {
@@ -122,7 +116,9 @@
     color: #333;
 }
 
-.item-icon { }
+.item-icon {
+    
+}
 
 .item-shortcut {
     color: #777;

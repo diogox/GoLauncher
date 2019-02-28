@@ -2,16 +2,16 @@ package result
 
 func NewSearchResult(title string, descr string, iconPath string) SearchResult {
 	return SearchResult{
-		title: title,
+		title:       title,
 		description: descr,
-		iconPath: iconPath,
+		iconPath:    iconPath,
 	}
 }
 
 type SearchResult struct {
-	title string
+	title       string
 	description string
-	iconPath string
+	iconPath    string
 }
 
 func (r SearchResult) Title() string {
@@ -25,4 +25,3 @@ func (r SearchResult) Description() string {
 func (r SearchResult) IconPath() string {
 	return r.iconPath
 }
-

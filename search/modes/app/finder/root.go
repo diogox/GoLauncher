@@ -2,6 +2,7 @@ package finder
 
 import (
 	"bufio"
+	"github.com/diogox/GoLauncher/models"
 	"github.com/diogox/GoLauncher/sqlite"
 	"io/ioutil"
 	"strings"
@@ -10,10 +11,10 @@ import (
 const BasePath = "/usr/share/applications/"
 
 // Finds all available '.desktop' file paths
-func FindApps(db *sqlite.LauncherDB) []sqlite.AppInfo {
+func FindApps(db *sqlite.LauncherDB) []models.AppInfo {
 	desktopFiles := getDesktopFiles()
 
-	apps := make([]sqlite.AppInfo, 0)
+	apps := make([]models.AppInfo, 0)
 	for _, file := range desktopFiles {
 		appInfo := getAppInfo(file)
 
@@ -46,7 +47,7 @@ func getDesktopFiles() []string {
 	return files
 }
 
-func getAppInfo(filePath string) sqlite.AppInfo {
+func getAppInfo(filePath string) models.AppInfo {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -55,7 +56,7 @@ func getAppInfo(filePath string) sqlite.AppInfo {
 	contents := string(data)
 	scanner := bufio.NewScanner(strings.NewReader(contents))
 
-	appInfo := sqlite.AppInfo{
+	appInfo := models.AppInfo{
 		Exec: "",
 		Name: "",
 		Description: "",

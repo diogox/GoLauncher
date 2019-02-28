@@ -1,6 +1,7 @@
 package gtk3
 
 import (
+	"fmt"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -8,18 +9,24 @@ import (
 const GladeResultFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/result_item.glade"
 
 const ResultFrameID = "item-frame"
+const ResultBoxID = "item-box"
 const IconID = "item-icon"
 const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(cssProvider *gtk.CssProvider, title string, description string, iconPath string) ResultItem {
+func NewResultItem(title string, description string, iconName string, position int) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
 	}
 
-	resultEventBox, err := glade.GetEventBox(bldr, ResultFrameID)
+	resultEventFrame, err := glade.GetEventBox(bldr, ResultFrameID)
+	if err != nil {
+		panic(err)
+	}
+
+	resultEventBox, err := glade.GetEventBox(bldr, ResultBoxID)
 	if err != nil {
 		panic(err)
 	}
@@ -46,31 +53,39 @@ func NewResultItem(cssProvider *gtk.CssProvider, title string, description strin
 
 	nameLabel.SetText(title)
 	descrLabel.SetText(description)
-	iconImg.SetFromIconName(iconPath, gtk.ICON_SIZE_DND)
 
-	// Set Styles
-	setStyleClass(cssProvider, &nameLabel.Widget, "item-name")
-	setStyleClass(cssProvider, &nameLabel.Widget, "item-text")
-	setStyleClass(cssProvider, &descrLabel.Widget, "item-descr")
-	setStyleClass(cssProvider, &descrLabel.Widget, "item-text")
-	setStyleClass(cssProvider, &shortcutLabel.Widget, "item-shortcut")
-	setStyleClass(cssProvider, &shortcutLabel.Widget, "item-text")
-	setStyleClass(cssProvider, &iconImg.Widget, "item-icon")
+	shortcut := fmt.Sprintf("Alt+%d", position)
+	shortcutLabel.SetText(shortcut)
 
-	return ResultItem {
-		frame: resultEventBox,
-		icon: iconImg,
-		label: nameLabel,
+	iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
+
+	// TODO: Explore this option! (Scaling looks much better!)
+	//p, _ := gdk.PixbufNewFromFileAtScale("/usr/share/icons/hicolor/48x48/apps/ulauncher.svg", 35, 35, true)
+	//iconImg.SetFromPixbuf(p)
+
+	return ResultItem{
+		frame:       resultEventFrame,
+		box:         resultEventBox,
+		icon:        iconImg,
+		label:       nameLabel,
 		description: descrLabel,
-		shortcut: shortcutLabel,
+		shortcut:    shortcutLabel,
 	}
 }
 
 type ResultItem struct {
-	frame *gtk.EventBox
-	icon *gtk.Image
-	label *gtk.Label
+	frame       *gtk.EventBox
+	box         *gtk.EventBox
+	icon        *gtk.Image
+	label       *gtk.Label
 	description *gtk.Label
-	shortcut *gtk.Label
+	shortcut    *gtk.Label
 }
 
+func (r *ResultItem) Select() {
+	setStyleClass(&r.box.Widget, "selected")
+}
+
+func (r *ResultItem) Unselect() {
+	removeStyleClass(&r.box.Widget, "selected")
+}

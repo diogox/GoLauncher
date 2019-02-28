@@ -1,4 +1,4 @@
-package sqlite
+package models
 
 type AppInfo struct {
 	Exec string

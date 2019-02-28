@@ -33,7 +33,7 @@ func NewLauncher() Launcher {
 	}
 
 	// Get CSS provider
-	cssProvider, err := setCssProvider()
+	_, err = setCssProvider()
 	if err != nil {
 		panic(err)
 	}
@@ -50,17 +50,11 @@ func NewLauncher() Launcher {
 		panic("Failed to get Body: " + err.Error())
 	}
 
-	// Set body style
-	setStyleClass(cssProvider, &body.Widget, "app")
-
 	// Get input
 	input, err := glade.GetEntry(bldr, InputID)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
-
-	// Set input style
-	setStyleClass(cssProvider, &input.Widget, "input")
 
 	// Get preferences button
 	prefsBtn, err := glade.GetButton(bldr, PrefsBtnID)
@@ -68,40 +62,34 @@ func NewLauncher() Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	// Set preferences button style
-	setStyleClass(cssProvider, &prefsBtn.Widget, "prefs-btn")
-
 	resultsBox, err := glade.GetBox(bldr, ResultsBoxID)
 	if err != nil {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	result := NewResultItem(cssProvider, "firefox", "Firefox description", "firefox")
-	resultsBox.Add(result.frame)
-
 	return Launcher{
-		cssProvider: cssProvider,
-		window:    win,
-		body:      body,
-		input:     input,
-		prefsBtn:  prefsBtn,
-		resultsBox: resultsBox,
-		isVisible: true,
+		window:      win,
+		body:        body,
+		input:       input,
+		prefsBtn:    prefsBtn,
+		resultsBox:  resultsBox,
+		results:     make([]*ResultItem, 0),
+		isVisible:   true,
 	}
 }
 
 type Launcher struct {
-	cssProvider *gtk.CssProvider
-	window    *gtk.Window
-	body      *gtk.Box
-	input     *gtk.Entry
-	prefsBtn  *gtk.Button
-	resultsBox *gtk.Box
-	isVisible bool
+	window      *gtk.Window
+	body        *gtk.Box
+	input       *gtk.Entry
+	prefsBtn    *gtk.Button
+	resultsBox  *gtk.Box
+	results     []*ResultItem
+	isVisible   bool
 }
 
 func (l *Launcher) HandleInput(callback func(string)) {
-	_,_ = l.input.Connect("changed", func(entry *gtk.Entry) {
+	_, _ = l.input.Connect("changed", func(entry *gtk.Entry) {
 		_, _ = glib.IdleAdd(func() {
 			input, err := entry.GetText()
 			if err != nil {
@@ -184,20 +172,33 @@ func (l *Launcher) ClearInput() {
 
 func (l *Launcher) ShowResults(searchResults []common.Result) {
 
-	results := make([]ResultItem, 0)
+	results := make([]*ResultItem, 0)
 
 	// Convert results
-	for _, r := range searchResults {
-		result := NewResultItem(l.cssProvider, r.Title(), r.Description(), r.IconPath())
-		results = append(results, result)
+	for i, r := range searchResults {
+		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1)
+		results = append(results, &result)
 	}
 
 	l.clearResults()
+
+	// Set Margins
+	if len(results) == 0 {
+		l.resultsBox.SetMarginTop(0)
+		l.resultsBox.SetMarginBottom(0)
+
+	} else {
+		l.resultsBox.SetMarginTop(3)
+	}
 
 	// Show New Results
 	for _, result := range results {
 		l.resultsBox.Add(result.frame)
 	}
+
+	// Update Launcher
+	l.results = results
+	l.results[0].Select()
 }
 
 func (l *Launcher) clearResults() {

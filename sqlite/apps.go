@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"github.com/diogox/GoLauncher/models"
 )
 
 func createAppsTable(db *sql.DB) error {
@@ -40,7 +41,7 @@ func (ldb *LauncherDB) FindAppByID(exec string) (string, error) {
 	return _name, nil
 }
 
-func (ldb *LauncherDB) FindAppByName(name string) ([]AppInfo, error) {
+func (ldb *LauncherDB) FindAppByName(name string) ([]models.AppInfo, error) {
 	query := "SELECT * FROM apps WHERE name LIKE '%" + name + "%'"
 	rows, err := ldb.db.Query(query)
 	if err != nil {
@@ -52,13 +53,13 @@ func (ldb *LauncherDB) FindAppByName(name string) ([]AppInfo, error) {
 	var _description string
 	var _iconName string
 
-	apps := make([]AppInfo, 0)
+	apps := make([]models.AppInfo, 0)
 	for rows.Next() {
 		err := rows.Scan(&_exec, &_name, &_description, &_iconName)
 		if err != nil {
 			panic(err)
 		}
-		appInfo := AppInfo{
+		appInfo := models.AppInfo{
 			Name: _name,
 			Description: _description,
 			Exec: _exec,

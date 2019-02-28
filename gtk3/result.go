@@ -58,10 +58,7 @@ func NewResultItem(title string, description string, iconName string, position i
 	shortcutLabel.SetText(shortcut)
 
 	iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
-
-	// TODO: Explore this option! (Scaling looks much better!)
-	//p, _ := gdk.PixbufNewFromFileAtScale("/usr/share/icons/hicolor/48x48/apps/ulauncher.svg", 35, 35, true)
-	//iconImg.SetFromPixbuf(p)
+	iconImg.SetPixelSize(40)
 
 	return ResultItem{
 		frame:       resultEventFrame,

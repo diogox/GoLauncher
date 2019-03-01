@@ -2,7 +2,7 @@ package actions
 
 import "github.com/diogox/GoLauncher/common"
 
-func NewRenderResultListAction(resultList []*common.Result, renderResultsCallback func()) RenderResultList {
+func NewRenderResultListAction(resultList []common.Result, renderResultsCallback func([]common.Result)) RenderResultList {
 	return RenderResultList{
 		resultList: resultList,
 		renderCallback: renderResultsCallback,
@@ -10,8 +10,8 @@ func NewRenderResultListAction(resultList []*common.Result, renderResultsCallbac
 }
 
 type RenderResultList struct {
-	resultList []*common.Result
-	renderCallback func()
+	resultList []common.Result
+	renderCallback func([]common.Result)
 }
 
 func (RenderResultList) KeepAppOpen() bool {
@@ -19,6 +19,6 @@ func (RenderResultList) KeepAppOpen() bool {
 }
 
 func (r RenderResultList) Run() {
-	r.renderCallback()
+	r.renderCallback(r.resultList)
 }
 

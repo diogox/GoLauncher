@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
@@ -8,7 +9,6 @@ import (
 )
 
 var wg sync.WaitGroup
-var launcher gtk3.Launcher
 
 func main() { 
 	
@@ -16,17 +16,20 @@ func main() {
 
 	db := sqlite.NewLauncherDB()
 
-	// Instantiate Search
-	search := search.NewSearch(&db)
-
 	// Instantiate Launcher
-	launcher = gtk3.NewLauncher()
+	launcher := gtk3.NewLauncher()
 	launcher.BindHotkey("<Ctrl>space")
+
+	// Instantiate Search
+	l := common.Launcher(launcher)
+	search := search.NewSearch(&db, &l)
+
+	// Handle input function
 	launcher.HandleInput(func(input string) {
 
 		// TODO: Probably not thread-safe, use channels instead
-		searchResults := search.HandleInput(input)
-		launcher.ShowResults(searchResults)
+		actionResult := search.HandleInput(input)
+		actionResult.Run()
 	})
 
 	// Start Launcher

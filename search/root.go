@@ -2,15 +2,16 @@ package search
 
 import (
 	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/common/actions"
 	"github.com/diogox/GoLauncher/search/modes/app"
 	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewSearch(db *sqlite.LauncherDB) Search {
+func NewSearch(db *sqlite.LauncherDB, launcher *common.Launcher) Search {
 
 	// Define available search modes
 	searchModes := []SearchMode {
-		app.NewAppSearchMode(db),
+		app.NewAppSearchMode(db, launcher),
 	}
 
 	return Search{
@@ -22,7 +23,7 @@ type Search struct {
 	modes []SearchMode
 }
 
-func (s *Search) HandleInput(input string) []common.Result {
+func (s *Search) HandleInput(input string) common.Action {
 
 	for _, mode := range s.modes {
 		if mode.IsEnabled(input) {
@@ -30,5 +31,5 @@ func (s *Search) HandleInput(input string) []common.Result {
 		}
 	}
 
-	return make([]common.Result, 0)
+	return actions.NewDoNothingAction()
 }

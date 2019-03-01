@@ -23,7 +23,7 @@ const InputID = "input"
 const PrefsBtnID = "prefs_btn"
 const ResultsBoxID = "result_box"
 
-func NewLauncher() Launcher {
+func NewLauncher() *Launcher {
 
 	// Initiate gtk (Must be here, so that it occurs before the hotkey binding)
 	gtk.Init(nil)
@@ -71,7 +71,7 @@ func NewLauncher() Launcher {
 
 	nav := navigation.NewNavigation(make([]*common.Result, 0))
 
-	return Launcher{
+	return &Launcher{
 		window:     win,
 		body:       body,
 		input:      input,

@@ -81,6 +81,13 @@ func (n *Navigation) Enter() {
 	}
 }
 
+func (n *Navigation) AltEnter() {
+	if n.currentIndex != -1 {
+		item := n.items[n.currentIndex]
+		n.onItemEnter((*item).OnAltEnter())
+	}
+}
+
 func (n *Navigation) SetSelected(item *common.Result) *common.Result {
 	prevSelected := n.items[n.currentIndex]
 

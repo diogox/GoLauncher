@@ -155,6 +155,10 @@ func (l *Launcher) Start() {
 				return
 			}
 		case KEY_Enter:
+			if keyEvent.State() == gdk.GDK_MOD1_MASK {
+				l.navigation.AltEnter()
+				return
+			}
 			l.navigation.Enter()
 			return
 		default:

@@ -6,11 +6,11 @@ func NewHideWindowAction() HideWindow {
 
 type HideWindow struct {}
 
-func (HideWindow) keepAppOpen() bool {
+func (HideWindow) KeepAppOpen() bool {
 	return false
 }
 
-func (HideWindow) run() {
+func (HideWindow) Run() {
 	return
 }
 

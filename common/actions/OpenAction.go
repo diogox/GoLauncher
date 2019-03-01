@@ -12,11 +12,11 @@ type OpenAction struct {
 	filepath string
 }
 
-func (OpenAction) keepAppOpen() bool {
+func (OpenAction) KeepAppOpen() bool {
 	return false
 }
 
-func (o *OpenAction) run() {
+func (o OpenAction) Run() {
 	fmt.Println("Opening file: " + o.filepath)
 }
 

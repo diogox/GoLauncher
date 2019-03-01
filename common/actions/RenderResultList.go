@@ -14,11 +14,11 @@ type RenderResultList struct {
 	renderCallback func()
 }
 
-func (RenderResultList) keepAppOpen() bool {
+func (RenderResultList) KeepAppOpen() bool {
 	return true
 }
 
-func (r *RenderResultList) run() {
+func (r RenderResultList) Run() {
 	r.renderCallback()
 }
 

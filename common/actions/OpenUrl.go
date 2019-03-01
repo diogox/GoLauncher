@@ -12,11 +12,11 @@ type OpenUrlAction struct {
 	url string
 }
 
-func (OpenUrlAction) keepAppOpen() bool {
+func (OpenUrlAction) KeepAppOpen() bool {
 	return false
 }
 
-func (o *OpenUrlAction) run() {
+func (o OpenUrlAction) Run() {
 	fmt.Println("Opening url: " + o.url)
 }
 

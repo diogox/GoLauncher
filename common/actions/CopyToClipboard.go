@@ -15,11 +15,11 @@ type CopyToClipboard struct {
 	text string
 }
 
-func (CopyToClipboard) keepAppOpen() bool {
+func (CopyToClipboard) KeepAppOpen() bool {
 	return false
 }
 
-func (c *CopyToClipboard) run() {
+func (c CopyToClipboard) Run() {
 	clipboard, err := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
 	if err != nil {
 		panic("Failed to get clipboard!")

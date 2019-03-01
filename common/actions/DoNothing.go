@@ -6,10 +6,10 @@ func NewDoNothingAction() DoNothing {
 
 type DoNothing struct {}
 
-func (DoNothing) keepAppOpen() bool {
+func (DoNothing) KeepAppOpen() bool {
 	return true
 }
 
-func (DoNothing) run() {
+func (DoNothing) Run() {
 	return
 }

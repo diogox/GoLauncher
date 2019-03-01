@@ -1,6 +1,6 @@
 package common
 
 type Action interface {
-	keepAppOpen() bool
-	run()
+	KeepAppOpen() bool
+	Run()
 }

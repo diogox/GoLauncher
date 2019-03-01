@@ -12,11 +12,11 @@ type LaunchApp struct {
 	exec string
 }
 
-func (LaunchApp) keepAppOpen() bool {
+func (LaunchApp) KeepAppOpen() bool {
 	return false
 }
 
-func (a *LaunchApp) run() {
+func (a LaunchApp) Run() {
 	fmt.Println("Executing App: " + a.exec)
 }
 

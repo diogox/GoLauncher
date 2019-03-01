@@ -12,11 +12,11 @@ type SetUserQuery struct {
 	setQueryCallback func()
 }
 
-func (SetUserQuery) keepAppOpen() bool {
+func (SetUserQuery) KeepAppOpen() bool {
 	return true
 }
 
-func (s *SetUserQuery) run() {
+func (s SetUserQuery) Run() {
 	s.setQueryCallback()
 }
 

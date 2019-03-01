@@ -41,7 +41,8 @@ func (asm AppSearchMode) HandleInput(input string) common.Action {
 			break
 		}
 
-		r := result.NewSearchResult(app.Name, app.Description, app.IconName)
+		action := actions.NewLaunchAppAction(app.Name)
+		r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
 		results = append(results, r)
 	}
 

@@ -1,6 +1,6 @@
 package actions
 
-func NewSetUserQueryAction(query string, setQueryCallback func()) SetUserQuery {
+func NewSetUserQueryAction(query string, setQueryCallback func(string)) SetUserQuery {
 	return SetUserQuery{
 		query: query,
 		setQueryCallback: setQueryCallback,
@@ -9,7 +9,7 @@ func NewSetUserQueryAction(query string, setQueryCallback func()) SetUserQuery {
 
 type SetUserQuery struct {
 	query string
-	setQueryCallback func()
+	setQueryCallback func(string)
 }
 
 func (SetUserQuery) KeepAppOpen() bool {
@@ -17,6 +17,6 @@ func (SetUserQuery) KeepAppOpen() bool {
 }
 
 func (s SetUserQuery) Run() {
-	s.setQueryCallback()
+	s.setQueryCallback(s.query)
 }
 

@@ -1,7 +1,6 @@
 package gtk3
 
 import (
-	"fmt"
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3/glade"
@@ -156,12 +155,7 @@ func (l *Launcher) Start() {
 				return
 			}
 		case KEY_Enter:
-			item := l.navigation.Enter()
-			if item != nil {
-				result, _ := (*item).(*ResultItem)
-				l.window.Hide()
-				fmt.Println("CHOSE: " + result.Title())
-			}
+			l.navigation.Enter()
 			return
 		default:
 			return
@@ -178,6 +172,13 @@ func (l *Launcher) Start() {
 
 		prevRes.Unselect()
 		res.Select()
+	})
+
+	l.navigation.SetOnItemEnter(func(action common.Action) {
+		action.Run()
+		if !action.KeepAppOpen() {
+			l.hide()
+		}
 	})
 
 	// Show everything in the app
@@ -226,7 +227,7 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 	// Convert results
 	for i, r := range searchResults {
-		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1)
+		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnter(), r.OnAltEnter())
 		result.BindMouseOver(func() {
 			_, _ = glib.IdleAdd(func() {
 				res := common.Result(&result)
@@ -234,13 +235,6 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 				prevRes, _ := (*prevSelected).(*ResultItem)
 				prevRes.Unselect()
 				result.Select()
-			})
-		})
-		result.SetAction(func() {
-			_, _ = glib.IdleAdd(func() {
-				txt, _ := result.label.GetText()
-				l.hide()
-				fmt.Println("CHOSE: " + txt)
 			})
 		})
 		results = append(results, &result)

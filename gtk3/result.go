@@ -2,6 +2,7 @@ package gtk3
 
 import (
 	"fmt"
+	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
@@ -16,7 +17,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, position int) ResultItem {
+func NewResultItem(title string, description string, iconName string, position int, onEnter common.Action, onAltEnter common.Action) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -62,7 +63,9 @@ func NewResultItem(title string, description string, iconName string, position i
 	iconImg.SetPixelSize(40)
 
 	resultItem := ResultItem{
-		action:      func(){},
+		onEnter: onEnter,
+		onAltEnter: onAltEnter,
+
 		frame:       resultEventFrame,
 		box:         resultEventBox,
 		icon:        iconImg,
@@ -75,7 +78,9 @@ func NewResultItem(title string, description string, iconName string, position i
 }
 
 type ResultItem struct {
-	action      func()
+	onEnter     common.Action
+	onAltEnter     common.Action
+
 	frame       *gtk.EventBox
 	box         *gtk.EventBox
 	icon        *gtk.Image
@@ -99,6 +104,15 @@ func (r *ResultItem) IconPath() string {
 	return iconName
 }
 
+func (r *ResultItem) OnEnter() common.Action {
+	return r.onEnter
+}
+
+func (r *ResultItem) OnAltEnter() common.Action {
+	fmt.Println("With Alt modifier!")
+	return r.onAltEnter
+}
+
 func (r *ResultItem) Select() {
 	setStyleClass(&r.box.Widget, "selected")
 }
@@ -112,10 +126,6 @@ func (r *ResultItem) BindMouseOver(callback func()) {
 		callback()
 	})
 	_, _ = r.frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
-		r.action()
+		r.onEnter.Run()
 	})
-}
-
-func (r *ResultItem) SetAction(action func()) {
-	r.action = action
 }

@@ -6,14 +6,20 @@ import (
 
 func NewNavigation(items []*common.Result) Navigation {
 	return Navigation{
+		onItemEnter: func(common.Action) {},
 		currentIndex: -1,
 		items:        items,
 	}
 }
 
 type Navigation struct {
+	onItemEnter func(common.Action)
 	currentIndex int
 	items        []*common.Result
+}
+
+func (n *Navigation) SetOnItemEnter(onItemEnter func(common.Action)) {
+	n.onItemEnter = onItemEnter
 }
 
 func (n *Navigation) SetItems(items []*common.Result) {
@@ -68,14 +74,11 @@ func (n *Navigation) Down() (*common.Result, *common.Result) {
 	return n.items[firstIndex], prevItem
 }
 
-func (n *Navigation) Enter() *common.Result {
-	var item *common.Result
-
+func (n *Navigation) Enter() {
 	if n.currentIndex != -1 {
-		item = n.items[n.currentIndex]
+		item := n.items[n.currentIndex]
+		n.onItemEnter((*item).OnEnter())
 	}
-
-	return item
 }
 
 func (n *Navigation) SetSelected(item *common.Result) *common.Result {

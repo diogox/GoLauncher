@@ -17,7 +17,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, position int, onEnter common.Action, onAltEnter common.Action) ResultItem {
+func NewResultItem(title string, description string, iconName string, position int, onEnterAction common.Action, onAltEnterAction common.Action) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -63,8 +63,8 @@ func NewResultItem(title string, description string, iconName string, position i
 	iconImg.SetPixelSize(40)
 
 	resultItem := ResultItem{
-		onEnter: onEnter,
-		onAltEnter: onAltEnter,
+		onEnterAction: onEnterAction,
+		onAltEnterAction: onAltEnterAction,
 
 		frame:       resultEventFrame,
 		box:         resultEventBox,
@@ -78,8 +78,8 @@ func NewResultItem(title string, description string, iconName string, position i
 }
 
 type ResultItem struct {
-	onEnter     common.Action
-	onAltEnter     common.Action
+	onEnterAction     common.Action
+	onAltEnterAction     common.Action
 
 	frame       *gtk.EventBox
 	box         *gtk.EventBox
@@ -104,13 +104,13 @@ func (r *ResultItem) IconPath() string {
 	return iconName
 }
 
-func (r *ResultItem) OnEnter() common.Action {
-	return r.onEnter
+func (r *ResultItem) OnEnterAction() common.Action {
+	return r.onEnterAction
 }
 
-func (r *ResultItem) OnAltEnter() common.Action {
+func (r *ResultItem) OnAltEnterAction() common.Action {
 	fmt.Println("With Alt modifier!")
-	return r.onAltEnter
+	return r.onAltEnterAction
 }
 
 func (r *ResultItem) Select() {
@@ -121,11 +121,14 @@ func (r *ResultItem) Unselect() {
 	removeStyleClass(&r.box.Widget, "selected")
 }
 
-func (r *ResultItem) BindMouseOver(callback func()) {
+func (r *ResultItem) BindMouseHover(callback func()) {
 	_, _ = r.frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
+}
+
+func (r *ResultItem) BindMouseClick(callback func()) {
 	_, _ = r.frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
-		r.onEnter.Run()
+		callback()
 	})
 }

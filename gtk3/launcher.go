@@ -231,14 +231,19 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 	// Convert results
 	for i, r := range searchResults {
-		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnter(), r.OnAltEnter())
-		result.BindMouseOver(func() {
+		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnterAction(), r.OnAltEnterAction())
+		result.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
 				res := common.Result(&result)
 				prevSelected := l.navigation.SetSelected(&res)
 				prevRes, _ := (*prevSelected).(*ResultItem)
 				prevRes.Unselect()
 				result.Select()
+			})
+		})
+		result.BindMouseClick(func() {
+			_, _ = glib.IdleAdd(func() {
+				l.navigation.Enter()
 			})
 		})
 		results = append(results, &result)

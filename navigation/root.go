@@ -77,14 +77,14 @@ func (n *Navigation) Down() (*common.Result, *common.Result) {
 func (n *Navigation) Enter() {
 	if n.currentIndex != -1 {
 		item := n.items[n.currentIndex]
-		n.onItemEnter((*item).OnEnter())
+		n.onItemEnter((*item).OnEnterAction())
 	}
 }
 
 func (n *Navigation) AltEnter() {
 	if n.currentIndex != -1 {
 		item := n.items[n.currentIndex]
-		n.onItemEnter((*item).OnAltEnter())
+		n.onItemEnter((*item).OnAltEnterAction())
 	}
 }
 

@@ -4,14 +4,14 @@ import (
 	"github.com/diogox/GoLauncher/common"
 )
 
-func NewSearchResult(title string, descr string, iconPath string, onEnter common.Action, onAltEnter common.Action) SearchResult {
+func NewSearchResult(title string, descr string, iconPath string, onEnterAction common.Action, onAltEnterAction common.Action) SearchResult {
 	return SearchResult{
 
 		title:       title,
 		description: descr,
 		iconPath:    iconPath,
-		onEnter: onEnter,
-		onAltEnter: onAltEnter,
+		onEnterAction: onEnterAction,
+		onAltEnterAction: onAltEnterAction,
 	}
 }
 
@@ -19,8 +19,8 @@ type SearchResult struct {
 	title       string
 	description string
 	iconPath    string
-	onEnter common.Action
-	onAltEnter common.Action
+	onEnterAction common.Action
+	onAltEnterAction common.Action
 }
 
 func (r SearchResult) Title() string {
@@ -35,10 +35,10 @@ func (r SearchResult) IconPath() string {
 	return r.iconPath
 }
 
-func (r SearchResult) OnEnter() common.Action {
-	return r.onEnter
+func (r SearchResult) OnEnterAction() common.Action {
+	return r.onEnterAction
 }
 
-func (r SearchResult) OnAltEnter() common.Action {
-	return r.onAltEnter
+func (r SearchResult) OnAltEnterAction() common.Action {
+	return r.onAltEnterAction
 }

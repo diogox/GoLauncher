@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
@@ -13,13 +14,14 @@ func main() {
 	
 	wg.Add(1)
 
-	db := sqlite.NewLauncherDB()
+	sqliteDB := sqlite.NewLauncherDB()
 
 	// Instantiate Launcher
 	launcher := gtk3.NewLauncher()
 	launcher.BindHotkey("<Ctrl>space")
 
 	// Instantiate Search
+	db := api.DB(&sqliteDB)
 	search := search.NewSearch(&db)
 
 	// Handle input function

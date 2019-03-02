@@ -2,7 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
-	"github.com/diogox/GoLauncher/models"
+	"github.com/diogox/GoLauncher/api/models"
 )
 
 func createAppsTable(db *sql.DB) error {

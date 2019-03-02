@@ -5,10 +5,9 @@ import (
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/modes/app/finder"
 	"github.com/diogox/GoLauncher/search/result"
-	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewAppSearchMode(db *sqlite.LauncherDB) AppSearchMode {
+func NewAppSearchMode(db *api.DB) AppSearchMode {
 	// Get App Info
 	finder.FindApps(db)
 
@@ -19,7 +18,7 @@ func NewAppSearchMode(db *sqlite.LauncherDB) AppSearchMode {
 
 // TODO: Has to implement `SearchMode`
 type AppSearchMode struct {
-	db *sqlite.LauncherDB
+	db *api.DB
 }
 
 func (AppSearchMode) IsEnabled(input string) bool {
@@ -29,7 +28,7 @@ func (AppSearchMode) IsEnabled(input string) bool {
 func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	results := make([]api.Result, 0)
-	apps, err := asm.db.FindAppByName(input)
+	apps, err := (*asm.db).FindAppByName(input)
 	if err != nil {
 		panic(err)
 	}

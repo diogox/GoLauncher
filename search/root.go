@@ -6,10 +6,9 @@ import (
 	"github.com/diogox/GoLauncher/search/modes/app"
 	"github.com/diogox/GoLauncher/search/modes/calc"
 	"github.com/diogox/GoLauncher/search/modes/file"
-	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewSearch(db *sqlite.LauncherDB) Search {
+func NewSearch(db *api.DB) Search {
 
 	// Define available search modes
 	searchModes := []SearchMode {

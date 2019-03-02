@@ -2,8 +2,8 @@ package finder
 
 import (
 	"bufio"
-	"github.com/diogox/GoLauncher/models"
-	"github.com/diogox/GoLauncher/sqlite"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/models"
 	"io/ioutil"
 	"strings"
 )
@@ -11,7 +11,7 @@ import (
 const BasePath = "/usr/share/applications/"
 
 // Finds all available '.desktop' file paths
-func FindApps(db *sqlite.LauncherDB) []models.AppInfo {
+func FindApps(db *api.DB) []models.AppInfo {
 	desktopFiles := getDesktopFiles()
 
 	apps := make([]models.AppInfo, 0)
@@ -19,9 +19,9 @@ func FindApps(db *sqlite.LauncherDB) []models.AppInfo {
 		appInfo := getAppInfo(file)
 
 		// Check if exists
-		res, err := db.FindAppByID(appInfo.Exec)
+		res, err := (*db).FindAppByID(appInfo.Exec)
 		if res == "" {
-			err = db.AddApp(appInfo.Exec, appInfo.Name, appInfo.Description, appInfo.IconName)
+			err = (*db).AddApp(appInfo.Exec, appInfo.Name, appInfo.Description, appInfo.IconName)
 			if err != nil {
 				panic(err)
 			}

@@ -5,7 +5,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-func NewOpenUrlAction(url string) OpenUrl {
+func NewOpenUrl(url string) OpenUrl {
 	return OpenUrl {
 		url: url,
 	}

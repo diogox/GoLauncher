@@ -12,20 +12,18 @@ import (
 
 const calcRegexString = "([-+]?[0-9]*\\.?[0-9]+[\\/\\+\\-\\*])+([-+]?[0-9]*\\.?[0-9]+)"
 
-func NewCalcSearchMode(launcher *common.Launcher) *CalcSearchMode {
+func NewCalcSearchMode() *CalcSearchMode {
 	regex, err := regexp.Compile(calcRegexString)
 	if err != nil {
 		panic(err)
 	}
 
 	return &CalcSearchMode{
-		launcher: launcher,
 		calcRegex: regex,
 	}
 }
 
 type CalcSearchMode struct {
-	launcher *common.Launcher
 	calcRegex *regexp.Regexp
 }
 
@@ -38,11 +36,11 @@ func (c *CalcSearchMode) HandleInput(input string) common.Action {
 
 	calcResult := c.calculate(input)
 
-	action := actions.NewCopyToClipboardAction(calcResult)
+	action := actions.NewCopyToClipboard(calcResult)
 	r := result.NewSearchResult(calcResult, "Copy to Clipboard", "calc", action, action)
 	results = append(results, r)
 
-	return actions.NewRenderResultListAction(results, (*c.launcher).ShowResults)
+	return actions.NewRenderResultList(results)
 }
 
 func (*CalcSearchMode) calculate(input string) string {

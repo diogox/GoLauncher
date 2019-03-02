@@ -2,7 +2,7 @@ package actions
 
 import "github.com/diogox/GoLauncher/common"
 
-func NewActionListAction(actions []common.Action) ActionList {
+func NewActionList(actions []common.Action) ActionList {
 	return ActionList{
 		actions: actions,
 	}

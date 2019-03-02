@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/diogox/GoLauncher/common"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
@@ -21,8 +20,7 @@ func main() {
 	launcher.BindHotkey("<Ctrl>space")
 
 	// Instantiate Search
-	l := common.Launcher(launcher)
-	search := search.NewSearch(&db, &l)
+	search := search.NewSearch(&db)
 
 	// Handle input function
 	launcher.HandleInput(func(input string) {

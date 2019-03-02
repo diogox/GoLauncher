@@ -3,6 +3,7 @@ package gtk3
 import (
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/common/actions"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/diogox/GoLauncher/navigation"
 	"github.com/gotk3/gotk3/cairo"
@@ -183,6 +184,29 @@ func (l *Launcher) Start() {
 		if !action.KeepAppOpen() {
 			l.hide()
 		}
+	})
+
+	// Setup actions
+	actions.SetupCopyToClipboard(func(text string) {
+		_, _ = glib.IdleAdd(func(text string) {
+			clipboard, err := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
+			if err != nil {
+				panic("Failed to get clipboard!")
+			}
+
+			clipboard.SetText(text)
+			clipboard.Store()
+		}, text)
+	})
+	actions.SetupSetUserQuery(func(query string) {
+		_, _ = glib.IdleAdd(func(query string) {
+			l.input.SetText(query)
+		}, query)
+	})
+	actions.SetupRenderResultList(func(results []common.Result) {
+		_, _ = glib.IdleAdd(func(results []common.Result) {
+			l.ShowResults(results)
+		}, results)
 	})
 
 	// Show everything in the app

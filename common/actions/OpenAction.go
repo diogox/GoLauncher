@@ -2,21 +2,21 @@ package actions
 
 import "fmt"
 
-func NewOpenAction(filepath string) OpenAction {
-	return OpenAction{
+func NewOpen(filepath string) Open {
+	return Open{
 		filepath: filepath,
 	}
 }
 
-type OpenAction struct {
+type Open struct {
 	filepath string
 }
 
-func (OpenAction) KeepAppOpen() bool {
+func (Open) KeepAppOpen() bool {
 	return false
 }
 
-func (o OpenAction) Run() {
+func (o Open) Run() {
 	fmt.Println("Opening file: " + o.filepath)
 }
 

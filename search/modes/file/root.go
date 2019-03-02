@@ -11,14 +11,13 @@ import (
 
 const pathRegex = "^(/[^/ ]*)+/?$"
 
-func NewFileBrowserMode(launcher *common.Launcher) *FileBrowserMode {
+func NewFileBrowserMode() *FileBrowserMode {
 	regex, err := regexp.Compile(pathRegex)
 	if err != nil {
 		panic(err)
 	}
 
 	return &FileBrowserMode {
-		launcher: launcher,
 		regex: regex,
 	}
 }
@@ -59,10 +58,10 @@ func (fb *FileBrowserMode) HandleInput(input string) common.Action {
 			path = input + "/" + file.Name()
 		}
 
-		action := actions.NewOpenAction(path)
+		action := actions.NewOpen(path)
 		r := result.NewSearchResult(file.Name(), "Open in finder", "nemo", action, action)
 		results = append(results, r)
 	}
 
-	return actions.NewRenderResultListAction(results, (*fb.launcher).ShowResults)
+	return actions.NewRenderResultList(results)
 }

@@ -5,21 +5,21 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-func NewOpenUrlAction(url string) OpenUrlAction {
-	return OpenUrlAction{
+func NewOpenUrlAction(url string) OpenUrl {
+	return OpenUrl {
 		url: url,
 	}
 }
 
-type OpenUrlAction struct {
+type OpenUrl struct {
 	url string
 }
 
-func (OpenUrlAction) KeepAppOpen() bool {
+func (OpenUrl) KeepAppOpen() bool {
 	return false
 }
 
-func (o OpenUrlAction) Run() {
+func (o OpenUrl) Run() {
 	fmt.Println("Opening url: " + o.url)
 	err := open.Start(o.url)
 	if err != nil {

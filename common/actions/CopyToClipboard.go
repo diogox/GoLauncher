@@ -1,17 +1,27 @@
 package actions
 
-import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
-)
+var copyToClipboardInstance *CopyToClipboard
 
-func NewCopyToClipboardAction(text string) CopyToClipboard {
-	return CopyToClipboard{
-		text: text,
+// Copying text to the clipboard may rely on the GUI framework.
+// To keep the action platform-agnostic, we need to set it up before using it.
+func SetupCopyToClipboard(copyToClipboardCallback func(string)) {
+	copyToClipboardInstance = &CopyToClipboard {
+		copyToClipboardCallback: copyToClipboardCallback,
 	}
 }
 
+func NewCopyToClipboard(text string) CopyToClipboard {
+	if copyToClipboardInstance == nil {
+		panic("You need to setup this action before you can use it!")
+	}
+
+	newInstance := *copyToClipboardInstance
+	newInstance.text = text
+	return newInstance
+}
+
 type CopyToClipboard struct {
+	copyToClipboardCallback func(string)
 	text string
 }
 
@@ -20,12 +30,6 @@ func (CopyToClipboard) KeepAppOpen() bool {
 }
 
 func (c CopyToClipboard) Run() {
-	clipboard, err := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
-	if err != nil {
-		panic("Failed to get clipboard!")
-	}
-
-	clipboard.SetText(c.text)
-	clipboard.Store()
+	c.copyToClipboardCallback(c.text)
 }
 

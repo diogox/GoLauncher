@@ -8,20 +8,18 @@ import (
 	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewAppSearchMode(db *sqlite.LauncherDB, launcher *common.Launcher) AppSearchMode {
+func NewAppSearchMode(db *sqlite.LauncherDB) AppSearchMode {
 	// Get App Info
 	finder.FindApps(db)
 
 	return AppSearchMode{
 		db: db,
-		launcher: launcher,
 	}
 }
 
 // TODO: Has to implement `SearchMode`
 type AppSearchMode struct {
 	db *sqlite.LauncherDB
-	launcher *common.Launcher
 }
 
 func (AppSearchMode) IsEnabled(input string) bool {
@@ -41,11 +39,11 @@ func (asm AppSearchMode) HandleInput(input string) common.Action {
 			break
 		}
 
-		action := actions.NewLaunchAppAction(app.Exec)
+		action := actions.NewLaunchApp(app.Exec)
 		r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
 		results = append(results, r)
 	}
 
-	return actions.NewRenderResultListAction(results, (*asm.launcher).ShowResults)
+	return actions.NewRenderResultList(results)
 }
 

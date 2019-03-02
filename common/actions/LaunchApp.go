@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NewLaunchAppAction(exec string) LaunchApp {
+func NewLaunchApp(exec string) LaunchApp {
 	return LaunchApp{
 		exec: exec,
 	}

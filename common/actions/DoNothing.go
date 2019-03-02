@@ -1,6 +1,6 @@
 package actions
 
-func NewDoNothingAction() DoNothing {
+func NewDoNothing() DoNothing {
 	return DoNothing{}
 }
 

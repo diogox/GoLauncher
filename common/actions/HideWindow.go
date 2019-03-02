@@ -1,7 +1,7 @@
 package actions
 
-func NewHideWindowAction() HideWindow {
-	return HideWindow{}
+func NewHideWindow() *HideWindow {
+	return &HideWindow{}
 }
 
 type HideWindow struct {}

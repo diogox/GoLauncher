@@ -9,13 +9,13 @@ import (
 	"github.com/diogox/GoLauncher/sqlite"
 )
 
-func NewSearch(db *sqlite.LauncherDB, launcher *common.Launcher) Search {
+func NewSearch(db *sqlite.LauncherDB) Search {
 
 	// Define available search modes
 	searchModes := []SearchMode {
-		file.NewFileBrowserMode(launcher),
-		calc.NewCalcSearchMode(launcher),
-		app.NewAppSearchMode(db, launcher),
+		file.NewFileBrowserMode(),
+		calc.NewCalcSearchMode(),
+		app.NewAppSearchMode(db),
 	}
 
 	return Search{
@@ -35,5 +35,5 @@ func (s *Search) HandleInput(input string) common.Action {
 		}
 	}
 
-	return actions.NewDoNothingAction()
+	return actions.NewDoNothing()
 }

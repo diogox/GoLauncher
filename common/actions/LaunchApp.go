@@ -28,5 +28,6 @@ func (a LaunchApp) Run() {
 	if err != nil {
 		panic(err)
 	}
+	_ = cmd.Process.Release()
 }
 

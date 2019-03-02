@@ -1,8 +1,8 @@
 package file
 
 import (
-	"github.com/diogox/GoLauncher/common"
-	"github.com/diogox/GoLauncher/common/actions"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/result"
 	"io/ioutil"
 	"regexp"
@@ -23,7 +23,7 @@ func NewFileBrowserMode() *FileBrowserMode {
 }
 
 type FileBrowserMode struct {
-	launcher *common.Launcher
+	launcher *api.Launcher
 	regex *regexp.Regexp
 }
 
@@ -38,8 +38,8 @@ func (fb *FileBrowserMode) IsEnabled(input string) bool {
 	return false
 }
 
-func (fb *FileBrowserMode) HandleInput(input string) common.Action {
-	results := make([]common.Result, 0)
+func (fb *FileBrowserMode) HandleInput(input string) api.Action {
+	results := make([]api.Result, 0)
 
 	files, err := ioutil.ReadDir(input)
 	if err != nil {

@@ -1,8 +1,8 @@
 package search
 
 import (
-	"github.com/diogox/GoLauncher/common"
-	"github.com/diogox/GoLauncher/common/actions"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/modes/app"
 	"github.com/diogox/GoLauncher/search/modes/calc"
 	"github.com/diogox/GoLauncher/search/modes/file"
@@ -27,7 +27,7 @@ type Search struct {
 	modes []SearchMode
 }
 
-func (s *Search) HandleInput(input string) common.Action {
+func (s *Search) HandleInput(input string) api.Action {
 
 	for _, mode := range s.modes {
 		if mode.IsEnabled(input) {

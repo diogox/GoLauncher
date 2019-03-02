@@ -2,7 +2,7 @@ package gtk3
 
 import (
 	"fmt"
-	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
@@ -17,7 +17,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, position int, onEnterAction common.Action, onAltEnterAction common.Action) ResultItem {
+func NewResultItem(title string, description string, iconName string, position int, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -78,8 +78,8 @@ func NewResultItem(title string, description string, iconName string, position i
 }
 
 type ResultItem struct {
-	onEnterAction     common.Action
-	onAltEnterAction     common.Action
+	onEnterAction    api.Action
+	onAltEnterAction api.Action
 
 	frame       *gtk.EventBox
 	box         *gtk.EventBox
@@ -104,11 +104,11 @@ func (r *ResultItem) IconPath() string {
 	return iconName
 }
 
-func (r *ResultItem) OnEnterAction() common.Action {
+func (r *ResultItem) OnEnterAction() api.Action {
 	return r.onEnterAction
 }
 
-func (r *ResultItem) OnAltEnterAction() common.Action {
+func (r *ResultItem) OnAltEnterAction() api.Action {
 	fmt.Println("With Alt modifier!")
 	return r.onAltEnterAction
 }

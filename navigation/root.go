@@ -1,28 +1,28 @@
 package navigation
 
 import (
-	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/api"
 )
 
-func NewNavigation(items []*common.Result) Navigation {
+func NewNavigation(items []*api.Result) Navigation {
 	return Navigation{
-		onItemEnter: func(common.Action) {},
+		onItemEnter: func(api.Action) {},
 		currentIndex: -1,
 		items:        items,
 	}
 }
 
 type Navigation struct {
-	onItemEnter func(common.Action)
+	onItemEnter func(api.Action)
 	currentIndex int
-	items        []*common.Result
+	items        []*api.Result
 }
 
-func (n *Navigation) SetOnItemEnter(onItemEnter func(common.Action)) {
+func (n *Navigation) SetOnItemEnter(onItemEnter func(api.Action)) {
 	n.onItemEnter = onItemEnter
 }
 
-func (n *Navigation) SetItems(items []*common.Result) {
+func (n *Navigation) SetItems(items []*api.Result) {
 	n.items = items
 
 	if len(items) == 0 {
@@ -32,12 +32,12 @@ func (n *Navigation) SetItems(items []*common.Result) {
 	}
 }
 
-func (n *Navigation) Up() (*common.Result, *common.Result) {
+func (n *Navigation) Up() (*api.Result, *api.Result) {
 	if len(n.items) == 0 {
 		return nil, nil
 	}
 
-	var prevItem *common.Result
+	var prevItem *api.Result
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
@@ -53,12 +53,12 @@ func (n *Navigation) Up() (*common.Result, *common.Result) {
 	return n.items[lastIndex], prevItem
 }
 
-func (n *Navigation) Down() (*common.Result, *common.Result) {
+func (n *Navigation) Down() (*api.Result, *api.Result) {
 	if len(n.items) == 0 {
 		return nil, nil
 	}
 
-	var prevItem *common.Result
+	var prevItem *api.Result
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
@@ -88,7 +88,7 @@ func (n *Navigation) AltEnter() {
 	}
 }
 
-func (n *Navigation) SetSelected(item *common.Result) *common.Result {
+func (n *Navigation) SetSelected(item *api.Result) *api.Result {
 	prevSelected := n.items[n.currentIndex]
 
 	for i, it := range n.items {

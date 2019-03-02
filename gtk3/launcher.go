@@ -2,8 +2,8 @@ package gtk3
 
 import (
 	kb "github.com/Isolus/go-keybinder"
-	"github.com/diogox/GoLauncher/common"
-	"github.com/diogox/GoLauncher/common/actions"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/diogox/GoLauncher/navigation"
 	"github.com/gotk3/gotk3/cairo"
@@ -69,7 +69,7 @@ func NewLauncher() *Launcher {
 		panic("Failed to get Input: " + err.Error())
 	}
 
-	nav := navigation.NewNavigation(make([]*common.Result, 0))
+	nav := navigation.NewNavigation(make([]*api.Result, 0))
 
 	return &Launcher{
 		window:     win,
@@ -140,7 +140,7 @@ func (l *Launcher) Start() {
 			Event: event,
 		}
 
-		var result, prevResult *common.Result
+		var result, prevResult *api.Result
 
 		// Resolve action
 		const KEY_Enter = 65293
@@ -179,7 +179,7 @@ func (l *Launcher) Start() {
 		res.Select()
 	})
 
-	l.navigation.SetOnItemEnter(func(action common.Action) {
+	l.navigation.SetOnItemEnter(func(action api.Action) {
 		action.Run()
 		if !action.KeepAppOpen() {
 			l.hide()
@@ -203,8 +203,8 @@ func (l *Launcher) Start() {
 			l.input.SetText(query)
 		}, query)
 	})
-	actions.SetupRenderResultList(func(results []common.Result) {
-		_, _ = glib.IdleAdd(func(results []common.Result) {
+	actions.SetupRenderResultList(func(results []api.Result) {
+		_, _ = glib.IdleAdd(func(results []api.Result) {
 			l.ShowResults(results)
 		}, results)
 	})
@@ -249,7 +249,7 @@ func (l *Launcher) ClearInput() {
 	l.input.SetText("")
 }
 
-func (l *Launcher) ShowResults(searchResults []common.Result) {
+func (l *Launcher) ShowResults(searchResults []api.Result) {
 
 	results := make([]*ResultItem, 0)
 
@@ -258,7 +258,7 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnterAction(), r.OnAltEnterAction())
 		result.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
-				res := common.Result(&result)
+				res := api.Result(&result)
 				prevSelected := l.navigation.SetSelected(&res)
 				prevRes, _ := (*prevSelected).(*ResultItem)
 				prevRes.Unselect()
@@ -293,9 +293,9 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 	}
 
 	// Update Launcher
-	resultItems := make([]*common.Result, 0)
+	resultItems := make([]*api.Result, 0)
 	for _, r := range results {
-		res := common.Result(r)
+		res := api.Result(r)
 		resultItems = append(resultItems, &res)
 	}
 	l.navigation.SetItems(resultItems)
@@ -303,7 +303,7 @@ func (l *Launcher) ShowResults(searchResults []common.Result) {
 
 func (l *Launcher) clearResults() {
 	// Clear navigation
-	l.navigation.SetItems(make([]*common.Result, 0))
+	l.navigation.SetItems(make([]*api.Result, 0))
 
 	// Get Children
 	previousResults := l.resultsBox.GetChildren()

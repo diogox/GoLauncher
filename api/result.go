@@ -1,4 +1,4 @@
-package common
+package api
 
 type Result interface {
 	Title() string

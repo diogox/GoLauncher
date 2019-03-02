@@ -1,8 +1,8 @@
 package calc
 
 import (
-	"github.com/diogox/GoLauncher/common"
-	"github.com/diogox/GoLauncher/common/actions"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/relnod/calcgo"
 	"regexp"
@@ -31,8 +31,8 @@ func (c *CalcSearchMode) IsEnabled(input string) bool {
 	return c.calcRegex.MatchString(input)
 }
 
-func (c *CalcSearchMode) HandleInput(input string) common.Action {
-	results := make([]common.Result, 0)
+func (c *CalcSearchMode) HandleInput(input string) api.Action {
+	results := make([]api.Result, 0)
 
 	calcResult := c.calculate(input)
 

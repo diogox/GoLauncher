@@ -1,15 +1,15 @@
 package actions
 
-import "github.com/diogox/GoLauncher/common"
+import "github.com/diogox/GoLauncher/api"
 
-func NewActionList(actions []common.Action) ActionList {
+func NewActionList(actions []api.Action) ActionList {
 	return ActionList{
 		actions: actions,
 	}
 }
 
 type ActionList struct {
-	actions []common.Action
+	actions []api.Action
 }
 
 func (al ActionList) KeepAppOpen() bool {

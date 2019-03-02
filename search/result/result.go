@@ -1,10 +1,10 @@
 package result
 
 import (
-	"github.com/diogox/GoLauncher/common"
+	"github.com/diogox/GoLauncher/api"
 )
 
-func NewSearchResult(title string, descr string, iconPath string, onEnterAction common.Action, onAltEnterAction common.Action) SearchResult {
+func NewSearchResult(title string, descr string, iconPath string, onEnterAction api.Action, onAltEnterAction api.Action) SearchResult {
 	return SearchResult{
 
 		title:       title,
@@ -16,11 +16,11 @@ func NewSearchResult(title string, descr string, iconPath string, onEnterAction 
 }
 
 type SearchResult struct {
-	title       string
-	description string
-	iconPath    string
-	onEnterAction common.Action
-	onAltEnterAction common.Action
+	title            string
+	description      string
+	iconPath         string
+	onEnterAction    api.Action
+	onAltEnterAction api.Action
 }
 
 func (r SearchResult) Title() string {
@@ -35,10 +35,10 @@ func (r SearchResult) IconPath() string {
 	return r.iconPath
 }
 
-func (r SearchResult) OnEnterAction() common.Action {
+func (r SearchResult) OnEnterAction() api.Action {
 	return r.onEnterAction
 }
 
-func (r SearchResult) OnAltEnterAction() common.Action {
+func (r SearchResult) OnAltEnterAction() api.Action {
 	return r.onAltEnterAction
 }

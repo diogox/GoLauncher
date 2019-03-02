@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/diogox/GoLauncher/common"
-	"github.com/diogox/GoLauncher/common/actions"
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/modes/app/finder"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/GoLauncher/sqlite"
@@ -26,9 +26,9 @@ func (AppSearchMode) IsEnabled(input string) bool {
 	return true // TODO: Change this
 }
 
-func (asm AppSearchMode) HandleInput(input string) common.Action {
+func (asm AppSearchMode) HandleInput(input string) api.Action {
 
-	results := make([]common.Result, 0)
+	results := make([]api.Result, 0)
 	apps, err := asm.db.FindAppByName(input)
 	if err != nil {
 		panic(err)

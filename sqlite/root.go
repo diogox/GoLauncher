@@ -22,7 +22,7 @@ func NewLauncherDB() LauncherDB {
 		panic(err)
 	}
 
-	return LauncherDB{
+	return LauncherDB {
 		db: db,
 	}
 }

@@ -3,13 +3,16 @@ package app
 import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
-	"github.com/diogox/GoLauncher/search/modes/app/finder"
 	"github.com/diogox/GoLauncher/search/result"
+	"github.com/diogox/LinuxApps"
 )
 
 func NewAppSearchMode(db *api.DB) AppSearchMode {
 	// Get App Info
-	finder.FindApps(db)
+	apps := LinuxApps.GetApps()
+	for _, app := range apps {
+		_ = (*db).AddApp(app.ExecName, app.Name, app.Description, app.IconName)
+	}
 
 	return AppSearchMode{
 		db: db,

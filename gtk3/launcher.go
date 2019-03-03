@@ -23,7 +23,7 @@ const InputID = "input"
 const PrefsBtnID = "prefs_btn"
 const ResultsBoxID = "result_box"
 
-func NewLauncher(db *api.DB) *Launcher {
+func NewLauncher(preferences *api.Preferences) *Launcher {
 
 	// Initiate gtk (Must be here, so that it occurs before the hotkey binding)
 	gtk.Init(nil)
@@ -72,26 +72,26 @@ func NewLauncher(db *api.DB) *Launcher {
 	nav := navigation.NewNavigation(make([]*api.Result, 0))
 
 	return &Launcher{
-		db:         db,
-		window:     win,
-		body:       body,
-		input:      input,
-		prefsBtn:   prefsBtn,
-		resultsBox: resultsBox,
-		navigation: &nav,
-		isVisible:  true,
+		preferences: preferences,
+		window:      win,
+		body:        body,
+		input:       input,
+		prefsBtn:    prefsBtn,
+		resultsBox:  resultsBox,
+		navigation:  &nav,
+		isVisible:   true,
 	}
 }
 
 type Launcher struct {
-	db         *api.DB
-	window     *gtk.Window
-	body       *gtk.Box
-	input      *gtk.Entry
-	prefsBtn   *gtk.Button
-	resultsBox *gtk.Box
-	navigation *navigation.Navigation
-	isVisible  bool
+	preferences *api.Preferences
+	window      *gtk.Window
+	body        *gtk.Box
+	input       *gtk.Entry
+	prefsBtn    *gtk.Button
+	resultsBox  *gtk.Box
+	navigation  *navigation.Navigation
+	isVisible   bool
 }
 
 func (l *Launcher) HandleInput(callback func(string)) {
@@ -344,7 +344,11 @@ func (l *Launcher) hide() {
 	l.window.Hide()
 	l.isVisible = false
 
-	keepInput := (*l.db).GetPreference(api.PreferenceKeepInputOnHide)
+	keepInput, err := (*l.preferences).GetPreference(api.PreferenceKeepInputOnHide)
+	if err != nil {
+		panic(err)
+	}
+
 	if keepInput == api.PreferenceFALSE {
 		l.ClearInput()
 	}

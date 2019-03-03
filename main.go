@@ -5,9 +5,11 @@ import (
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
+	"github.com/gotk3/gotk3/glib"
 	"sync"
 )
 
+var launcher *gtk3.Launcher
 var wg sync.WaitGroup
 
 // TODO: To allow for dynamically changing the Hotkey binding, for example, we need a dedicated "Preferences" object
@@ -20,14 +22,20 @@ func main() {
 	sqliteDB := sqlite.NewLauncherDB()
 	db := api.DB(&sqliteDB)
 
+	preferences := gtk3.PreferencesNew(&db)
+	preferences.BindHotkeyCallBack(func(hotkey string) {
+		_, _ = glib.IdleAdd(func() {
+			launcher.BindHotkey(hotkey)
+		})
+	})
+	prefs := api.Preferences(&preferences)
+	_ = prefs.SetPreference(api.PreferenceHotkey, db.GetPreference(api.PreferenceHotkey))
+
 	// Instantiate Search
 	search := search.NewSearch(&db)
 
 	// Instantiate Launcher
-	launcher := gtk3.NewLauncher(&db)
-
-	hotkey := db.GetPreference(api.PreferenceHotkey)
-	launcher.BindHotkey(hotkey)
+	launcher = gtk3.NewLauncher(&prefs)
 
 	// Handle input function
 	launcher.HandleInput(func(input string) {

@@ -179,6 +179,12 @@ func (l *Launcher) Start() {
 		res.Select()
 	})
 
+	_, _ = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
+		_, _ = glib.IdleAdd(func(btn *gtk.Button) {
+			ShowPreferencesWindow()
+		}, btn)
+	})
+
 	l.navigation.SetOnItemEnter(func(action api.Action) {
 		action.Run()
 		if !action.KeepAppOpen() {

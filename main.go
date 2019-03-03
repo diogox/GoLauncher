@@ -10,6 +10,9 @@ import (
 
 var wg sync.WaitGroup
 
+// TODO: To allow for dynamically changing the Hotkey binding, for example, we need a dedicated "Preferences" object
+//  that runs the appropriate functions after preference changes and commits them to the database.
+
 func main() { 
 	
 	wg.Add(1)

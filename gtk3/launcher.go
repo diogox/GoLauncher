@@ -183,7 +183,7 @@ func (l *Launcher) Start() {
 
 	_, _ = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
 		_, _ = glib.IdleAdd(func(btn *gtk.Button) {
-			ShowPreferencesWindow()
+			ShowSettingsWindow()
 		}, btn)
 	})
 

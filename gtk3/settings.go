@@ -5,25 +5,23 @@ import (
 	"sync"
 )
 
+// TODO: Save an instance of the window with the launcher for performance? (Maybe we can get rid of the singleton)
+
 var preferencesWindowInstance *gtk.Window
 var mtx sync.Mutex
 
-func ShowPreferencesWindow() {
+func ShowSettingsWindow() {
 	mtx.Lock()
 	defer mtx.Unlock()
 
 	if preferencesWindowInstance == nil {
-		preferencesWindowInstance = buildPreferencesWindow()
+		preferencesWindowInstance = buildSettingsWindow()
 	}
 
 	preferencesWindowInstance.ShowAll()
 }
 
-type PreferencesWindow struct {
-
-}
-
-func buildPreferencesWindow() *gtk.Window {
+func buildSettingsWindow() *gtk.Window {
 	prefsWin, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
 	label, _ := gtk.LabelNew("Preferences Window!")
 	prefsWin.Add(label)

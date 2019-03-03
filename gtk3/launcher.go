@@ -23,7 +23,7 @@ const InputID = "input"
 const PrefsBtnID = "prefs_btn"
 const ResultsBoxID = "result_box"
 
-func NewLauncher() *Launcher {
+func NewLauncher(db *api.DB) *Launcher {
 
 	// Initiate gtk (Must be here, so that it occurs before the hotkey binding)
 	gtk.Init(nil)
@@ -72,6 +72,7 @@ func NewLauncher() *Launcher {
 	nav := navigation.NewNavigation(make([]*api.Result, 0))
 
 	return &Launcher{
+		db:         db,
 		window:     win,
 		body:       body,
 		input:      input,
@@ -83,6 +84,7 @@ func NewLauncher() *Launcher {
 }
 
 type Launcher struct {
+	db         *api.DB
 	window     *gtk.Window
 	body       *gtk.Box
 	input      *gtk.Entry
@@ -328,9 +330,6 @@ func (l *Launcher) show() {
 	// Position
 	centerAtTopOfScreen(l.window)
 
-	// Clear
-	l.ClearInput()
-
 	// Show
 	l.window.ShowAll()
 	l.isVisible = true
@@ -344,5 +343,9 @@ func (l *Launcher) hide() {
 	// Hide
 	l.window.Hide()
 	l.isVisible = false
-	l.clearResults()
+
+	keepInput := (*l.db).GetPreference(api.PreferenceKeepInputOnHide)
+	if keepInput == api.PreferenceFALSE {
+		l.ClearInput()
+	}
 }

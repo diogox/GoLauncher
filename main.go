@@ -15,14 +15,16 @@ func main() {
 	wg.Add(1)
 
 	sqliteDB := sqlite.NewLauncherDB()
-
-	// Instantiate Launcher
-	launcher := gtk3.NewLauncher()
-	launcher.BindHotkey("<Ctrl>space")
+	db := api.DB(&sqliteDB)
 
 	// Instantiate Search
-	db := api.DB(&sqliteDB)
 	search := search.NewSearch(&db)
+
+	// Instantiate Launcher
+	launcher := gtk3.NewLauncher(&db)
+
+	hotkey := db.GetPreference(api.PreferenceHotkey)
+	launcher.BindHotkey(hotkey)
 
 	// Handle input function
 	launcher.HandleInput(func(input string) {

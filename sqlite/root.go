@@ -21,6 +21,10 @@ func NewLauncherDB() LauncherDB {
 	if err != nil {
 		panic(err)
 	}
+	err = createPreferencesTable(db)
+	if err != nil {
+		panic(err)
+	}
 
 	return LauncherDB {
 		db: db,

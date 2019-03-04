@@ -65,7 +65,7 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	if err != nil {
 		panic(err)
 	}
-	if isKeepInputOnHide == "true" {
+	if isKeepInputOnHide == api.PreferenceTRUE {
 		keepInputOnHideCheckButton.SetActive(true)
 	} else {
 		keepInputOnHideCheckButton.SetActive(false)
@@ -90,9 +90,9 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 
 		isKeepInputOnHide := keepInputOnHideCheckButton.GetActive()
 		if isKeepInputOnHide {
-			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, "true")
+			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, api.PreferenceTRUE)
 		} else {
-			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, "false")
+			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, api.PreferenceFALSE)
 		}
 		if err != nil {
 			panic(err)

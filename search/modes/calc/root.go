@@ -55,3 +55,6 @@ func (*CalcSearchMode) calculate(input string) string {
 	return resultStr
 }
 
+func (*CalcSearchMode) DefaultItems(input string) []api.Result {
+	return nil
+}

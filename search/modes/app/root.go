@@ -4,11 +4,12 @@ import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/api/models"
+	"github.com/diogox/GoLauncher/search/modes"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/LinuxApps"
 )
 
-func NewAppSearchMode(db *api.DB) AppSearchMode {
+func NewAppSearchMode(db *api.DB, searchModes []modes.SearchMode) AppSearchMode {
 	// Get App Info
 	apps := LinuxApps.GetApps()
 	for _, app := range apps {
@@ -22,17 +23,18 @@ func NewAppSearchMode(db *api.DB) AppSearchMode {
 	}
 
 	return AppSearchMode{
-		db: db,
+		db:          db,
+		searchModes: searchModes,
 	}
 }
 
-// TODO: Has to implement `SearchMode`
 type AppSearchMode struct {
-	db *api.DB
+	db          *api.DB
+	searchModes []modes.SearchMode
 }
 
 func (AppSearchMode) IsEnabled(input string) bool {
-	return true // TODO: Change this
+	return true
 }
 
 func (asm AppSearchMode) HandleInput(input string) api.Action {
@@ -53,5 +55,17 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 		results = append(results, r)
 	}
 
+	if len(results) == 0 {
+		for _, searchMode := range asm.searchModes {
+			for _, item := range searchMode.DefaultItems(input) {
+				results = append(results, item)
+			}
+		}
+	}
+
 	return actions.NewRenderResultList(results)
+}
+
+func (AppSearchMode) DefaultItems(input string) []api.Result {
+	return nil
 }

@@ -65,3 +65,7 @@ func (fb *FileBrowserMode) HandleInput(input string) api.Action {
 
 	return actions.NewRenderResultList(results)
 }
+
+func (*FileBrowserMode) DefaultItems(input string) []api.Result {
+	return nil
+}

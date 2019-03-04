@@ -72,6 +72,7 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	nav := navigation.NewNavigation(make([]*api.Result, 0))
 
 	return &Launcher{
+		hotkey:      nil,
 		preferences: preferences,
 		window:      win,
 		body:        body,
@@ -83,7 +84,9 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	}
 }
 
+// TODO: Probably better to make a LauncherOptions object
 type Launcher struct {
+	hotkey      *string
 	preferences *api.Preferences
 	window      *gtk.Window
 	body        *gtk.Box
@@ -237,9 +240,15 @@ func (l *Launcher) BindHotkey(hotkey string) {
 		l.ToggleVisibility()
 	}
 
+	// Unbind previous hotkey, if exists
+	if l.hotkey != nil {
+		kb.Unbind(*l.hotkey, toggle)
+	}
+
 	// Bind hotkey
 	kb.Init()
 	kb.Bind(hotkey, toggle, nil)
+	l.hotkey = &hotkey
 }
 
 func (l *Launcher) ToggleVisibility() {

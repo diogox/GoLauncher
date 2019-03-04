@@ -10,9 +10,6 @@ import (
 
 func NewSearch(db *api.DB) Search {
 
-	// Load default preferences if they aren't already set
-	_ = (*db).LoadDefaultPreferences()
-
 	// Define available search modes
 	searchModes := []SearchMode {
 		file.NewFileBrowserMode(),

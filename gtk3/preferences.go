@@ -6,6 +6,9 @@ import (
 )
 
 func PreferencesNew(db *api.DB) Preferences {
+	// Load default preferences if they aren't already set
+	_ = (*db).LoadDefaultPreferences()
+	
 	return Preferences{
 		db: db,
 	}

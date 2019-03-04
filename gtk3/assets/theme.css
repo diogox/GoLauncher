@@ -20,7 +20,6 @@
 @define-color item_shortcut_color_sel #444;
 @define-color item_shortcut_shadow_sel lighter(@item_box_selected);
 */
-
 * {
     color: inherit;
     font-size: inherit;

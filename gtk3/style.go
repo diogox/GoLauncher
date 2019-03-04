@@ -6,14 +6,14 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-func setCssProvider() (*gtk.CssProvider, error) {
+func setCssProvider(cssPath string) (*gtk.CssProvider, error) {
 	cssProvider, err := gtk.CssProviderNew()
 	if err != nil {
 		return nil, err
 	}
 
 	// Load styles onto the provider
-	err = cssProvider.LoadFromPath(CssFile)
+	err = cssProvider.LoadFromPath(cssPath)
 	if err != nil {
 		return nil, err
 	}

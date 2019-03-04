@@ -35,7 +35,7 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	}
 
 	// Get CSS provider
-	_, err = setCssProvider()
+	_, err = setCssProvider(CssFile)
 	if err != nil {
 		panic(err)
 	}
@@ -186,7 +186,7 @@ func (l *Launcher) Start() {
 
 	_, _ = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
 		_, _ = glib.IdleAdd(func(btn *gtk.Button) {
-			ShowSettingsWindow()
+			ShowSettingsWindow(l.preferences)
 		}, btn)
 	})
 

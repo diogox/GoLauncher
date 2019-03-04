@@ -30,6 +30,20 @@ func GetWindow(app *gtk.Builder, id string) (*gtk.Window, error) {
 	return win, nil
 }
 
+func GetCheckButton(app *gtk.Builder, id string) (*gtk.CheckButton, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	checkButton, ok := obj.(*gtk.CheckButton)
+	if !ok {
+		return nil, err
+	}
+
+	return checkButton, nil
+}
+
 func GetEntry(app *gtk.Builder, id string) (*gtk.Entry, error) {
 	obj, err := app.GetObject(id)
 	if err != nil {
@@ -70,6 +84,20 @@ func GetButton(app *gtk.Builder, id string) (*gtk.Button, error) {
 	}
 
 	return btn, nil
+}
+
+func GetNotebook(app *gtk.Builder, id string) (*gtk.Notebook, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	notebook, ok := obj.(*gtk.Notebook)
+	if !ok {
+		return nil, err
+	}
+
+	return notebook, nil
 }
 
 func GetBox(app *gtk.Builder, id string) (*gtk.Box, error) {

@@ -1,33 +1,110 @@
 package gtk3
 
 import (
+	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gtk"
 	"sync"
 )
 
-// TODO: Save an instance of the window with the launcher for performance? (Maybe we can get rid of the singleton)
+const GladeSettingsFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/settings.glade"
 
-var preferencesWindowInstance *gtk.Window
+const SettingsWindowID = "settings_window"
+const SettingsHotkeyInputID = "hotkey_input"
+const SettingsClearInputOnHideID = "keep_input_on_hide"
+const SettingsSaveButtonID = "save"
+const SettingsCancelButtonID = "cancel"
+
+var settingsWindowInstance *gtk.Window
 var mtx sync.Mutex
 
-func ShowSettingsWindow() {
+func ShowSettingsWindow(preferences *api.Preferences) {
 	mtx.Lock()
 	defer mtx.Unlock()
 
-	if preferencesWindowInstance == nil {
-		preferencesWindowInstance = buildSettingsWindow()
+	if settingsWindowInstance == nil {
+		settingsWindowInstance = buildSettingsWindow(preferences)
 	}
 
-	preferencesWindowInstance.ShowAll()
+	settingsWindowInstance.ShowAll()
 }
 
-func buildSettingsWindow() *gtk.Window {
-	prefsWin, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	label, _ := gtk.LabelNew("Preferences Window!")
-	prefsWin.Add(label)
+func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
+	bldr, err := glade.BuildFromFile(GladeSettingsFile)
+	if err != nil {
+		panic(err)
+	}
 
-	_, _ = prefsWin.Connect("destroy", func() {
-		preferencesWindowInstance = nil
+	win, err :=  glade.GetWindow(bldr, SettingsWindowID)
+	if err != nil {
+		panic(err)
+	}
+
+	hotkeyInput, err :=  glade.GetEntry(bldr, SettingsHotkeyInputID)
+	if err != nil {
+		panic(err)
+	}
+
+	keepInputOnHideCheckButton, err :=  glade.GetCheckButton(bldr, SettingsClearInputOnHideID)
+	if err != nil {
+		panic(err)
+	}
+
+	saveButton, err :=  glade.GetButton(bldr, SettingsSaveButtonID)
+	if err != nil {
+		panic(err)
+	}
+
+	cancelButton, err :=  glade.GetButton(bldr, SettingsCancelButtonID)
+	if err != nil {
+		panic(err)
+	}
+
+	// Load with current preference values
+	isKeepInputOnHide, err := (*preferences).GetPreference(api.PreferenceKeepInputOnHide)
+	if err != nil {
+		panic(err)
+	}
+	if isKeepInputOnHide == "true" {
+		keepInputOnHideCheckButton.SetActive(true)
+	} else {
+		keepInputOnHideCheckButton.SetActive(false)
+	}
+
+	currentHotkey, err := (*preferences).GetPreference(api.PreferenceHotkey)
+	if err != nil {
+		panic(err)
+	}
+	hotkeyInput.SetText(currentHotkey)
+
+	// Save new preferences
+	_, _ = saveButton.Connect("clicked", func(btn *gtk.Button) {
+		newHotkey, err := hotkeyInput.GetText()
+		if err != nil {
+			panic(err)
+		}
+		err = (*preferences).SetPreference(api.PreferenceHotkey, newHotkey)
+		if err != nil {
+			panic(err)
+		}
+
+		isKeepInputOnHide := keepInputOnHideCheckButton.GetActive()
+		if isKeepInputOnHide {
+			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, "true")
+		} else {
+			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, "false")
+		}
+		if err != nil {
+			panic(err)
+		}
 	})
-	return prefsWin
+
+	_, _ = cancelButton.Connect("clicked", func() {
+		win.Destroy()
+	})
+
+	_, _ = win.Connect("destroy", func() {
+		settingsWindowInstance = nil
+	})
+	return win
 }

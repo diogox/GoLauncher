@@ -339,6 +339,16 @@ func (l *Launcher) show() {
 	// Position
 	centerAtTopOfScreen(l.window)
 
+	// Keep input or not
+	keepInput, err := (*l.preferences).GetPreference(api.PreferenceKeepInputOnHide)
+	if err != nil {
+		panic(err)
+	}
+
+	if keepInput == api.PreferenceFALSE {
+		l.ClearInput()
+	}
+
 	// Show
 	l.window.ShowAll()
 	l.isVisible = true
@@ -352,13 +362,4 @@ func (l *Launcher) hide() {
 	// Hide
 	l.window.Hide()
 	l.isVisible = false
-
-	keepInput, err := (*l.preferences).GetPreference(api.PreferenceKeepInputOnHide)
-	if err != nil {
-		panic(err)
-	}
-
-	if keepInput == api.PreferenceFALSE {
-		l.ClearInput()
-	}
 }

@@ -18,12 +18,12 @@ func NewRenderResultList(resultList []api.Result) RenderResultList {
 	}
 
 	newInstance := *renderResultListInstance
-	newInstance.resultList = resultList
+	newInstance.ResultList = resultList
 	return newInstance
 }
 
 type RenderResultList struct {
-	resultList []api.Result
+	ResultList []api.Result
 	renderCallback func([]api.Result)
 }
 
@@ -32,6 +32,6 @@ func (RenderResultList) KeepAppOpen() bool {
 }
 
 func (r RenderResultList) Run() {
-	r.renderCallback(r.resultList)
+	r.renderCallback(r.ResultList)
 }
 

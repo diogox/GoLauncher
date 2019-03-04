@@ -8,12 +8,12 @@ import (
 
 func NewLaunchApp(exec string) LaunchApp {
 	return LaunchApp{
-		exec: exec,
+		Exec: exec,
 	}
 }
 
 type LaunchApp struct {
-	exec string
+	Exec string
 }
 
 func (LaunchApp) KeepAppOpen() bool {
@@ -21,8 +21,8 @@ func (LaunchApp) KeepAppOpen() bool {
 }
 
 func (a LaunchApp) Run() {
-	fmt.Println("Executing App: " + a.exec)
-	executable := strings.Split(a.exec, " ")
+	fmt.Println("Executing App: " + a.Exec)
+	executable := strings.Split(a.Exec, " ")
 	cmd := exec.Command(executable[0], executable[1:]...)
 	err := cmd.Start()
 	if err != nil {

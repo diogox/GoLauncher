@@ -16,12 +16,12 @@ func NewSetUserQuery(query string) SetUserQuery {
 	}
 
 	newInstance := *setQueryInstance
-	newInstance.query = query
+	newInstance.Query = query
 	return newInstance
 }
 
 type SetUserQuery struct {
-	query string
+	Query string
 	setQueryCallback func(string)
 }
 
@@ -30,6 +30,6 @@ func (SetUserQuery) KeepAppOpen() bool {
 }
 
 func (s SetUserQuery) Run() {
-	s.setQueryCallback(s.query)
+	s.setQueryCallback(s.Query)
 }
 

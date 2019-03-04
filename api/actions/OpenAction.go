@@ -4,12 +4,12 @@ import "fmt"
 
 func NewOpen(filepath string) Open {
 	return Open{
-		filepath: filepath,
+		Filepath: filepath,
 	}
 }
 
 type Open struct {
-	filepath string
+	Filepath string `json:"file_path"`
 }
 
 func (Open) KeepAppOpen() bool {
@@ -17,6 +17,6 @@ func (Open) KeepAppOpen() bool {
 }
 
 func (o Open) Run() {
-	fmt.Println("Opening file: " + o.filepath)
+	fmt.Println("Opening file: " + o.Filepath)
 }
 

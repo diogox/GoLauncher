@@ -4,21 +4,21 @@ import "github.com/diogox/GoLauncher/api"
 
 func NewActionList(actions []api.Action) ActionList {
 	return ActionList{
-		actions: actions,
+		Actions: actions,
 	}
 }
 
 type ActionList struct {
-	actions []api.Action
+	Actions []api.Action
 }
 
 func (al ActionList) KeepAppOpen() bool {
-	if len(al.actions) == 0 {
+	if len(al.Actions) == 0 {
 		return true
 	}
 
 	// If any of the actions returns true, return true
-	for _, action := range al.actions {
+	for _, action := range al.Actions {
 		if action.KeepAppOpen() == true {
 			return true
 		}
@@ -28,7 +28,7 @@ func (al ActionList) KeepAppOpen() bool {
 }
 
 func (al ActionList) Run() {
-	for _, action := range al.actions {
+	for _, action := range al.Actions {
 		action.Run()
 	}
 }

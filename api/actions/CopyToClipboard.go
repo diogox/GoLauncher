@@ -16,13 +16,13 @@ func NewCopyToClipboard(text string) CopyToClipboard {
 	}
 
 	newInstance := *copyToClipboardInstance
-	newInstance.text = text
+	newInstance.Text = text
 	return newInstance
 }
 
 type CopyToClipboard struct {
 	copyToClipboardCallback func(string)
-	text string
+	Text string
 }
 
 func (CopyToClipboard) KeepAppOpen() bool {
@@ -30,6 +30,6 @@ func (CopyToClipboard) KeepAppOpen() bool {
 }
 
 func (c CopyToClipboard) Run() {
-	c.copyToClipboardCallback(c.text)
+	c.copyToClipboardCallback(c.Text)
 }
 

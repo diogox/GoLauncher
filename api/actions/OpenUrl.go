@@ -7,12 +7,12 @@ import (
 
 func NewOpenUrl(url string) OpenUrl {
 	return OpenUrl {
-		url: url,
+		Url: url,
 	}
 }
 
 type OpenUrl struct {
-	url string
+	Url string
 }
 
 func (OpenUrl) KeepAppOpen() bool {
@@ -20,8 +20,8 @@ func (OpenUrl) KeepAppOpen() bool {
 }
 
 func (o OpenUrl) Run() {
-	fmt.Println("Opening url: " + o.url)
-	err := open.Start(o.url)
+	fmt.Println("Opening url: " + o.Url)
+	err := open.Start(o.Url)
 	if err != nil {
 		panic(err)
 	}

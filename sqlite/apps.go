@@ -13,20 +13,20 @@ func createAppsTable(db *sql.DB) error {
 	return err
 }
 
-func (ldb *LauncherDB) AddApp(exec string, name string, descr string, _iconName string) error {
+func (ldb *LauncherDB) AddApp(app models.AppInfo) error {
 	statement, err := ldb.db.Prepare("INSERT INTO apps (exec, name, description, IconName) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		panic(err)
 	}
-	_, err = statement.Exec(exec, name, descr, _iconName)
+	_, err = statement.Exec(app.Exec, app.Name, app.Description, app.IconName)
 
 	return err
 }
 
-func (ldb *LauncherDB) FindAppByID(exec string) (string, error) {
+func (ldb *LauncherDB) FindAppByID(exec string) (models.AppInfo, error) {
 	rows, err := ldb.db.Query("SELECT * FROM apps WHERE exec=(?)", exec)
 	if err != nil {
-		return "", err
+		return models.AppInfo{}, err
 	}
 
 	var _exec string
@@ -38,7 +38,14 @@ func (ldb *LauncherDB) FindAppByID(exec string) (string, error) {
 		rows.Scan(&_exec, &_name, &_description, &_iconName)
 	}
 
-	return _name, nil
+	app := models.AppInfo{
+		Exec:        _exec,
+		Name:        _name,
+		Description: _description,
+		IconName:    _iconName,
+	}
+
+	return app, nil
 }
 
 func (ldb *LauncherDB) FindAppByName(name string) ([]models.AppInfo, error) {
@@ -60,10 +67,10 @@ func (ldb *LauncherDB) FindAppByName(name string) ([]models.AppInfo, error) {
 			panic(err)
 		}
 		appInfo := models.AppInfo{
-			Name: _name,
+			Name:        _name,
 			Description: _description,
-			Exec: _exec,
-			IconName: _iconName,
+			Exec:        _exec,
+			IconName:    _iconName,
 		}
 		apps = append(apps, appInfo)
 	}

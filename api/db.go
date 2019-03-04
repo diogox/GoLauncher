@@ -5,8 +5,8 @@ import "github.com/diogox/GoLauncher/api/models"
 type DB interface {
 
 	// Apps
-	AddApp(exec string, name string, descr string, iconName string) error
-	FindAppByID(exec string) (string, error)
+	AddApp(app models.AppInfo) error
+	FindAppByID(exec string) (models.AppInfo, error)
 	FindAppByName(name string) ([]models.AppInfo, error)
 
 	// Preferences

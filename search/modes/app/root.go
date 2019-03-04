@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
+	"github.com/diogox/GoLauncher/api/models"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/LinuxApps"
 )
@@ -11,7 +12,13 @@ func NewAppSearchMode(db *api.DB) AppSearchMode {
 	// Get App Info
 	apps := LinuxApps.GetApps()
 	for _, app := range apps {
-		_ = (*db).AddApp(app.ExecName, app.Name, app.Description, app.IconName)
+		appInfo := models.AppInfo{
+			Exec:        app.ExecName,
+			Name:        app.Name,
+			Description: app.Description,
+			IconName:    app.IconName,
+		}
+		_ = (*db).AddApp(appInfo)
 	}
 
 	return AppSearchMode{
@@ -48,4 +55,3 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	return actions.NewRenderResultList(results)
 }
-

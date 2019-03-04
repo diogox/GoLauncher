@@ -97,6 +97,8 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 		if err != nil {
 			panic(err)
 		}
+
+		win.Destroy()
 	})
 
 	_, _ = cancelButton.Connect("clicked", func() {

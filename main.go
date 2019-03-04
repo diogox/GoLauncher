@@ -31,6 +31,8 @@ func main() {
 	prefs := api.Preferences(&preferences)
 	_ = prefs.SetPreference(api.PreferenceHotkey, db.GetPreference(api.PreferenceHotkey))
 
+	// TODO: Start extension server
+
 	// Instantiate Search
 	search := search.NewSearch(&db)
 

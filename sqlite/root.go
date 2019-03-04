@@ -25,6 +25,10 @@ func NewLauncherDB() LauncherDB {
 	if err != nil {
 		panic(err)
 	}
+	err = createShortcutsTable(db)
+	if err != nil {
+		panic(err)
+	}
 
 	return LauncherDB {
 		db: db,

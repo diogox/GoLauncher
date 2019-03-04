@@ -14,4 +14,10 @@ type DB interface {
 	AddPreference(preference string, value string) error
 	SetPreference(preference string, value string) error
 	GetPreference(preference string) string
+
+	// Shortcuts
+	AddShortcut(shortcut models.ShortcutInfo) error
+	DeleteShortcut(shortcut models.ShortcutInfo) error
+	GetAllShortcuts() ([]models.ShortcutInfo, error)
+	FindShortcutByKeyword(keyword string) (models.ShortcutInfo, error)
 }

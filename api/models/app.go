@@ -1,8 +1,8 @@
 package models
 
 type AppInfo struct {
-	Exec string
-	Name string
+	Exec        string
+	Name        string
 	Description string
-	IconName string
+	IconName    string
 }

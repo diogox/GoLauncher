@@ -6,6 +6,7 @@ import (
 	"github.com/diogox/GoLauncher/search/modes/app"
 	"github.com/diogox/GoLauncher/search/modes/calc"
 	"github.com/diogox/GoLauncher/search/modes/file"
+	"github.com/diogox/GoLauncher/search/modes/shortcut"
 )
 
 func NewSearch(db *api.DB) Search {
@@ -14,6 +15,7 @@ func NewSearch(db *api.DB) Search {
 	searchModes := []SearchMode {
 		file.NewFileBrowserMode(),
 		calc.NewCalcSearchMode(),
+		shortcut.NewShortcutSearchMode(db),
 		app.NewAppSearchMode(db),
 	}
 

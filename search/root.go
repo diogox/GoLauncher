@@ -19,6 +19,7 @@ func NewSearch(db *api.DB) Search {
 		shortcut.NewShortcutSearchMode(db),
 	}
 
+	// Initialize AppSearchMode with the other modes
 	searchModes = append(searchModes, app.NewAppSearchMode(db, searchModes))
 
 	return Search{

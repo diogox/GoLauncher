@@ -5,6 +5,7 @@ import (
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
+	"github.com/diogox/GoLauncher/websockets"
 	"github.com/gotk3/gotk3/glib"
 	"sync"
 )
@@ -49,6 +50,8 @@ func main() {
 
 	// Start Launcher
 	launcher.Start()
+
+	websockets.StartExtensionsServer()
 
 	// Make main function wait
 	wg.Wait()

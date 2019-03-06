@@ -2,18 +2,25 @@ package actions
 
 import (
 	"fmt"
+	"github.com/diogox/GoLauncher/api"
 	"os/exec"
 	"strings"
 )
 
 func NewLaunchApp(exec string) LaunchApp {
 	return LaunchApp{
+		Type: api.LAUNCH_APP_ACTION,
 		Exec: exec,
 	}
 }
 
 type LaunchApp struct {
+	Type string
 	Exec string
+}
+
+func (la LaunchApp) GetType() string {
+	return la.Type
 }
 
 func (LaunchApp) KeepAppOpen() bool {

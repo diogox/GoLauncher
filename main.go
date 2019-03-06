@@ -16,8 +16,8 @@ var wg sync.WaitGroup
 // TODO: To allow for dynamically changing the Hotkey binding, for example, we need a dedicated "Preferences" object
 //  that runs the appropriate functions after preference changes and commits them to the database.
 
-func main() { 
-	
+func main() {
+
 	wg.Add(1)
 
 	sqliteDB := sqlite.NewLauncherDB()
@@ -51,7 +51,12 @@ func main() {
 	// Start Launcher
 	launcher.Start()
 
-	websockets.StartExtensionsServer()
+	// Start Extension Server
+	extensionActionChannel := make(chan *api.Action)
+	go websockets.StartExtensionsServer(extensionActionChannel)
+	for action := range extensionActionChannel {
+		_, _ = glib.IdleAdd((*action).Run)
+	}
 
 	// Make main function wait
 	wg.Wait()

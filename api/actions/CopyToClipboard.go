@@ -1,11 +1,14 @@
 package actions
 
+import "github.com/diogox/GoLauncher/api"
+
 var copyToClipboardInstance *CopyToClipboard
 
 // Copying text to the clipboard may rely on the GUI framework.
 // To keep the action platform-agnostic, we need to set it up before using it.
 func SetupCopyToClipboard(copyToClipboardCallback func(string)) {
 	copyToClipboardInstance = &CopyToClipboard {
+		Type: api.COPY_TO_CLIPBOARD_ACTION,
 		copyToClipboardCallback: copyToClipboardCallback,
 	}
 }
@@ -21,8 +24,13 @@ func NewCopyToClipboard(text string) CopyToClipboard {
 }
 
 type CopyToClipboard struct {
+	Type string
 	copyToClipboardCallback func(string)
 	Text string
+}
+
+func (c CopyToClipboard) GetType() string {
+	return c.Type
 }
 
 func (CopyToClipboard) KeepAppOpen() bool {

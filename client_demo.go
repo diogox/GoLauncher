@@ -17,11 +17,13 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 
 func main() {
 
-	action := actions.NewOpen("/")
+	time.Sleep(3000)
+	action := actions.NewOpenUrl("http://google.com")
 	jsonObj, err := json.Marshal(action)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(string(jsonObj))
 
 	flag.Parse()
@@ -39,6 +41,7 @@ func main() {
 	}
 	defer c.Close()
 
+	/*
 	done := make(chan struct{})
 
 	go func() {
@@ -52,20 +55,22 @@ func main() {
 			log.Printf("recv: %s", message)
 		}
 	}()
+	*/
 
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
+	err = c.WriteMessage(websocket.TextMessage, jsonObj)
+	if err != nil {
+		log.Println("write:", err)
+		return
+	}
+	/*
 	for {
 		select {
 		case <-done:
 			return
 		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
-			if err != nil {
-				log.Println("write:", err)
-				return
-			}
 		case <-interrupt:
 			log.Println("interrupt")
 
@@ -83,4 +88,5 @@ func main() {
 			return
 		}
 	}
+	*/
 }

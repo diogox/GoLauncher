@@ -8,6 +8,7 @@ var renderResultListInstance *RenderResultList
 // To keep the action platform-agnostic, we need to set it up before using it.
 func SetupRenderResultList(renderResultsCallback func([]api.Result)) {
 	renderResultListInstance = &RenderResultList {
+		Type: api.RENDER_RESULT_LIST_ACTION,
 		renderCallback: renderResultsCallback,
 	}
 }
@@ -23,8 +24,13 @@ func NewRenderResultList(resultList []api.Result) RenderResultList {
 }
 
 type RenderResultList struct {
-	ResultList []api.Result
+	Type string
+	ResultList []api.Result `json:"result_list"`
 	renderCallback func([]api.Result)
+}
+
+func (rrl RenderResultList) GetType() string {
+	return rrl.Type
 }
 
 func (RenderResultList) KeepAppOpen() bool {

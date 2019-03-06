@@ -7,19 +7,24 @@ import (
 
 func KeywordQueryNew(query string) KeywordQuery {
 	return KeywordQuery{
+		Type:  api.KEYWORD_QUERY_EVENT,
 		query: query,
 	}
 }
 
 type KeywordQuery struct {
-	api.BaseEvent
+	Type  string
 	query string
 }
 
-func (kqe KeywordQuery) Keyword() string {
-	return strings.Split(kqe.query, " ")[0]
+func (kq KeywordQuery) GetEventType() string {
+	return kq.Type
 }
 
-func (kqe KeywordQuery) Argument() []string {
-	return strings.Split(kqe.query, " ")[1:]
+func (kq KeywordQuery) Keyword() string {
+	return strings.Split(kq.query, " ")[0]
+}
+
+func (kq KeywordQuery) Argument() []string {
+	return strings.Split(kq.query, " ")[1:]
 }

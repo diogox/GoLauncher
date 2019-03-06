@@ -1,20 +1,23 @@
 package events
 
-import (
-	"github.com/diogox/GoLauncher/api"
-)
+import "github.com/diogox/GoLauncher/api"
 
 func ItemEnterNew(data interface{}) ItemEnter {
 	return ItemEnter{
+		Type: api.ITEM_ENTER_EVENT,
 		data: data,
 	}
 }
 
 type ItemEnter struct {
-	api.BaseEvent
+	Type string
 	data interface{}
 }
 
-func (kqe ItemEnter) Data() interface{} {
-	return kqe.data
+func (ie ItemEnter) GetEventType() string {
+	return ie.Type
+}
+
+func (ie ItemEnter) Data() interface{} {
+	return ie.data
 }

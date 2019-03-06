@@ -1,6 +1,6 @@
 package api
 
 type Response struct {
-	Event  *BaseEvent
+	Event  *Event
 	Action *Action
 }

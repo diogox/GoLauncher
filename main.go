@@ -52,10 +52,10 @@ func main() {
 	launcher.Start()
 
 	// Start Extension Server
-	extensionActionChannel := make(chan *api.Action)
-	go websockets.StartExtensionsServer(extensionActionChannel)
-	for action := range extensionActionChannel {
-		_, _ = glib.IdleAdd((*action).Run)
+	extensionResponseChannel := make(chan *api.Response)
+	go websockets.StartExtensionsServer(extensionResponseChannel)
+	for res := range extensionResponseChannel {
+		_, _ = glib.IdleAdd((*res).Action.Run)
 	}
 
 	// Make main function wait

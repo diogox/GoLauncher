@@ -1,8 +1,10 @@
 package websockets
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/diogox/GoLauncher/api"
-	"github.com/diogox/GoLauncher/websockets/json"
+	json2 "github.com/diogox/GoLauncher/websockets/json"
 	"github.com/gorilla/websocket"
 	"net/http"
 )
@@ -12,7 +14,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func StartExtensionsServer(actionChannel chan *api.Action) {
+func StartExtensionsServer(responseChannel chan *api.Response) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 
@@ -24,13 +26,40 @@ func StartExtensionsServer(actionChannel chan *api.Action) {
 			}
 
 			// Infer action type
-			action, err := json.InferActionType(msg)
+			var res map[string]*json.RawMessage
+			fmt.Println(string(msg))
+			err = json.Unmarshal(msg, &res)
+			fmt.Println(res)
+			if err == nil {
+			}
+
+			// Unmarshal action
+			actionJson, err := res["Action"].MarshalJSON()
+			if err != nil {
+				panic(err)
+			}
+			action, err := json2.InferActionType(actionJson)
 			if err != nil {
 				panic(err)
 			}
 
-			// Send action
-			actionChannel <- action
+			// Unmarshal event
+			eventJson, err := res["Event"].MarshalJSON()
+			if err != nil {
+				panic(err)
+			}
+			event, err := json2.InferEventType(eventJson)
+			if err != nil {
+				panic(err)
+			}
+
+			response := api.Response{
+				Action: *action,
+				Event:  *event,
+			}
+
+			// Send response
+			responseChannel <- &response
 
 			// Print the message to the console
 			//fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), (*action).GetType())

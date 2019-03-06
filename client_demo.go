@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
+	"github.com/diogox/GoLauncher/api/events"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
@@ -18,8 +20,10 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 func main() {
 
 	time.Sleep(3000)
-	action := actions.NewOpenUrl("http://google.com")
-	jsonObj, err := json.Marshal(action)
+	action := api.Action(actions.NewOpenUrl("http://google.com"))
+	event := api.Event(events.KeywordQueryNew("query"))
+	response := api.ResponseNew(event, action)
+	jsonObj, err := json.Marshal(response)
 	if err != nil {
 		panic(err)
 	}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/diogox/GoLauncher/api"
-	json2 "github.com/diogox/GoLauncher/websockets/json"
+	json2 "github.com/diogox/GoLauncher/extensions/websockets/json"
 	"github.com/gorilla/websocket"
 	"net/http"
 )

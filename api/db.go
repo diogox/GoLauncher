@@ -23,5 +23,7 @@ type DB interface {
 
 	// Shortcuts
 	AddExtension(extension models.Extension) error
-	GetExtension(extension models.Extension) (*models.Extension, error)
+	DeleteExtension(extension models.Extension) error
+	GetAllExtensions() ([]models.Extension, error)
+	FindExtensionByKeyword(keyword string) (models.Extension, error)
 }

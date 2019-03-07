@@ -69,7 +69,7 @@ func (c *Controller) Receive() (*api.Response, error) {
 	fmt.Println(string(message))
 	err = json.Unmarshal(message, &res)
 	fmt.Println(res)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 

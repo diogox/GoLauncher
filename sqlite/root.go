@@ -29,8 +29,12 @@ func NewLauncherDB() LauncherDB {
 	if err != nil {
 		panic(err)
 	}
+	err = createExtensionsTable(db)
+	if err != nil {
+		panic(err)
+	}
 
-	return LauncherDB {
+	return LauncherDB{
 		db: db,
 	}
 }

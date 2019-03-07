@@ -20,4 +20,8 @@ type DB interface {
 	DeleteShortcut(shortcut models.ShortcutInfo) error
 	GetAllShortcuts() ([]models.ShortcutInfo, error)
 	FindShortcutByKeyword(keyword string) (models.ShortcutInfo, error)
+
+	// Shortcuts
+	AddExtension(extension models.Extension) error
+	GetExtension(extension models.Extension) (*models.Extension, error)
 }

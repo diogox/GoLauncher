@@ -1,4 +1,4 @@
-package extensions
+package websockets
 
 import "github.com/diogox/GoLauncher/api"
 

@@ -18,7 +18,7 @@ func NewSearch(db *api.DB) Search {
 		file.NewFileBrowserMode(),
 		calc.NewCalcSearchMode(),
 		shortcut.NewShortcutSearchMode(db),
-		extensions.NewExtensionSearchMode(db),
+		extensions.NewExtensionSearchMode(),
 	}
 
 	// Initialize AppSearchMode with the other modes

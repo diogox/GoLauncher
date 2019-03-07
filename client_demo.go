@@ -7,6 +7,7 @@ import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/api/events"
+	"github.com/diogox/GoLauncher/search/result"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
@@ -45,7 +46,6 @@ func main() {
 	}
 	defer c.Close()
 
-	/*
 	done := make(chan struct{})
 
 	go func() {
@@ -56,41 +56,38 @@ func main() {
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+
+			var queryEvent events.KeywordQuery
+			err = json.Unmarshal(message, &queryEvent)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(queryEvent.Query)
+
+			results := make([]api.Result, 0)
+			act := actions.NewOpenUrl("http://news.ycombinator.com/")
+			results = append(results, result.NewSearchResult("Story 1", "Click here to read more about story 1!", "google", act, act))
+			event := events.KeywordQueryNew(string(message))
+			action := actions.RenderResultList{
+				Type: api.RENDER_RESULT_LIST_ACTION,
+				ResultList: results,
+			}
+			res := api.ResponseNew(event, action)
+			resJson, err := json.Marshal(res)
+			if err != nil {
+				panic(err)
+			}
+			err = c.WriteMessage(websocket.TextMessage, resJson)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}()
-	*/
 
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-
+	for true {}
 	err = c.WriteMessage(websocket.TextMessage, jsonObj)
 	if err != nil {
 		log.Println("write:", err)
 		return
 	}
-	/*
-	for {
-		select {
-		case <-done:
-			return
-		case t := <-ticker.C:
-		case <-interrupt:
-			log.Println("interrupt")
-
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("write close:", err)
-				return
-			}
-			select {
-			case <-done:
-			case <-time.After(time.Second):
-			}
-			return
-		}
-	}
-	*/
 }

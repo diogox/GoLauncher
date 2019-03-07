@@ -1,15 +1,14 @@
-package extensions
+package websockets
 
 import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/models"
-	"github.com/diogox/GoLauncher/extensions/websockets"
 )
 
-func StartExtensions(db *api.DB, responseChannel chan *api.Response) {
+func StartExtensions(db *api.DB) {
 
 	// Start listening for extensions
-	go websockets.StartExtensionsServer(responseChannel)
+	go GetExtensionsServer().Start()
 
 	// TODO: Run extensions in db (Receive db through args in this function)
 	_ = (*db).AddExtension(models.Extension{

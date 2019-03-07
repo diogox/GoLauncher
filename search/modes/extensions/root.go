@@ -1,37 +1,30 @@
 package extensions
 
 import (
-	"errors"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
-	"github.com/diogox/GoLauncher/extensions"
+	"github.com/diogox/GoLauncher/websockets"
 	"strings"
 )
 
-func NewExtensionSearchMode(db *api.DB) *ExtensionSearchMode {
+func NewExtensionSearchMode() *ExtensionSearchMode {
 
-	controllers := make([]*extensions.Controller, 0)
-
-	exts, _ := (*db).GetAllExtensions()
-	for _, extension := range exts {
-		controller := extensions.ControllerNew(&extension)
-		controllers = append(controllers, controller)
-	}
+	extensionsServer := websockets.GetExtensionsServer()
 
 	return &ExtensionSearchMode{
-		controllers: controllers,
+		extensionsServer: extensionsServer,
 	}
 }
 
 type ExtensionSearchMode struct {
-	controllers []*extensions.Controller
+	extensionsServer *websockets.ExtensionsServer
 }
 
 func (esm *ExtensionSearchMode) IsEnabled(input string) bool {
 	keyword, _ := getKeywordArgs(input)
 	if strings.Contains(input, *keyword + " ") {
-		_, err := esm.getControllerByKeyword(*keyword)
-		if err == nil {
+		controller := esm.extensionsServer.GetControllerByKeyword(*keyword)
+		if controller != nil {
 			return true
 		}
 	}
@@ -43,7 +36,7 @@ func (esm *ExtensionSearchMode) HandleInput(input string) api.Action {
 	results := make([]api.Result, 0)
 	keyword, args := getKeywordArgs(input)
 	if strings.Contains(input, *keyword + " ") {
-		controller, _ := esm.getControllerByKeyword(*keyword)
+		controller := esm.extensionsServer.GetControllerByKeyword(*keyword)
 		return controller.HandleInput(strings.Join(args, " "))
 	}
 	return actions.NewRenderResultList(results)
@@ -51,17 +44,6 @@ func (esm *ExtensionSearchMode) HandleInput(input string) api.Action {
 
 func (*ExtensionSearchMode) DefaultItems(input string) []api.Result {
 	return make([]api.Result, 0)
-}
-
-func (esm *ExtensionSearchMode) getControllerByKeyword(keyword string) (*extensions.Controller, error) {
-
-	for _, controller := range esm.controllers {
-		if controller.Extension.Keyword == keyword {
-			return controller, nil
-		}
-	}
-
-	return nil, errors.New("controller not found")
 }
 
 // TODO: Create a 'query' type for this?

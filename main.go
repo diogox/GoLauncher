@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/diogox/GoLauncher/api"
-	"github.com/diogox/GoLauncher/extensions"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
+	"github.com/diogox/GoLauncher/websockets"
 	"github.com/gotk3/gotk3/glib"
 	"sync"
 )
@@ -32,7 +32,8 @@ func main() {
 	prefs := api.Preferences(&preferences)
 	_ = prefs.SetPreference(api.PreferenceHotkey, db.GetPreference(api.PreferenceHotkey))
 
-	// TODO: Start extension server
+	// Start Extension Server
+	go websockets.StartExtensions(&db)
 
 	// Instantiate Search
 	search := search.NewSearch(&db)
@@ -50,13 +51,6 @@ func main() {
 
 	// Start Launcher
 	launcher.Start()
-
-	// Start Extension Server
-	extensionResponseChannel := make(chan *api.Response)
-	go extensions.StartExtensions(&db, extensionResponseChannel)
-	for res := range extensionResponseChannel {
-		_, _ = glib.IdleAdd((*res).Action.Run)
-	}
 
 	// Make main function wait
 	wg.Wait()

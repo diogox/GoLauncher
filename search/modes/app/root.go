@@ -40,10 +40,7 @@ func (AppSearchMode) IsEnabled(input string) bool {
 func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	results := make([]api.Result, 0)
-	apps, err := (*asm.db).FindAppByName(input)
-	if err != nil {
-		panic(err)
-	}
+	apps, _ := (*asm.db).FindAppByName(input)
 
 	for _, app := range apps {
 		if len(results) > 5 {

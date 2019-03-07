@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/extensions"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/sqlite"
-	"github.com/diogox/GoLauncher/extensions/websockets"
 	"github.com/gotk3/gotk3/glib"
 	"sync"
 )
@@ -53,7 +53,7 @@ func main() {
 
 	// Start Extension Server
 	extensionResponseChannel := make(chan *api.Response)
-	go websockets.StartExtensionsServer(extensionResponseChannel)
+	go extensions.StartExtensions(&db, extensionResponseChannel)
 	for res := range extensionResponseChannel {
 		_, _ = glib.IdleAdd((*res).Action.Run)
 	}

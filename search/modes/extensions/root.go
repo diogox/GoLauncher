@@ -1,32 +1,39 @@
 package extensions
 
 import (
+	"errors"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
-	"github.com/diogox/GoLauncher/api/models"
-	"github.com/diogox/GoLauncher/search/result"
+	"github.com/diogox/GoLauncher/extensions"
 	"strings"
 )
 
 func NewExtensionSearchMode(db *api.DB) *ExtensionSearchMode {
 
-	return & ExtensionSearchMode{
-		db: db,
+	controllers := make([]*extensions.Controller, 0)
+
+	exts, _ := (*db).GetAllExtensions()
+	for _, extension := range exts {
+		controller := extensions.ControllerNew(&extension)
+		controllers = append(controllers, controller)
+	}
+
+	return &ExtensionSearchMode{
+		controllers: controllers,
 	}
 }
 
 type ExtensionSearchMode struct {
-	db *api.DB
+	controllers []*extensions.Controller
 }
 
 func (esm *ExtensionSearchMode) IsEnabled(input string) bool {
 	keyword, _ := getKeywordArgs(input)
 	if strings.Contains(input, *keyword + " ") {
-		_, err := esm.getExtensionByKeyword(*keyword)
-		if err != nil {
-			panic(err)
+		_, err := esm.getControllerByKeyword(*keyword)
+		if err == nil {
+			return true
 		}
-		return true
 	}
 	return false
 }
@@ -34,11 +41,10 @@ func (esm *ExtensionSearchMode) IsEnabled(input string) bool {
 func (esm *ExtensionSearchMode) HandleInput(input string) api.Action {
 	// TODO
 	results := make([]api.Result, 0)
-	keyword, _ := getKeywordArgs(input)
+	keyword, args := getKeywordArgs(input)
 	if strings.Contains(input, *keyword + " ") {
-		extension, _ := esm.getExtensionByKeyword(*keyword)
-		action := actions.NewCopyToClipboard(input)
-		results = append(results, result.NewSearchResult(extension.Name, extension.Description, extension.IconName, action, action))
+		controller, _ := esm.getControllerByKeyword(*keyword)
+		return controller.HandleInput(strings.Join(args, " "))
 	}
 	return actions.NewRenderResultList(results)
 }
@@ -47,12 +53,15 @@ func (*ExtensionSearchMode) DefaultItems(input string) []api.Result {
 	return make([]api.Result, 0)
 }
 
-func (esm *ExtensionSearchMode) getExtensionByKeyword(keyword string) (models.Extension, error) {
-	extension, err := (*esm.db).FindExtensionByKeyword(keyword)
-	if err != nil {
-		return models.Extension{}, nil
+func (esm *ExtensionSearchMode) getControllerByKeyword(keyword string) (*extensions.Controller, error) {
+
+	for _, controller := range esm.controllers {
+		if controller.Extension.Keyword == keyword {
+			return controller, nil
+		}
 	}
-	return extension, nil
+
+	return nil, errors.New("controller not found")
 }
 
 // TODO: Create a 'query' type for this?

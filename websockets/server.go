@@ -42,7 +42,7 @@ func (es *ExtensionsServer) Start() {
 		es.controllers = append(es.controllers, controller)
 	})
 
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8081", nil)
 	if err != nil {
 		panic(err)
 	}

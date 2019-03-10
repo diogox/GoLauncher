@@ -93,7 +93,7 @@ func (c *Controller) Receive() (*api.Response, error) {
 		return nil, err
 	}
 
-	// TODO: !!!! CAN'T UNMARSHAL RESULT_LIST INSIDE OF ACTION!!!!
+	// TODO: !!!! CAN'T UNMARSHAL RESULT_LIST INSIDE OF ACTION!!!! Shows as empty (Problem is in the client!!)
 
 	response := api.Response{
 		Action: *action,

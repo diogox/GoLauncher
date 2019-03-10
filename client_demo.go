@@ -16,11 +16,12 @@ import (
 	"time"
 )
 
-var addr = flag.String("addr", "localhost:8080", "http service address")
+var addr = flag.String("addr", "localhost:8081", "http service address")
 
 func main() {
 
 	time.Sleep(3000)
+	/*
 	action := api.Action(actions.NewOpenUrl("http://google.com"))
 	event := api.Event(events.KeywordQueryNew("query"))
 	response := api.ResponseNew(event, action)
@@ -28,8 +29,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(string(jsonObj))
+	*/
 
 	flag.Parse()
 	log.SetFlags(0)
@@ -62,18 +62,21 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println(queryEvent.Query)
+			//	fmt.Println(queryEvent.Query)
+
+			actions.SetupRenderResultList(func(results []api.Result) {
+				fmt.Println("Sending: ", results)
+			})
 
 			results := make([]api.Result, 0)
 			act := actions.NewOpenUrl("http://news.ycombinator.com/")
 			results = append(results, result.NewSearchResult("Story 1", "Click here to read more about story 1!", "google", act, act))
 			event := events.KeywordQueryNew(string(message))
-			action := actions.RenderResultList{
-				Type: api.RENDER_RESULT_LIST_ACTION,
-				ResultList: results,
-			}
+			action := actions.NewRenderResultList(results)
 			res := api.ResponseNew(event, action)
-			resJson, err := json.Marshal(res)
+			// TODO: CAN'T MARSHAL RESULTS INSIDE THE ACTION
+			resJson, err := json.Marshal(&res)
+			fmt.Println(res, string(resJson))
 			if err != nil {
 				panic(err)
 			}
@@ -85,7 +88,7 @@ func main() {
 	}()
 
 	for true {}
-	err = c.WriteMessage(websocket.TextMessage, jsonObj)
+	//err = c.WriteMessage(websocket.TextMessage, jsonObj)
 	if err != nil {
 		log.Println("write:", err)
 		return

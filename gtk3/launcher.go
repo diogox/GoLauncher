@@ -291,7 +291,12 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 
 	// Convert results
 	for i, r := range searchResults {
-		result := NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnterAction(), r.OnAltEnterAction())
+		var result ResultItem
+		if i <= 9 {
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnterAction(), r.OnAltEnterAction())
+		} else {
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), -1, r.OnEnterAction(), r.OnAltEnterAction())
+		}
 		result.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
 				res := api.Result(&result)

@@ -56,8 +56,10 @@ func NewResultItem(title string, description string, iconName string, position i
 	nameLabel.SetText(title)
 	descrLabel.SetText(description)
 
-	shortcut := fmt.Sprintf("Alt+%d", position)
-	shortcutLabel.SetText(shortcut)
+	if position != -1 {
+		shortcut := fmt.Sprintf("Alt+%d", position)
+		shortcutLabel.SetText(shortcut)
+	}
 
 	iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
 	iconImg.SetPixelSize(40)

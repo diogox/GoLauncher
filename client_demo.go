@@ -74,9 +74,8 @@ func main() {
 			event := events.KeywordQueryNew(string(message))
 			action := actions.NewRenderResultList(results)
 			res := api.ResponseNew(event, action)
-			// TODO: CAN'T MARSHAL RESULTS INSIDE THE ACTION
 			resJson, err := json.Marshal(&res)
-			fmt.Println(res, string(resJson))
+			fmt.Println(string(resJson))
 			if err != nil {
 				panic(err)
 			}

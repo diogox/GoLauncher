@@ -3,8 +3,10 @@ package json
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
+	"github.com/diogox/GoLauncher/search/result"
 )
 
 func InferActionType(jsonObj []byte) (*api.Action, error) {
@@ -66,10 +68,49 @@ func InferActionType(jsonObj []byte) (*api.Action, error) {
 	}
 
 	// Check if RenderResultList
-	var renderResultList actions.RenderResultList
-	err = json.Unmarshal(jsonObj, &renderResultList)
-	if err == nil && renderResultList.Type == api.RENDER_RESULT_LIST_ACTION{
-		action := api.Action(renderResultList)
+	var action map[string]*json.RawMessage
+	//obj = []byte(strings.Replace(string(obj), "\\\"", "\"", -1))
+	err = json.Unmarshal(jsonObj, &action)
+	if err != nil {
+		return nil, err
+	}
+
+	actionJson, err := action["result_list"].MarshalJSON()
+	fmt.Println(string(actionJson))
+	if err != nil {
+		return nil, err
+	}
+
+	var results []map[string]*json.RawMessage
+	err = json.Unmarshal(actionJson, &results)
+	if err != nil {
+		panic(err)
+	}
+
+	var renderResultList []api.Result
+	for _, r := range results {
+		name, _ := r["Title_"].MarshalJSON()
+		descr, _ := r["Description_"].MarshalJSON()
+		icon, _ := r["IconPath_"].MarshalJSON()
+		onEnter, _ := r["OnEnterAction_"].MarshalJSON()
+		onEnterAction, err := InferActionType(onEnter)
+		if err != nil {
+			return nil, err
+		}
+
+		onAltEnter, _ := r["OnAltEnterAction_"].MarshalJSON()
+		onAltEnterAction, err := InferActionType(onAltEnter)
+		if err != nil {
+			return nil, err
+		}
+
+		result := result.NewSearchResult(string(name), string(descr), string(icon), *onEnterAction, *onAltEnterAction)
+		renderResultList = append(renderResultList, result)
+	}
+
+	if len(renderResultList) != 0 {
+
+		action := api.Action(actions.NewRenderResultList(renderResultList))
 		return &action, nil
 	}
 

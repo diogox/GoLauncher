@@ -58,17 +58,15 @@ func (c *Controller) Send(res *api.Event) error {
 
 func (c *Controller) Receive() (*api.Response, error) {
 
-
 	_, message, err := c.conn.ReadMessage()
+	fmt.Println(string(message) + "\n\n\n\n")
 	if err != nil {
 		return nil, err
 	}
 
 	// Infer action type
 	var res map[string]*json.RawMessage
-	fmt.Println(string(message))
 	err = json.Unmarshal(message, &res)
-	fmt.Println(res)
 	if err != nil {
 		return nil, err
 	}
@@ -76,8 +74,9 @@ func (c *Controller) Receive() (*api.Response, error) {
 	// Unmarshal action
 	actionJson, err := res["Action"].MarshalJSON()
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
+
 	action, err := json2.InferActionType(actionJson)
 	if err != nil {
 		return nil, err
@@ -92,8 +91,6 @@ func (c *Controller) Receive() (*api.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: !!!! CAN'T UNMARSHAL RESULT_LIST INSIDE OF ACTION!!!! Shows as empty (Problem is in the client!!)
 
 	response := api.Response{
 		Action: *action,

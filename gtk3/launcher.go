@@ -1,7 +1,6 @@
 package gtk3
 
 import (
-	"fmt"
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
@@ -101,20 +100,18 @@ type Launcher struct {
 
 func (l *Launcher) HandleInput(callback func(string)) {
 	_, _ = l.input.Connect("changed", func(entry *gtk.Entry) {
-		_, _ = glib.IdleAdd(func() {
-			input, err := entry.GetText()
-			if err != nil {
-				panic(err)
-			}
+		input, err := entry.GetText()
+		if err != nil {
+			panic(err)
+		}
 
-			// TODO: Move this to external logic? (To main.go?)
-			if input == "" {
-				l.clearResults()
-				return
-			}
+		// TODO: Move this to external logic? (To main.go?)
+		if input == "" {
+			l.clearResults()
+			return
+		}
 
-			callback(input)
-		})
+		callback(input)
 	})
 }
 
@@ -172,7 +169,6 @@ func (l *Launcher) Start() {
 			return
 		default:
 			if keyEvent.State() == gdk.GDK_MOD1_MASK {
-				fmt.Println(key)
 				if (key >= 48) && (key <= 57) { // info: (48 == '0')(57 == '9')
 					index, _ := strconv.Atoi(string(key))
 					r, err := l.navigation.At(index - 1)
@@ -359,9 +355,6 @@ func (l *Launcher) clearResults() {
 
 func (l *Launcher) show() {
 
-	// Position
-	centerAtTopOfScreen(l.window)
-
 	// Keep input or not
 	keepInput, err := (*l.preferences).GetPreference(api.PreferenceKeepInputOnHide)
 	if err != nil {
@@ -371,6 +364,9 @@ func (l *Launcher) show() {
 	if keepInput == api.PreferenceFALSE {
 		l.ClearInput()
 	}
+
+	// Position (after clearing results - otherwise it won't center properly)
+	centerAtTopOfScreen(l.window)
 
 	// Show
 	l.window.ShowAll()

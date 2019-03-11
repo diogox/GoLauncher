@@ -6,6 +6,7 @@ import (
 	"github.com/diogox/GoLauncher/api/models"
 	"github.com/diogox/GoLauncher/search/modes"
 	"github.com/diogox/GoLauncher/search/result"
+	"github.com/diogox/GoLauncher/search/util"
 	"github.com/diogox/LinuxApps"
 )
 
@@ -60,7 +61,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 		}
 	}
 
-	return actions.NewRenderResultList(results)
+	return actions.NewRenderResultList(util.GetBestMatches(input, results))
 }
 
 func (AppSearchMode) DefaultItems(input string) []api.Result {

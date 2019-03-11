@@ -1,6 +1,7 @@
 package gtk3
 
 import (
+	"fmt"
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
@@ -10,6 +11,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"strconv"
 	"unsafe"
 )
 
@@ -149,7 +151,8 @@ func (l *Launcher) Start() {
 
 		// Resolve action
 		const KEY_Enter = 65293
-		switch keyEvent.KeyVal() {
+		key := keyEvent.KeyVal()
+		switch key {
 		case gdk.KEY_Up:
 			result, prevResult = l.navigation.Up()
 			if result == nil {
@@ -168,6 +171,26 @@ func (l *Launcher) Start() {
 			l.navigation.Enter()
 			return
 		default:
+			if keyEvent.State() == gdk.GDK_MOD1_MASK {
+				fmt.Println(key)
+				if (key >= 48) && (key <= 57) { // info: (48 == '0')(57 == '9')
+					index, _ := strconv.Atoi(string(key))
+					r, err := l.navigation.At(index - 1)
+					if err == nil {
+						// Select new item
+						currentItem := (*r).(*ResultItem)
+						currentItem.Select()
+
+						// Unselect previous item
+						prev := l.navigation.SetSelected(r)
+						prevItem, _ := (*prev).(*ResultItem)
+						prevItem.Unselect()
+
+						// Run Action
+						currentItem.OnEnterAction().Run()
+					}
+				}
+			}
 			return
 		}
 

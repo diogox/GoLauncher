@@ -1,6 +1,7 @@
 package navigation
 
 import (
+	"errors"
 	"github.com/diogox/GoLauncher/api"
 )
 
@@ -99,4 +100,12 @@ func (n *Navigation) SetSelected(item *api.Result) *api.Result {
 	}
 
 	return prevSelected
+}
+
+func (n *Navigation) At(index int) (*api.Result, error) {
+	if index >= 0 && index < len(n.items) {
+		return n.items[index], nil
+	}
+
+	return nil, errors.New("index not in range")
 }

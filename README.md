@@ -3,6 +3,6 @@ A Linux Application Launcher, based on [Ulauncher](https://ulauncher.io/) and wr
 
 For now, it's basically just a reimplementation of [Ulauncher](https://ulauncher.io/) but aims to be faster and more flexible.
 
-![App Search Mode Preview](https://streamable.com/umzzp)
+[App Search Mode Preview](https://streamable.com/umzzp)
 
 (*The other modes are also available. Run the launcher to test them all out!*)

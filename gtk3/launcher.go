@@ -104,7 +104,6 @@ func (l *Launcher) HandleInput(callback func(string)) {
 		if err != nil {
 			panic(err)
 		}
-
 		// TODO: Move this to external logic? (To main.go?)
 		if input == "" {
 			l.clearResults()

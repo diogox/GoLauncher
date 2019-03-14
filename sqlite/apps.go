@@ -23,6 +23,26 @@ func (ldb *LauncherDB) AddApp(app models.AppInfo) error {
 	return err
 }
 
+func (ldb *LauncherDB) UpdateApp(app models.AppInfo) error {
+	statement, err := ldb.db.Prepare("UPDATE apps SET exec=?, name=?, description=?, IconName=? WHERE exec=?")
+	if err != nil {
+		panic(err)
+	}
+	_, err = statement.Exec(app.Exec, app.Name, app.Description, app.IconName, app.Exec)
+
+	return err
+}
+
+func (ldb *LauncherDB) RemoveAllApps() error {
+	statement, err := ldb.db.Prepare("DROP TABLE apps")
+	if err != nil {
+		panic(err)
+	}
+	_, err = statement.Exec()
+
+	return err
+}
+
 func (ldb *LauncherDB) FindAppByID(exec string) (models.AppInfo, error) {
 	rows, err := ldb.db.Query("SELECT * FROM apps WHERE exec=(?)", exec)
 	if err != nil {

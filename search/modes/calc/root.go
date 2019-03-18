@@ -1,6 +1,7 @@
 package calc
 
 import (
+	"errors"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/result"
@@ -34,7 +35,13 @@ func (c *CalcSearchMode) IsEnabled(input string) bool {
 func (c *CalcSearchMode) HandleInput(input string) api.Action {
 	results := make([]api.Result, 0)
 
-	calcResult := c.calculate(input)
+	calcResult, err := c.calculate(input)
+	if err != nil {
+		action := actions.NewDoNothing()
+		r := result.NewSearchResult("Error!", err.Error(), "calc", action, action)
+		results = append(results, r)
+		return actions.NewRenderResultList(results)
+	}
 
 	action := actions.NewCopyToClipboard(calcResult)
 	r := result.NewSearchResult(calcResult, "Copy to Clipboard", "calc", action, action)
@@ -43,16 +50,20 @@ func (c *CalcSearchMode) HandleInput(input string) api.Action {
 	return actions.NewRenderResultList(results)
 }
 
-func (*CalcSearchMode) calculate(input string) string {
+func (*CalcSearchMode) calculate(input string) (string, error) {
 	// TODO: Refactor this code
 	input = strings.Replace(input, "+", " + ", -1)
 	input = strings.Replace(input, "-", " - ", -1)
 	input = strings.Replace(input, "*", " * ", -1)
 	input = strings.Replace(input, "/", " / ", -1)
 
-	result, _ := calcgo.Calc(input)
-	resultStr := strconv.FormatFloat(result, 'f', -1, 32)
-	return resultStr
+	mathRes, errs := calcgo.Calc(input)
+	if len(errs) != 0 {
+		return "", errors.New("Invalid Expression!")
+	}
+
+	resultStr := strconv.FormatFloat(mathRes, 'f', -1, 32)
+	return resultStr, nil
 }
 
 func (*CalcSearchMode) DefaultItems(input string) []api.Result {

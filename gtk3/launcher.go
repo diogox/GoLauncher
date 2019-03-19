@@ -228,14 +228,10 @@ func (l *Launcher) Start() {
 		}, text)
 	})
 	actions.SetupSetUserQuery(func(query string) {
-		_, _ = glib.IdleAdd(func(query string) {
-			l.input.SetText(query)
-		}, query)
+		_, _ = glib.IdleAdd(l.input.SetText, query)
 	})
 	actions.SetupRenderResultList(func(results []api.Result) {
-		_, _ = glib.IdleAdd(func(results []api.Result) {
-			l.ShowResults(results)
-		}, results)
+		_, _ = glib.IdleAdd(l.ShowResults, results)
 	})
 
 	// Show everything in the app
@@ -316,12 +312,9 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	l.clearResults()
 
 	// Set Margins
-	if len(results) == 0 {
-		l.resultsBox.SetMarginTop(0)
-		l.resultsBox.SetMarginBottom(0)
-
-	} else {
+	if len(results) != 0 {
 		l.resultsBox.SetMarginTop(3)
+		l.resultsBox.SetMarginBottom(10)
 
 		// Select first one automatically
 		results[0].Select()
@@ -355,6 +348,10 @@ func (l *Launcher) clearResults() {
 			l.resultsBox.Remove(item)
 		}
 	})
+
+	// Remove margins
+	l.resultsBox.SetMarginTop(0)
+	l.resultsBox.SetMarginBottom(0)
 }
 
 func (l *Launcher) show() {

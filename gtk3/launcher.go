@@ -229,6 +229,7 @@ func (l *Launcher) Start() {
 	})
 	actions.SetupSetUserQuery(func(query string) {
 		_, _ = glib.IdleAdd(l.input.SetText, query)
+		_, _ = glib.IdleAdd(l.input.SetPosition, len(query))
 	})
 	actions.SetupRenderResultList(func(results []api.Result) {
 		_, _ = glib.IdleAdd(l.ShowResults, results)

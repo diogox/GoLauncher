@@ -19,7 +19,7 @@ const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/th
 
 const WindowID = "window"
 const BodyID = "body"
-const InputBoxID = "input-box"
+//const InputBoxID = "input-box"
 const InputID = "input"
 const PrefsBtnID = "prefs_btn"
 const ResultsBoxID = "result_box"
@@ -104,7 +104,7 @@ func (l *Launcher) HandleInput(callback func(string)) {
 		if err != nil {
 			panic(err)
 		}
-		// TODO: Move this to external logic? (To main.go?)
+
 		if input == "" {
 			l.clearResults()
 			return
@@ -302,9 +302,7 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 			})
 		})
 		result.BindMouseClick(func() {
-			_, _ = glib.IdleAdd(func() {
-				l.navigation.Enter()
-			})
+			_, _ = glib.IdleAdd(l.navigation.Enter)
 		})
 		results = append(results, &result)
 	}

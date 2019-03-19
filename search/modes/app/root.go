@@ -31,7 +31,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	apps, _ := (*asm.db).FindAppByName(input)
 
 	for _, app := range apps {
-		if len(results) > 5 {
+		if len(results) > 8 { // TODO: Extract this to 'Number of results' preference or config file!
 			break
 		}
 

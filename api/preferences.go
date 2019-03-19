@@ -3,10 +3,21 @@ package api
 // Preferences
 const PreferenceHotkey = "hotkey"
 const PreferenceKeepInputOnHide = "keep_input_on_hide"
+const PreferenceLaunchAtStartUp = "launch_at_startup"
 
 // For Booleans values
 const PreferenceTRUE = "true"
 const PreferenceFALSE = "false"
+
+func AssertPreferenceBool(value string) bool {
+	if value == PreferenceTRUE {
+		return true
+	} else if value == PreferenceFALSE {
+		return false
+	}
+	panic("invalid preference boolean")
+}
+
 
 type Preferences interface {
 	GetPreference(preference string) (string, error)

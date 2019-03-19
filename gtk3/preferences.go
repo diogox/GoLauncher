@@ -3,6 +3,7 @@ package gtk3
 import (
 	"errors"
 	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/autostart"
 )
 
 func PreferencesNew(db *api.DB) Preferences {
@@ -34,6 +35,9 @@ func (p *Preferences) SetPreference(preference string, value string) error {
 		p.bindHotkeyCallback(value)
 	case api.PreferenceKeepInputOnHide:
 		// TODO: Maybe not needed?
+	case api.PreferenceLaunchAtStartUp:
+		isStart := api.AssertPreferenceBool(value)
+		autostart.SetAppStart(isStart)
 	}
 	return (*p.db).SetPreference(preference, value)
 }

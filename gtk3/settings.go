@@ -12,6 +12,7 @@ const GladeSettingsFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3
 const SettingsWindowID = "settings_window"
 const SettingsHotkeyInputID = "hotkey_input"
 const SettingsClearInputOnHideID = "keep_input_on_hide"
+const SettingsLaunchAtStartUpID = "launch_at_startup"
 const SettingsSaveButtonID = "save"
 const SettingsCancelButtonID = "cancel"
 
@@ -50,6 +51,11 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 		panic(err)
 	}
 
+	launchAtStartupCheckButton, err :=  glade.GetCheckButton(bldr, SettingsLaunchAtStartUpID)
+	if err != nil {
+		panic(err)
+	}
+
 	saveButton, err :=  glade.GetButton(bldr, SettingsSaveButtonID)
 	if err != nil {
 		panic(err)
@@ -65,17 +71,19 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	if err != nil {
 		panic(err)
 	}
-	if isKeepInputOnHide == api.PreferenceTRUE {
-		keepInputOnHideCheckButton.SetActive(true)
-	} else {
-		keepInputOnHideCheckButton.SetActive(false)
-	}
+	keepInputOnHideCheckButton.SetActive(api.AssertPreferenceBool(isKeepInputOnHide))
 
 	currentHotkey, err := (*preferences).GetPreference(api.PreferenceHotkey)
 	if err != nil {
 		panic(err)
 	}
 	hotkeyInput.SetText(currentHotkey)
+
+	isLaunchAtStartup, err := (*preferences).GetPreference(api.PreferenceLaunchAtStartUp)
+	if err != nil {
+		panic(err)
+	}
+	launchAtStartupCheckButton.SetActive(api.AssertPreferenceBool(isLaunchAtStartup))
 
 	// Save new preferences
 	_, _ = saveButton.Connect("clicked", func(btn *gtk.Button) {
@@ -93,6 +101,16 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, api.PreferenceTRUE)
 		} else {
 			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, api.PreferenceFALSE)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		isLaunchAtStartup := launchAtStartupCheckButton.GetActive()
+		if isLaunchAtStartup {
+			err = (*preferences).SetPreference(api.PreferenceLaunchAtStartUp, api.PreferenceTRUE)
+		} else {
+			err = (*preferences).SetPreference(api.PreferenceLaunchAtStartUp, api.PreferenceFALSE)
 		}
 		if err != nil {
 			panic(err)

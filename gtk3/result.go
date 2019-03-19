@@ -6,6 +6,8 @@ import (
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
+	"os"
+	"strings"
 )
 
 const GladeResultFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/result_item.glade"
@@ -61,8 +63,14 @@ func NewResultItem(title string, description string, iconName string, position i
 		shortcutLabel.SetText(shortcut)
 	}
 
-	iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
-	iconImg.SetPixelSize(40)
+	if strings.Contains(iconName, string(os.PathSeparator)) {
+		// It's not an icon name, it's an icon path
+		pix, _ := gdk.PixbufNewFromFileAtScale(iconName, 40, 40, true)
+		iconImg.SetFromPixbuf(pix)
+	} else {
+		iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
+		iconImg.SetPixelSize(40)
+	}
 
 	resultItem := ResultItem{
 		onEnterAction: onEnterAction,

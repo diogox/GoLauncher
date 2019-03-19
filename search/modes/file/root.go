@@ -4,12 +4,14 @@ import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/search/result"
+	"github.com/mitchellh/go-homedir"
 	"io/ioutil"
+	"path"
 	"regexp"
 	"strings"
 )
 
-const pathRegex = "^(/[^/ ]*)+/?$"
+const pathRegex = "^((\\/|~)[^/ ]*)+\\/?$"
 
 func NewFileBrowserMode() *FileBrowserMode {
 	regex, err := regexp.Compile(pathRegex)
@@ -29,7 +31,13 @@ type FileBrowserMode struct {
 
 func (fb *FileBrowserMode) IsEnabled(input string) bool {
 	if fb.regex.MatchString(input) {
-		_, err := ioutil.ReadDir(input)
+		// Get absolute path, in case it's relative ('~')
+		absPath, err := getAbsPath(input)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = ioutil.ReadDir(absPath)
 		if err != nil {
 			return false
 		}
@@ -40,6 +48,8 @@ func (fb *FileBrowserMode) IsEnabled(input string) bool {
 
 func (fb *FileBrowserMode) HandleInput(input string) api.Action {
 	results := make([]api.Result, 0)
+
+	input, _ = getAbsPath(input)
 
 	files, err := ioutil.ReadDir(input)
 	if err != nil {
@@ -68,4 +78,15 @@ func (fb *FileBrowserMode) HandleInput(input string) api.Action {
 
 func (*FileBrowserMode) DefaultItems(input string) []api.Result {
 	return nil
+}
+
+func getAbsPath(pathStr string) (string, error) {
+	if !path.IsAbs(pathStr) {
+		absPath, err := homedir.Expand(pathStr)
+		if err != nil {
+			return "", err
+		}
+		pathStr = absPath
+	}
+	return pathStr, nil
 }

@@ -203,9 +203,7 @@ func (l *Launcher) Start() {
 	})
 
 	_, _ = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
-		_, _ = glib.IdleAdd(func(btn *gtk.Button) {
-			ShowSettingsWindow(l.preferences)
-		}, btn)
+		_, _ = glib.IdleAdd(ShowSettingsWindow, l.preferences)
 	})
 
 	l.navigation.SetOnItemEnter(func(action api.Action) {

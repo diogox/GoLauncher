@@ -84,6 +84,10 @@ func showSuggestions(_path string, nOfResults int) []api.Result {
 		}
 	}
 
+	if len(allResults) == 0 {
+		return renderNoMatch()
+	}
+
 	return getN(allResults, nOfResults)
 }
 

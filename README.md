@@ -6,3 +6,12 @@ For now, it's basically just a reimplementation of [Ulauncher](https://ulauncher
 [App Search Mode Preview](https://streamable.com/umzzp)
 
 (*The other modes are also available. Run the launcher to test them all out!*)
+
+## So... What's different about GoLauncher?
+Right now, the main advantages of **Golauncher** over [Ulauncher](https://ulauncher.io/) are:
+* Scrollable results
+* The number of results shown at a time is a user preference. (*And, because the results are scrollable, that doesn't limit your searches.*)
+* It's written in Go, therefore, it should be faster.
+* The extension system (**TODO**) will use JSON to communicate with the launcher. This is an advantage because, 
+unlike Ulauncher (that uses Python specific formats), pretty much every language can use JSON, and that means that,
+provided that a library is made for that purpose, extensions can be written in any language.

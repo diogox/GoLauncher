@@ -120,6 +120,9 @@ func (n *Navigation) SetSelected(item *api.Result) *api.Result {
 		}
 	}
 
+	// Update scroller
+	n.ScrollController.SetSelectedIndex(n.currentIndex)
+
 	return prevSelected
 }
 

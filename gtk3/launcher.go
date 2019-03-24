@@ -146,12 +146,10 @@ func (l *Launcher) Start() {
 		setTransparent(window, context)
 	})
 
-	/* TODO: Uncomment this!
 	// When the window loses focus, hide it
 	_, _ = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
 		_, _ = glib.IdleAdd(l.hide)
 	})
-	*/
 
 	// Detect navigation ('Up', 'Down', 'Enter')
 	_, _ = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {

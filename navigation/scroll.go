@@ -1,6 +1,7 @@
 package navigation
 
 import (
+	"fmt"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -81,7 +82,7 @@ func (sc *ScrollController) SignalMoveUp() {
 }
 
 func (sc *ScrollController) SignalMoveDown() {
-
+	fmt.Println(sc.currentIndex)
 	// Assert new indexes
 	previousIndex := sc.currentIndex
 	sc.currentIndex = previousIndex + 1
@@ -109,8 +110,8 @@ func (sc *ScrollController) SignalMoveDown() {
 	sc.window.GetVAdjustment().SetValue(itemInLowerBound)
 }
 
-func (sc *ScrollController) SetSelectedIndex() {
-
+func (sc *ScrollController) SetSelectedIndex(index int) {
+	sc.currentIndex = index
 }
 
 type ViewingRange struct {

@@ -1,4 +1,4 @@
-package gtk3
+package navigation
 
 import (
 	"github.com/gotk3/gotk3/gtk"
@@ -52,8 +52,8 @@ func (sc *ScrollController) SetHeight(height int) {
 	sc.window.SetSizeRequest(-1, height)
 }
 
-func (sc *ScrollController) MoveOneItemUp() {
-	
+func (sc *ScrollController) SignalMoveUp() {
+
 	// Assert new indexes
 	previousIndex := sc.currentIndex
 	sc.currentIndex = previousIndex - 1
@@ -80,7 +80,7 @@ func (sc *ScrollController) MoveOneItemUp() {
 	sc.window.GetVAdjustment().SetValue(sc.itemVisibilityRange[sc.currentIndex].Min)
 }
 
-func (sc *ScrollController) MoveOneItemDown() {
+func (sc *ScrollController) SignalMoveDown() {
 
 	// Assert new indexes
 	previousIndex := sc.currentIndex
@@ -107,6 +107,10 @@ func (sc *ScrollController) MoveOneItemDown() {
 	// Set the scroll's upper level to match the beginning of the next item
 	itemInLowerBound := sc.itemVisibilityRange[sc.currentIndex].Min - (sc.increment * 3) // TODO: Get this value from `ViewingRange`
 	sc.window.GetVAdjustment().SetValue(itemInLowerBound)
+}
+
+func (sc *ScrollController) SetSelectedIndex() {
+
 }
 
 type ViewingRange struct {

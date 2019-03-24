@@ -5,11 +5,12 @@ import (
 	"github.com/diogox/GoLauncher/api"
 )
 
-func NewNavigation() Navigation {
+func NewNavigation(scrollController *ScrollController) Navigation {
 	return Navigation{
-		onItemEnter:      func(api.Action) {},
-		currentIndex:     -1,
-		items:            make([]*api.Result, 0),
+		onItemEnter:  func(api.Action) {},
+		currentIndex: -1,
+		items:        make([]*api.Result, 0),
+		ScrollController: scrollController,
 	}
 }
 
@@ -17,6 +18,7 @@ type Navigation struct {
 	onItemEnter      func(api.Action)
 	currentIndex     int
 	items            []*api.Result
+	ScrollController *ScrollController
 }
 
 func (n *Navigation) SetOnItemEnter(onItemEnter func(api.Action)) {
@@ -38,6 +40,9 @@ func (n *Navigation) Up() (*api.Result, *api.Result) {
 	if len(n.items) == 0 {
 		return nil, nil
 	}
+
+	// Update ScrolledWindow
+	n.ScrollController.SignalMoveUp()
 
 	// There's only a previous item if a current index exists
 	var prevItem *api.Result
@@ -61,21 +66,30 @@ func (n *Navigation) Up() (*api.Result, *api.Result) {
 }
 
 func (n *Navigation) Down() (*api.Result, *api.Result) {
+	// No items to navigate through
 	if len(n.items) == 0 {
 		return nil, nil
 	}
 
+	// Update ScrolledWindow
+	n.ScrollController.SignalMoveDown()
+
+	// There's only a previous item if a current index exists
 	var prevItem *api.Result
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
 
+	// Get next index
 	index := n.currentIndex + 1
 	if index < len(n.items) {
+
+		// Set current index
 		n.currentIndex = index
 		return n.items[index], prevItem
 	}
 
+	// Overflowed, skipping to the first index (beginning of the list)
 	firstIndex := 0
 	n.currentIndex = firstIndex
 	return n.items[firstIndex], prevItem

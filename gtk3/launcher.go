@@ -80,9 +80,9 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	// Add it to the scrolled window
 	resultsScrollableBox.Add(resultsBox)
 
-	scrollController := NewScrollController(resultsScrollableBox, 4) // TODO: Change '4' to get value from preferences
+	scrollController := navigation.NewScrollController(resultsScrollableBox, 4) // TODO: Change '4' to get value from preferences
 
-	nav := navigation.NewNavigation()
+	nav := navigation.NewNavigation(scrollController)
 
 	return &Launcher{
 		hotkey:               nil,
@@ -94,7 +94,6 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 		resultsBox:           resultsBox,
 		resultsScrollableBox: resultsScrollableBox,
 		navigation:           &nav,
-		scrollController:     scrollController,
 		isVisible:            true,
 	}
 }
@@ -110,7 +109,6 @@ type Launcher struct {
 	resultsBox           *gtk.Box
 	resultsScrollableBox *gtk.ScrolledWindow
 	navigation           *navigation.Navigation
-	scrollController     *ScrollController
 	isVisible            bool
 }
 
@@ -172,13 +170,11 @@ func (l *Launcher) Start() {
 			if result == nil {
 				return
 			}
-			l.scrollController.MoveOneItemUp()
 		case gdk.KEY_Down:
 			result, prevResult = l.navigation.Down()
 			if result == nil {
 				return
 			}
-			l.scrollController.MoveOneItemDown()
 		case KEY_Enter:
 			if keyEvent.State() == gdk.GDK_MOD1_MASK {
 				l.navigation.AltEnter()
@@ -361,7 +357,7 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	if len(results) > 4 { // TODO: Get '4' from the preferences. This is the maximum number of results to show
 		newScrolledHeight = float64(resultItemHeight * 4)
 	}
-	l.scrollController.SetHeight(int(newScrolledHeight))
+	l.navigation.ScrollController.SetHeight(int(newScrolledHeight))
 
 	// Set 'scroll interval', so that when the user scrolls, it will skip, exactly, one item's height
 
@@ -369,8 +365,8 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	if err != nil {
 		panic(err)
 	}
-	l.scrollController.SetAdjustment(newAdjustment)
-	l.scrollController.SetNewResults(len(results))
+	l.navigation.ScrollController.SetAdjustment(newAdjustment)
+	l.navigation.ScrollController.SetNewResults(len(results))
 }
 
 func (l *Launcher) clearResults() {
@@ -389,7 +385,7 @@ func (l *Launcher) clearResults() {
 	})
 
 	// Set ScrolledWindow height
-	l.scrollController.SetHeight(0)
+	l.navigation.ScrollController.SetHeight(0)
 
 	// Remove margins
 	l.resultsScrollableBox.SetMarginTop(0)

@@ -294,7 +294,6 @@ func (l *Launcher) ClearInput() {
 }
 
 func (l *Launcher) ShowResults(searchResults []api.Result) {
-
 	results := make([]*ResultItem, 0)
 
 	// Convert results
@@ -344,6 +343,9 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	}
 	l.navigation.SetItems(resultItems)
 
+	// Show ScrolledWindow here (Had to hide it, initially, to keep from showing an awkward whitespace. Couldn't find another way to fix that...)
+	l.resultsScrollableBox.Show()
+
 	// Set ScrolledWindow height
 	resultItemHeight := float64(0)
 	if len(results) != 0 {
@@ -369,6 +371,9 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 }
 
 func (l *Launcher) clearResults() {
+	// Need to hide ScrolledWindow, otherwise it shows an awkward whitespace...
+	l.resultsScrollableBox.Hide()
+
 	// Clear navigation
 	l.navigation.SetItems(make([]*api.Result, 0))
 
@@ -409,6 +414,9 @@ func (l *Launcher) show() {
 	// Show
 	l.window.ShowAll()
 	l.isVisible = true
+
+	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
+	l.resultsScrollableBox.Hide()
 
 	// Focus
 	l.window.PresentWithTime(kb.GetCurrentEventTime())

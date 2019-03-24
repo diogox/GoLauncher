@@ -100,6 +100,20 @@ func GetNotebook(app *gtk.Builder, id string) (*gtk.Notebook, error) {
 	return notebook, nil
 }
 
+func GetScrolledWindow(app *gtk.Builder, id string) (*gtk.ScrolledWindow, error) {
+	obj, err := app.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+
+	box, ok := obj.(*gtk.ScrolledWindow)
+	if !ok {
+		return nil, err
+	}
+
+	return box, nil
+}
+
 func GetBox(app *gtk.Builder, id string) (*gtk.Box, error) {
 	obj, err := app.GetObject(id)
 	if err != nil {

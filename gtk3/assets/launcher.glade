@@ -90,18 +90,14 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="result_box">
+          <object class="GtkScrolledWindow" id="result_box_scrollable">
             <property name="visible">True</property>
-            <property name="sensitive">True</property>
-            <property name="can_focus">False</property>
-            <property name="double_buffered">False</property>
-            <property name="orientation">vertical</property>
-            <style>
-              <class name="result-box"/>
-            </style>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">never</property>
+            <property name="shadow_type">in</property>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

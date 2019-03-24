@@ -19,9 +19,11 @@ const CssFile = "/home/diogox/go/src/github.com/diogox/GoLauncher/gtk3/assets/th
 
 const WindowID = "window"
 const BodyID = "body"
+
 //const InputBoxID = "input-box"
 const InputID = "input"
 const PrefsBtnID = "prefs_btn"
+const ResultsBoxScrollableID = "result_box_scrollable"
 const ResultsBoxID = "result_box"
 
 func NewLauncher(preferences *api.Preferences) *Launcher {
@@ -56,46 +58,60 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	// Get input
 	input, err := glade.GetEntry(bldr, InputID)
 	if err != nil {
-		panic("Failed to get Input: " + err.Error())
+		panic("Failed to get Entry: " + err.Error())
 	}
 
 	// Get preferences button
 	prefsBtn, err := glade.GetButton(bldr, PrefsBtnID)
 	if err != nil {
-		panic("Failed to get Input: " + err.Error())
+		panic("Failed to get Button: " + err.Error())
 	}
 
-	resultsBox, err := glade.GetBox(bldr, ResultsBoxID)
+	resultsScrollableBox, err := glade.GetScrolledWindow(bldr, ResultsBoxScrollableID)
 	if err != nil {
-		panic("Failed to get Input: " + err.Error())
+		panic("Failed to get ScrolledWindow: " + err.Error())
 	}
 
-	nav := navigation.NewNavigation(make([]*api.Result, 0))
+	// Create Results container
+	resultsBox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
+	st, _ := resultsBox.GetStyleContext()
+	st.AddClass("result-box")
+
+	// Add it to the scrolled window
+	resultsScrollableBox.Add(resultsBox)
+
+	scrollController := NewScrollController(resultsScrollableBox, 4) // TODO: Change '4' to get value from preferences
+
+	nav := navigation.NewNavigation()
 
 	return &Launcher{
-		hotkey:      nil,
-		preferences: preferences,
-		window:      win,
-		body:        body,
-		input:       input,
-		prefsBtn:    prefsBtn,
-		resultsBox:  resultsBox,
-		navigation:  &nav,
-		isVisible:   true,
+		hotkey:               nil,
+		preferences:          preferences,
+		window:               win,
+		body:                 body,
+		input:                input,
+		prefsBtn:             prefsBtn,
+		resultsBox:           resultsBox,
+		resultsScrollableBox: resultsScrollableBox,
+		navigation:           &nav,
+		scrollController:     scrollController,
+		isVisible:            true,
 	}
 }
 
 // TODO: Probably better to make a LauncherOptions object
 type Launcher struct {
-	hotkey      *string
-	preferences *api.Preferences
-	window      *gtk.Window
-	body        *gtk.Box
-	input       *gtk.Entry
-	prefsBtn    *gtk.Button
-	resultsBox  *gtk.Box
-	navigation  *navigation.Navigation
-	isVisible   bool
+	hotkey               *string
+	preferences          *api.Preferences
+	window               *gtk.Window
+	body                 *gtk.Box
+	input                *gtk.Entry
+	prefsBtn             *gtk.Button
+	resultsBox           *gtk.Box
+	resultsScrollableBox *gtk.ScrolledWindow
+	navigation           *navigation.Navigation
+	scrollController     *ScrollController
+	isVisible            bool
 }
 
 func (l *Launcher) HandleInput(callback func(string)) {
@@ -132,10 +148,12 @@ func (l *Launcher) Start() {
 		setTransparent(window, context)
 	})
 
+	/* TODO: Uncomment this!
 	// When the window loses focus, hide it
 	_, _ = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
 		_, _ = glib.IdleAdd(l.hide)
 	})
+	*/
 
 	// Detect navigation ('Up', 'Down', 'Enter')
 	_, _ = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {
@@ -154,11 +172,13 @@ func (l *Launcher) Start() {
 			if result == nil {
 				return
 			}
+			l.scrollController.MoveOneItemUp()
 		case gdk.KEY_Down:
 			result, prevResult = l.navigation.Down()
 			if result == nil {
 				return
 			}
+			l.scrollController.MoveOneItemDown()
 		case KEY_Enter:
 			if keyEvent.State() == gdk.GDK_MOD1_MASK {
 				l.navigation.AltEnter()
@@ -310,8 +330,8 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 
 	// Set Margins
 	if len(results) != 0 {
-		l.resultsBox.SetMarginTop(3)
-		l.resultsBox.SetMarginBottom(10)
+		l.resultsScrollableBox.SetMarginTop(3)
+		l.resultsScrollableBox.SetMarginBottom(10)
 
 		// Select first one automatically
 		results[0].Select()
@@ -329,6 +349,28 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 		resultItems = append(resultItems, &res)
 	}
 	l.navigation.SetItems(resultItems)
+
+	// Set ScrolledWindow height
+	resultItemHeight := float64(0)
+	if len(results) != 0 {
+		_, height := results[0].frame.GetPreferredHeight()
+		resultItemHeight = float64(height)
+	}
+
+	newScrolledHeight := resultItemHeight * float64(len(results))
+	if len(results) > 4 { // TODO: Get '4' from the preferences. This is the maximum number of results to show
+		newScrolledHeight = float64(resultItemHeight * 4)
+	}
+	l.scrollController.SetHeight(int(newScrolledHeight))
+
+	// Set 'scroll interval', so that when the user scrolls, it will skip, exactly, one item's height
+
+	newAdjustment, err := gtk.AdjustmentNew(-1, float64(0), newScrolledHeight, resultItemHeight, resultItemHeight, newScrolledHeight)
+	if err != nil {
+		panic(err)
+	}
+	l.scrollController.SetAdjustment(newAdjustment)
+	l.scrollController.SetNewResults(len(results))
 }
 
 func (l *Launcher) clearResults() {
@@ -346,9 +388,12 @@ func (l *Launcher) clearResults() {
 		}
 	})
 
+	// Set ScrolledWindow height
+	l.scrollController.SetHeight(0)
+
 	// Remove margins
-	l.resultsBox.SetMarginTop(0)
-	l.resultsBox.SetMarginBottom(0)
+	l.resultsScrollableBox.SetMarginTop(0)
+	l.resultsScrollableBox.SetMarginBottom(0)
 }
 
 func (l *Launcher) show() {

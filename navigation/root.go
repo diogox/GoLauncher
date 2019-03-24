@@ -5,18 +5,18 @@ import (
 	"github.com/diogox/GoLauncher/api"
 )
 
-func NewNavigation(items []*api.Result) Navigation {
+func NewNavigation() Navigation {
 	return Navigation{
-		onItemEnter: func(api.Action) {},
-		currentIndex: -1,
-		items:        items,
+		onItemEnter:      func(api.Action) {},
+		currentIndex:     -1,
+		items:            make([]*api.Result, 0),
 	}
 }
 
 type Navigation struct {
-	onItemEnter func(api.Action)
-	currentIndex int
-	items        []*api.Result
+	onItemEnter      func(api.Action)
+	currentIndex     int
+	items            []*api.Result
 }
 
 func (n *Navigation) SetOnItemEnter(onItemEnter func(api.Action)) {
@@ -34,21 +34,27 @@ func (n *Navigation) SetItems(items []*api.Result) {
 }
 
 func (n *Navigation) Up() (*api.Result, *api.Result) {
+	// No items to navigate through
 	if len(n.items) == 0 {
 		return nil, nil
 	}
 
+	// There's only a previous item if a current index exists
 	var prevItem *api.Result
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
 
+	// Get next index
 	index := n.currentIndex - 1
 	if index >= 0 {
+
+		// Set current index
 		n.currentIndex = index
 		return n.items[index], prevItem
 	}
 
+	// Overflowed, skipping to the last index (end of the list)
 	lastIndex := len(n.items) - 1
 	n.currentIndex = lastIndex
 	return n.items[lastIndex], prevItem
@@ -94,6 +100,7 @@ func (n *Navigation) SetSelected(item *api.Result) *api.Result {
 
 	for i, it := range n.items {
 		if *it == *item {
+			// Save current item's index
 			n.currentIndex = i
 			break
 		}

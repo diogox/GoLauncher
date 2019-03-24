@@ -92,7 +92,7 @@
         <child>
           <object class="GtkScrolledWindow" id="result_box_scrollable">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
             <property name="hscrollbar_policy">never</property>
             <property name="shadow_type">in</property>
           </object>

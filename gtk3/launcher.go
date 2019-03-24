@@ -355,14 +355,15 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	if len(results) > 4 { // TODO: Get '4' from the preferences. This is the maximum number of results to show
 		newScrolledHeight = float64(resultItemHeight * 4)
 	}
-	l.navigation.ScrollController.SetHeight(int(newScrolledHeight))
 
-	// Set 'scroll interval', so that when the user scrolls, it will skip, exactly, one item's height
-
-	newAdjustment, err := gtk.AdjustmentNew(-1, float64(0), newScrolledHeight, resultItemHeight, resultItemHeight, newScrolledHeight)
+	// Set adjustment
+	newAdjustment, err := gtk.AdjustmentNew(-1, float64(0), -1, resultItemHeight, resultItemHeight, newScrolledHeight)
 	if err != nil {
 		panic(err)
 	}
+
+	// Update ScrollController
+	l.navigation.ScrollController.SetHeight(int(newScrolledHeight))
 	l.navigation.ScrollController.SetAdjustment(newAdjustment)
 	l.navigation.ScrollController.SetNewResults(len(results))
 }

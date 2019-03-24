@@ -1,7 +1,6 @@
 package navigation
 
 import (
-	"fmt"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -39,6 +38,7 @@ func (sc *ScrollController) SetNewResults(nOfResults int) {
 
 	sc.itemVisibilityRange = visibility
 }
+
 func (sc *ScrollController) SetAdjustment(adj *gtk.Adjustment) {
 	sc.setIncrement(adj.GetStepIncrement())
 	sc.window.SetVAdjustment(adj)
@@ -82,7 +82,7 @@ func (sc *ScrollController) SignalMoveUp() {
 }
 
 func (sc *ScrollController) SignalMoveDown() {
-	fmt.Println(sc.currentIndex)
+
 	// Assert new indexes
 	previousIndex := sc.currentIndex
 	sc.currentIndex = previousIndex + 1

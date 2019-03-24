@@ -13,6 +13,7 @@ const SettingsWindowID = "settings_window"
 const SettingsHotkeyInputID = "hotkey_input"
 const SettingsClearInputOnHideID = "keep_input_on_hide"
 const SettingsLaunchAtStartUpID = "launch_at_startup"
+const SettingsNOfResultsToShowID = "n_results_input"
 const SettingsSaveButtonID = "save"
 const SettingsCancelButtonID = "cancel"
 
@@ -42,6 +43,11 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	}
 
 	hotkeyInput, err :=  glade.GetEntry(bldr, SettingsHotkeyInputID)
+	if err != nil {
+		panic(err)
+	}
+
+	nResultsInput, err :=  glade.GetEntry(bldr, SettingsNOfResultsToShowID)
 	if err != nil {
 		panic(err)
 	}
@@ -79,6 +85,12 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	}
 	hotkeyInput.SetText(currentHotkey)
 
+	currentNOfResults, err := (*preferences).GetPreference(api.PreferenceNResultsToShow)
+	if err != nil {
+		panic(err)
+	}
+	nResultsInput.SetText(currentNOfResults)
+
 	isLaunchAtStartup, err := (*preferences).GetPreference(api.PreferenceLaunchAtStartUp)
 	if err != nil {
 		panic(err)
@@ -87,6 +99,8 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 
 	// Save new preferences
 	_, _ = saveButton.Connect("clicked", func(btn *gtk.Button) {
+
+		// Set `PreferenceHotkey`
 		newHotkey, err := hotkeyInput.GetText()
 		if err != nil {
 			panic(err)
@@ -96,6 +110,17 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 			panic(err)
 		}
 
+		// Set `PreferenceNResultsToShow`
+		nOfResults, err := nResultsInput.GetText()
+		if err != nil {
+			panic(err)
+		}
+		err = (*preferences).SetPreference(api.PreferenceNResultsToShow, nOfResults)
+		if err != nil {
+			panic(err)
+		}
+
+		// Set `PreferenceKeepInputOnHide`
 		isKeepInputOnHide := keepInputOnHideCheckButton.GetActive()
 		if isKeepInputOnHide {
 			err = (*preferences).SetPreference(api.PreferenceKeepInputOnHide, api.PreferenceTRUE)
@@ -106,6 +131,7 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 			panic(err)
 		}
 
+		// Set `PreferenceLaunchAtStartUp`
 		isLaunchAtStartup := launchAtStartupCheckButton.GetActive()
 		if isLaunchAtStartup {
 			err = (*preferences).SetPreference(api.PreferenceLaunchAtStartUp, api.PreferenceTRUE)

@@ -80,7 +80,17 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	// Add it to the scrolled window
 	resultsScrollableBox.Add(resultsBox)
 
-	scrollController := navigation.NewScrollController(resultsScrollableBox, 4) // TODO: Change '4' to get value from preferences
+	// Get number of results to show
+	nOfResultsToShowStr, _ := (*preferences).GetPreference(api.PreferenceNResultsToShow)
+	nOfResultsToShow, _ := strconv.Atoi(nOfResultsToShowStr)
+
+	scrollController := navigation.NewScrollController(resultsScrollableBox, nOfResultsToShow)
+
+	// Update ScrollController every time a change is made to the preference 'PreferenceNResultsToShow'
+	(*preferences).BindCallback(api.PreferenceNResultsToShow, func(arg interface{}) {
+		nOfResultsToShow, _ := arg.(int)
+		scrollController.SetNOfItemsToShow(nOfResultsToShow)
+	})
 
 	nav := navigation.NewNavigation(scrollController)
 
@@ -354,8 +364,13 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	}
 
 	newScrolledHeight := resultItemHeight * float64(len(results))
-	if len(results) > 4 { // TODO: Get '4' from the preferences. This is the maximum number of results to show
-		newScrolledHeight = float64(resultItemHeight * 4)
+
+	// Get number of results to display
+	nOfResultsToShowStr, err := (*l.preferences).GetPreference(api.PreferenceNResultsToShow)
+	nOfResultsToShow, _ := strconv.Atoi(nOfResultsToShowStr)
+
+	if len(results) > nOfResultsToShow {
+		newScrolledHeight = resultItemHeight * float64(nOfResultsToShow)
 	}
 
 	// Set adjustment

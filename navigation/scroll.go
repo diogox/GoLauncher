@@ -106,12 +106,16 @@ func (sc *ScrollController) SignalMoveDown() {
 	}
 
 	// Set the scroll's upper level to match the beginning of the next item
-	itemInLowerBound := sc.itemVisibilityRange[sc.currentIndex].Min - (sc.increment * 3) // TODO: Get this value from `ViewingRange`
+	itemInLowerBound := sc.itemVisibilityRange[sc.currentIndex].Min - (sc.increment * float64(sc.nItemsToShow - 1)) // TODO: Get this value from `ViewingRange`
 	sc.window.GetVAdjustment().SetValue(itemInLowerBound)
 }
 
 func (sc *ScrollController) SetSelectedIndex(index int) {
 	sc.currentIndex = index
+}
+
+func (sc *ScrollController) SetNOfItemsToShow(nOfItems int) {
+	sc.nItemsToShow = nOfItems
 }
 
 type ViewingRange struct {

@@ -26,11 +26,13 @@ func main() {
 	db := api.DB(&sqliteDB)
 
 	preferences := gtk3.PreferencesNew(&db)
-	preferences.BindHotkeyCallBack(func(hotkey string) {
+	preferences.BindCallback(api.PreferenceHotkey, func(arg interface{}) {
+		hotkey, _ := arg.(string)
 		_, _ = glib.IdleAdd(func() {
 			launcher.BindHotkey(hotkey)
 		})
 	})
+
 	prefs := api.Preferences(&preferences)
 	_ = prefs.SetPreference(api.PreferenceHotkey, db.GetPreference(api.PreferenceHotkey))
 

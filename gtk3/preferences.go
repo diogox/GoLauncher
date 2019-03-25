@@ -57,6 +57,17 @@ func (p *Preferences) SetPreference(preference string, value string) error {
 
 		// Run all associated callbacks
 		p.runAllCallbacks(api.PreferenceNResultsToShow, value)
+
+	case api.PreferenceNAppResults:
+		// Make sure it's an interface
+		_, err := strconv.Atoi(value)
+		if err != nil {
+			// Keep old value
+			value = (*p.db).GetPreference(preference)
+		}
+
+		// Run all associated callbacks
+		p.runAllCallbacks(api.PreferenceNAppResults, value)
 	}
 	return (*p.db).SetPreference(preference, value)
 }

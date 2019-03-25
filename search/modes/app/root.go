@@ -6,6 +6,7 @@ import (
 	"github.com/diogox/GoLauncher/search/modes"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/GoLauncher/search/util"
+	"strconv"
 )
 
 func NewAppSearchMode(db *api.DB, searchModes []modes.SearchMode) AppSearchMode {
@@ -31,7 +32,9 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	apps, _ := (*asm.db).FindAppByName(input)
 
 	for _, app := range apps {
-		if len(results) > 8 { // TODO: Extract this to 'Number of results' preference or config file!
+		// Get maximum number of app results to show
+		maxNOfApps, _ := strconv.Atoi((*asm.db).GetPreference(api.PreferenceNAppResults))
+		if len(results) > (maxNOfApps - 1) {
 			break
 		}
 

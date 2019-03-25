@@ -14,6 +14,7 @@ const SettingsHotkeyInputID = "hotkey_input"
 const SettingsClearInputOnHideID = "keep_input_on_hide"
 const SettingsLaunchAtStartUpID = "launch_at_startup"
 const SettingsNOfResultsToShowID = "n_results_input"
+const SettingsNOfAppResultsID = "max_n_app_results"
 const SettingsSaveButtonID = "save"
 const SettingsCancelButtonID = "cancel"
 
@@ -48,6 +49,11 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	}
 
 	nResultsInput, err :=  glade.GetEntry(bldr, SettingsNOfResultsToShowID)
+	if err != nil {
+		panic(err)
+	}
+
+	nAppResultsInput, err :=  glade.GetEntry(bldr, SettingsNOfAppResultsID)
 	if err != nil {
 		panic(err)
 	}
@@ -91,6 +97,13 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 	}
 	nResultsInput.SetText(currentNOfResults)
 
+
+	currentNOfAppResults, err := (*preferences).GetPreference(api.PreferenceNAppResults)
+	if err != nil {
+		panic(err)
+	}
+	nAppResultsInput.SetText(currentNOfAppResults)
+
 	isLaunchAtStartup, err := (*preferences).GetPreference(api.PreferenceLaunchAtStartUp)
 	if err != nil {
 		panic(err)
@@ -116,6 +129,16 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 			panic(err)
 		}
 		err = (*preferences).SetPreference(api.PreferenceNResultsToShow, nOfResults)
+		if err != nil {
+			panic(err)
+		}
+
+		// Set `PreferenceNAppResults`
+		nAppResults, err := nAppResultsInput.GetText()
+		if err != nil {
+			panic(err)
+		}
+		err = (*preferences).SetPreference(api.PreferenceNAppResults, nAppResults)
 		if err != nil {
 			panic(err)
 		}

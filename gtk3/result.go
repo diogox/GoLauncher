@@ -19,7 +19,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, position int, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
+func NewResultItem(title string, description string, iconName string, position string, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -58,10 +58,9 @@ func NewResultItem(title string, description string, iconName string, position i
 	nameLabel.SetText(title)
 	descrLabel.SetText(description)
 
-	if position != -1 {
-		shortcut := fmt.Sprintf("Alt+%d", position)
-		shortcutLabel.SetText(shortcut)
-	}
+	shortcut := fmt.Sprintf("Alt+%s", position)
+	shortcutLabel.SetText(shortcut)
+
 
 	if strings.Contains(iconName, string(os.PathSeparator)) {
 		// It's not an icon name, it's an icon path

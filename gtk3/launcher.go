@@ -1,6 +1,7 @@
 package gtk3
 
 import (
+	"fmt"
 	kb "github.com/Isolus/go-keybinder"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
@@ -192,22 +193,26 @@ func (l *Launcher) Start() {
 			return
 		default:
 			if keyEvent.State() == gdk.GDK_MOD1_MASK {
+
+				index := rune(key - 97 + 10) // Magic ascii transformation
 				if (key >= 48) && (key <= 57) { // info: (48 == '0')(57 == '9')
-					index, _ := strconv.Atoi(string(key))
-					r, err := l.navigation.At(index - 1)
-					if err == nil {
-						// Select new item
-						currentItem := (*r).(*ResultItem)
-						currentItem.Select()
+					indexInt, _ := strconv.Atoi(string(key))
+					index = rune(indexInt)
+				}
 
-						// Unselect previous item
-						prev := l.navigation.SetSelected(r)
-						prevItem, _ := (*prev).(*ResultItem)
-						prevItem.Unselect()
+				r, err := l.navigation.At(int(index) - 1)
+				if err == nil {
+					// Select new item
+					currentItem := (*r).(*ResultItem)
+					currentItem.Select()
 
-						// Run Action
-						currentItem.OnEnterAction().Run()
-					}
+					// Unselect previous item
+					prev := l.navigation.SetSelected(r)
+					prevItem, _ := (*prev).(*ResultItem)
+					prevItem.Unselect()
+
+					// Run Action
+					currentItem.OnEnterAction().Run()
 				}
 			}
 			return
@@ -309,10 +314,12 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	// Convert results
 	for i, r := range searchResults {
 		var result ResultItem
-		if i <= 9 {
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), i+1, r.OnEnterAction(), r.OnAltEnterAction())
+		if i < 9 {
+			position := fmt.Sprintf("%d", i+1)
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), position, r.OnEnterAction(), r.OnAltEnterAction())
 		} else {
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), -1, r.OnEnterAction(), r.OnAltEnterAction())
+			position := fmt.Sprintf("%s", string(rune(97 + i - 9)))
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), position, r.OnEnterAction(), r.OnAltEnterAction())
 		}
 		result.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {

@@ -194,12 +194,14 @@ func (l *Launcher) Start() {
 		default:
 			if keyEvent.State() == gdk.GDK_MOD1_MASK {
 
+				// Get result index
 				index := rune(key - 97 + 10) // Magic ascii transformation
 				if (key >= 48) && (key <= 57) { // info: (48 == '0')(57 == '9')
 					indexInt, _ := strconv.Atoi(string(key))
 					index = rune(indexInt)
 				}
 
+				// Get result at that index
 				r, err := l.navigation.At(int(index) - 1)
 				if err == nil {
 					// Select new item

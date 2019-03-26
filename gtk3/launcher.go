@@ -135,7 +135,7 @@ func (l *Launcher) HandleInput(callback func(string)) {
 			return
 		}
 
-		callback(input)
+		_, _ = glib.IdleAdd(callback, input)
 	})
 }
 

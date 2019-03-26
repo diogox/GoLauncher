@@ -43,12 +43,17 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 		results = append(results, r)
 	}
 
+	// If there are no apps matching the search
 	if len(results) == 0 {
+
+		// Look for default items
 		for _, searchMode := range asm.searchModes {
 			for _, item := range searchMode.DefaultItems(input) {
 				results = append(results, item)
 			}
 		}
+		// Return default items here, to prevent them from getting their order changed by fuzzy search
+		return actions.NewRenderResultList(results)
 	}
 
 	return actions.NewRenderResultList(util.GetBestMatches(input, results))

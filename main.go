@@ -92,7 +92,12 @@ func main() {
 		return nil
 	}
 	appWatcher := LinuxApps.NewAppWatcher(onChange, onRemove)
-	go appWatcher.Start()
+	go func() {
+		err := appWatcher.Start()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	// Instantiate Search
 	search := search.NewSearch(&db)

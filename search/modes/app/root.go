@@ -43,6 +43,8 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 		results = append(results, r)
 	}
 
+	results = util.GetBestMatches(input, results, -15)
+
 	// If there are no apps matching the search
 	if len(results) == 0 {
 
@@ -56,7 +58,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 		return actions.NewRenderResultList(results)
 	}
 
-	return actions.NewRenderResultList(util.GetBestMatches(input, results))
+	return actions.NewRenderResultList(results)
 }
 
 func (AppSearchMode) DefaultItems(input string) []api.Result {

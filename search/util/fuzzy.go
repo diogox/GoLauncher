@@ -25,23 +25,30 @@ func (s sortableResults) Less(i, j int) bool {
 	return s[i].score > s[j].score
 }
 
-func GetBestMatches(query string, results []api.Result) []api.Result {
+func GetBestMatches(query string, results []api.Result, minScore int) []api.Result {
 
 	// Get Scores
-	scores := make([]resultWithScore, 0, len(results))
+	scores := make([]resultWithScore, 0)
 	for _, r := range results {
-		res := resultWithScore{
-			result: r,
-			score: getScore(query, r),
+
+		// Calculate score
+		score := getScore(query, r)
+		
+		// Check if above minimum
+		if score >= minScore {
+			res := resultWithScore{
+				result: r,
+				score: score,
+			}
+			scores = append(scores, res)
 		}
-		scores = append(scores, res)
 	}
 
 	// Sort
 	sort.Sort(sortableResults(scores))
 
 	// Turn into []api.Result
-	results = make([]api.Result, 0, len(results))
+	results = make([]api.Result, 0)
 	for _, s := range scores {
 		results = append(results, s.result)
 	}
@@ -60,7 +67,7 @@ func getScore(query string, result api.Result) int {
 
 	for _, part := range strings.Split(title, " ") {
 		if strings.HasPrefix(part, query) {
-			score += 50
+			score += 20
 		}
 	}
 

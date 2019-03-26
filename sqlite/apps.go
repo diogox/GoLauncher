@@ -68,6 +68,36 @@ func (ldb *LauncherDB) FindAppByID(exec string) (models.AppInfo, error) {
 	return app, nil
 }
 
+func (ldb *LauncherDB) GetAllApps(name string) ([]models.AppInfo, error) {
+	query := "SELECT * FROM apps"
+	rows, err := ldb.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	var _exec string
+	var _name string
+	var _description string
+	var _iconName string
+
+	apps := make([]models.AppInfo, 0)
+	for rows.Next() {
+		err := rows.Scan(&_exec, &_name, &_description, &_iconName)
+		if err != nil {
+			panic(err)
+		}
+		appInfo := models.AppInfo{
+			Name:        _name,
+			Description: _description,
+			Exec:        _exec,
+			IconName:    _iconName,
+		}
+		apps = append(apps, appInfo)
+	}
+
+	return apps, nil
+}
+
 func (ldb *LauncherDB) FindAppByName(name string) ([]models.AppInfo, error) {
 	query := "SELECT * FROM apps WHERE name LIKE '%" + name + "%'"
 	rows, err := ldb.db.Query(query)

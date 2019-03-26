@@ -1,7 +1,8 @@
 package util
 
 import (
-	"github.com/agnivade/levenshtein"
+	"fmt"
+	"github.com/texttheater/golang-levenshtein/levenshtein"
 	"github.com/diogox/GoLauncher/api"
 	"sort"
 	"strings"
@@ -9,7 +10,7 @@ import (
 
 type resultWithScore struct {
 	result api.Result
-	score int
+	score float64
 }
 
 type sortableResults []resultWithScore
@@ -25,7 +26,7 @@ func (s sortableResults) Less(i, j int) bool {
 	return s[i].score > s[j].score
 }
 
-func GetBestMatches(query string, results []api.Result, minScore int) []api.Result {
+func GetBestMatches(query string, results []api.Result, minScore float64) []api.Result {
 
 	// Get Scores
 	scores := make([]resultWithScore, 0)
@@ -33,15 +34,18 @@ func GetBestMatches(query string, results []api.Result, minScore int) []api.Resu
 
 		// Calculate score
 		score := getScore(query, r)
-		
+
 		// Check if above minimum
-		if score >= minScore {
-			res := resultWithScore{
-				result: r,
-				score: score,
-			}
-			scores = append(scores, res)
+		if score < minScore {
+			continue
 		}
+
+		// Add result with respective score
+		res := resultWithScore{
+			result: r,
+			score: score,
+		}
+		scores = append(scores, res)
 	}
 
 	// Sort
@@ -56,18 +60,19 @@ func GetBestMatches(query string, results []api.Result, minScore int) []api.Resu
 	return results
 }
 
-func getScore(query string, result api.Result) int {
+func getScore(query string, result api.Result) float64 {
 	query = strings.ToLower(query)
 	title := strings.ToLower(result.Title())
 	//descr := strings.ToLower(result.Description())
 
-	score := 0
-
-	score -= levenshtein.ComputeDistance(query, title)
+	score := levenshtein.RatioForStrings([]rune(query), []rune(title), levenshtein.DefaultOptions) * 100
 
 	for _, part := range strings.Split(title, " ") {
+		if part == "editor" {
+			fmt.Println(score)
+		}
 		if strings.HasPrefix(part, query) {
-			score += 20
+			score += 40
 		}
 	}
 

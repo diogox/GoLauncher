@@ -8,6 +8,7 @@ type DB interface {
 	AddApp(app models.AppInfo) error
 	UpdateApp(app models.AppInfo) error
 	RemoveAllApps() error
+	GetAllApps(name string) ([]models.AppInfo, error)
 	FindAppByID(exec string) (models.AppInfo, error)
 	FindAppByName(name string) ([]models.AppInfo, error)
 

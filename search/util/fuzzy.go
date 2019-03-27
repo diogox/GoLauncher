@@ -1,9 +1,8 @@
 package util
 
 import (
-	"fmt"
-	"github.com/texttheater/golang-levenshtein/levenshtein"
 	"github.com/diogox/GoLauncher/api"
+	"github.com/texttheater/golang-levenshtein/levenshtein"
 	"sort"
 	"strings"
 )
@@ -68,9 +67,6 @@ func getScore(query string, result api.Result) float64 {
 	score := levenshtein.RatioForStrings([]rune(query), []rune(title), levenshtein.DefaultOptions) * 100
 
 	for _, part := range strings.Split(title, " ") {
-		if part == "editor" {
-			fmt.Println(score)
-		}
 		if strings.HasPrefix(part, query) {
 			score += 40
 		}

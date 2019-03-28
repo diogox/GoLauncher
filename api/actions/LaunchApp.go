@@ -1,22 +1,23 @@
 package actions
 
 import (
-	"fmt"
 	"github.com/diogox/GoLauncher/api"
 	"os/exec"
 	"strings"
 )
 
-func NewLaunchApp(exec string) LaunchApp {
+func NewLaunchApp(exec string, db *api.DB) LaunchApp {
 	return LaunchApp{
 		Type: api.LAUNCH_APP_ACTION,
 		Exec: exec,
+		db:   db,
 	}
 }
 
 type LaunchApp struct {
 	Type string
 	Exec string
+	db   *api.DB
 }
 
 func (la LaunchApp) GetType() string {
@@ -28,13 +29,17 @@ func (LaunchApp) KeepAppOpen() bool {
 }
 
 func (a LaunchApp) Run() {
-	fmt.Println("Executing App: " + a.Exec)
+	// Increment access counter
+	err := (*a.db).IncrementAppAccessCounter(a.Exec)
+	if err != nil {
+		panic(err)
+	}
+
 	executable := strings.Split(a.Exec, " ")
 	cmd := exec.Command(executable[0], executable[1:]...)
-	err := cmd.Start()
+	err = cmd.Start()
 	if err != nil {
 		panic(err)
 	}
 	_ = cmd.Process.Release()
 }
-

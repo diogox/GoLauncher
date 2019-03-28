@@ -33,7 +33,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	for _, app := range apps {
 
-		action := actions.NewLaunchApp(app.Exec)
+		action := actions.NewLaunchApp(app.Exec, asm.db)
 		r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
 		results = append(results, r)
 	}

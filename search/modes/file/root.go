@@ -107,7 +107,7 @@ func renderResults(files []os.FileInfo, basePath string) []api.Result {
 		altAction := actions.NewOpen(itemPath)
 
 		// Create result
-		r := result.NewSearchResult(f.Name(), "See what's inside", DIR_ICON, enterAction, altAction)
+		r := result.NewSearchResult(f.Name(), "See what's inside", DIR_ICON, false, enterAction, altAction)
 
 		// In case the item is a file
 		if !f.IsDir() {
@@ -126,6 +126,6 @@ func renderResults(files []os.FileInfo, basePath string) []api.Result {
 
 func renderNoMatch() []api.Result {
 	return []api.Result {
-		result.NewSearchResult("No match found!", "Try another path...", "warning", actions.NewDoNothing(), actions.NewDoNothing()),
+		result.NewSearchResult("No match found!", "Try another path...", "warning", false, actions.NewDoNothing(), actions.NewDoNothing()),
 	}
 }

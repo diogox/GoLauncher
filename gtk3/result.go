@@ -19,7 +19,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, position string, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
+func NewResultItem(title string, description string, iconName string, isDefaultSelect bool, position string, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -73,6 +73,7 @@ func NewResultItem(title string, description string, iconName string, position s
 	resultItem := ResultItem{
 		onEnterAction:    onEnterAction,
 		onAltEnterAction: onAltEnterAction,
+		isDefaultSelect: isDefaultSelect,
 
 		frame:       resultEventFrame,
 		box:         resultEventBox,
@@ -88,6 +89,7 @@ func NewResultItem(title string, description string, iconName string, position s
 type ResultItem struct {
 	onEnterAction    api.Action
 	onAltEnterAction api.Action
+	isDefaultSelect  bool
 
 	frame       *gtk.EventBox
 	box         *gtk.EventBox
@@ -110,6 +112,10 @@ func (r *ResultItem) Description() string {
 func (r *ResultItem) IconPath() string {
 	iconName, _ := r.icon.GetIconName()
 	return iconName
+}
+
+func (r *ResultItem) IsDefaultSelect() bool {
+	return r.isDefaultSelect
 }
 
 func (r *ResultItem) OnEnterAction() api.Action {

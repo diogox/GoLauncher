@@ -136,7 +136,7 @@ func main() {
 		frequentAppsResults := make([]api.Result, 0)
 		for _, app := range frequentApps {
 			action := actions.NewLaunchApp(app.Exec, &db)
-			r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
+			r := result.NewSearchResult(app.Name, app.Description, app.IconName, false, action, action)
 			frequentAppsResults = append(frequentAppsResults, api.Result(&r))
 		}
 

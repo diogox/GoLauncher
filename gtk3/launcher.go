@@ -319,10 +319,10 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 		var result ResultItem
 		if i < 9 {
 			position := fmt.Sprintf("%d", i+1)
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), position, r.OnEnterAction(), r.OnAltEnterAction())
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), r.IsDefaultSelect(), position, r.OnEnterAction(), r.OnAltEnterAction())
 		} else {
 			position := fmt.Sprintf("%s", string(rune(97 + i - 9)))
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), position, r.OnEnterAction(), r.OnAltEnterAction())
+			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), r.IsDefaultSelect(), position, r.OnEnterAction(), r.OnAltEnterAction())
 		}
 		result.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
@@ -348,6 +348,19 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 
 		// Select first one automatically
 		results[0].Select()
+
+		// Check if any of the results should be the automatic default
+		for _, r := range results {
+			if r.IsDefaultSelect() {
+
+				// Unselect the first item that was automatically selected
+				results[0].Unselect()
+
+				// Select default item
+				r.Select()
+				break
+			}
+		}
 	}
 
 	// Show New Results

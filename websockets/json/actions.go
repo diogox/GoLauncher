@@ -104,7 +104,7 @@ func InferActionType(jsonObj []byte) (*api.Action, error) {
 			return nil, err
 		}
 
-		result := result.NewSearchResult(string(name), string(descr), string(icon), *onEnterAction, *onAltEnterAction)
+		result := result.NewSearchResult(string(name), string(descr), string(icon), false, *onEnterAction, *onAltEnterAction)
 		renderResultList = append(renderResultList, result)
 	}
 

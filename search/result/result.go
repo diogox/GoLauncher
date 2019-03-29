@@ -4,13 +4,14 @@ import (
 	"github.com/diogox/GoLauncher/api"
 )
 
-func NewSearchResult(title string, descr string, iconPath string, onEnterAction api.Action, onAltEnterAction api.Action) SearchResult {
+func NewSearchResult(title string, descr string, iconPath string, isDefaultSelect bool, onEnterAction api.Action, onAltEnterAction api.Action) SearchResult {
 	return SearchResult{
 
-		Title_:       title,
-		Description_: descr,
-		IconPath_:    iconPath,
-		OnEnterAction_: onEnterAction,
+		Title_:            title,
+		Description_:      descr,
+		IconPath_:         iconPath,
+		IsDefaultSelect_:   isDefaultSelect,
+		OnEnterAction_:    onEnterAction,
 		OnAltEnterAction_: onAltEnterAction,
 	}
 }
@@ -19,6 +20,7 @@ type SearchResult struct {
 	Title_            string
 	Description_      string
 	IconPath_         string
+	IsDefaultSelect_   bool
 	OnEnterAction_    api.Action
 	OnAltEnterAction_ api.Action
 }
@@ -33,6 +35,10 @@ func (r SearchResult) Description() string {
 
 func (r SearchResult) IconPath() string {
 	return r.IconPath_
+}
+
+func (r SearchResult) IsDefaultSelect() bool {
+	return r.IsDefaultSelect_
 }
 
 func (r SearchResult) OnEnterAction() api.Action {

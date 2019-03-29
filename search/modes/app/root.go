@@ -34,7 +34,8 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	for _, app := range apps {
 
 		action := actions.NewLaunchApp(app.Exec, asm.db)
-		r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
+		// TODO: Get isDefaultSelect from the statistics
+		r := result.NewSearchResult(app.Name, app.Description, app.IconName, false, action, action)
 		results = append(results, r)
 	}
 

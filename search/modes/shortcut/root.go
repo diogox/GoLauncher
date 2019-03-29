@@ -53,7 +53,7 @@ func (ssm ShortcutSearchMode) HandleInput(input string) api.Action {
 
 	descr := strings.Replace(shortcut.Cmd, "%s", input, -1)
 	action := actions.NewOpenUrl(descr)
-	r := result.NewSearchResult(shortcut.Name, descr, shortcut.IconName, action, action)
+	r := result.NewSearchResult(shortcut.Name, descr, shortcut.IconName, false, action, action)
 
 	results = append(results, r)
 	return actions.NewRenderResultList(results)
@@ -85,7 +85,7 @@ func (ssm ShortcutSearchMode) DefaultItems(input string) []api.Result {
 		if shortcut.IsDefaultSearch {
 			cmd := strings.Replace(shortcut.Cmd, "%s", input, -1)
 			action := actions.NewOpenUrl(cmd)
-			r := result.NewSearchResult(shortcut.Name, cmd, shortcut.IconName, action, action)
+			r := result.NewSearchResult(shortcut.Name, cmd, shortcut.IconName, false, action, action)
 			results = append(results, r)
 		}
 	}

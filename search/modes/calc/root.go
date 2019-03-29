@@ -38,13 +38,13 @@ func (c *CalcSearchMode) HandleInput(input string) api.Action {
 	calcResult, err := c.calculate(input)
 	if err != nil {
 		action := actions.NewDoNothing()
-		r := result.NewSearchResult("Error!", err.Error(), "calc", action, action)
+		r := result.NewSearchResult("Error!", err.Error(), "calc", true, action, action)
 		results = append(results, r)
 		return actions.NewRenderResultList(results)
 	}
 
 	action := actions.NewCopyToClipboard(calcResult)
-	r := result.NewSearchResult(calcResult, "Copy to Clipboard", "calc", action, action)
+	r := result.NewSearchResult(calcResult, "Copy to Clipboard", "calc", true, action, action)
 	results = append(results, r)
 
 	return actions.NewRenderResultList(results)

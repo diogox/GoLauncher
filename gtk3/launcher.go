@@ -123,7 +123,7 @@ type Launcher struct {
 	isVisible            bool
 }
 
-func (l *Launcher) HandleInput(callback func(string)) {
+func (l *Launcher) HandleInput(callback func(string), onEmptyCallback func()) {
 	_, _ = l.input.Connect("changed", func(entry *gtk.Entry) {
 		input, err := entry.GetText()
 		if err != nil {
@@ -132,6 +132,7 @@ func (l *Launcher) HandleInput(callback func(string)) {
 
 		if input == "" {
 			l.clearResults()
+			_, _ = glib.IdleAdd(onEmptyCallback)
 			return
 		}
 

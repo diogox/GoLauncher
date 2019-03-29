@@ -61,7 +61,6 @@ func NewResultItem(title string, description string, iconName string, position s
 	shortcut := fmt.Sprintf("Alt+%s", position)
 	shortcutLabel.SetText(shortcut)
 
-
 	if strings.Contains(iconName, string(os.PathSeparator)) {
 		// It's not an icon name, it's an icon path
 		pix, _ := gdk.PixbufNewFromFileAtScale(iconName, 40, 40, true)
@@ -72,7 +71,7 @@ func NewResultItem(title string, description string, iconName string, position s
 	}
 
 	resultItem := ResultItem{
-		onEnterAction: onEnterAction,
+		onEnterAction:    onEnterAction,
 		onAltEnterAction: onAltEnterAction,
 
 		frame:       resultEventFrame,
@@ -118,7 +117,6 @@ func (r *ResultItem) OnEnterAction() api.Action {
 }
 
 func (r *ResultItem) OnAltEnterAction() api.Action {
-	fmt.Println("With Alt modifier!")
 	return r.onAltEnterAction
 }
 

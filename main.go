@@ -2,9 +2,11 @@ package main
 
 import (
 	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/api/models"
 	"github.com/diogox/GoLauncher/gtk3"
 	"github.com/diogox/GoLauncher/search"
+	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/GoLauncher/sqlite"
 	"github.com/diogox/GoLauncher/websockets"
 	"github.com/diogox/LinuxApps"
@@ -106,12 +108,46 @@ func main() {
 	launcher = gtk3.NewLauncher(&prefs)
 
 	// Handle input function
-	launcher.HandleInput(func(input string) {
+	onInput := func(input string) {
 
-		// TODO: Probably not thread-safe, use channels instead
+		// TODO: Probably not thread-safe, use channels instead?
 		actionResult := search.HandleInput(input)
 		actionResult.Run()
-	})
+	}
+	onEmptyInput := func() {
+
+		/* TODO: Should I use the preference number?
+		// Get n of results to show by default
+		nOfResultsStr, err := preferences.GetPreference(api.PreferenceNResultsToShow)
+		if err != nil {
+			panic(err)
+		}
+
+		nOfResults, err := strconv.Atoi(nOfResultsStr)
+		*/
+		nOfResults := 3
+		frequentApps, err := db.GetMostFrequentApps(nOfResults)
+		if err != nil {
+			panic(err)
+		}
+
+		// Generate results
+		// TODO: Implement ResultMaker interface (also TODO) to turn apps into results
+		frequentAppsResults := make([]api.Result, 0)
+		for _, app := range frequentApps {
+			action := actions.NewLaunchApp(app.Exec, &db)
+			r := result.NewSearchResult(app.Name, app.Description, app.IconName, action, action)
+			frequentAppsResults = append(frequentAppsResults, api.Result(&r))
+		}
+
+		// Show results
+		_, _ = glib.IdleAdd(launcher.ShowResults, frequentAppsResults)
+	}
+	// Show most frequent apps at startup
+	onEmptyInput()
+
+	// Set actions for when the input is changed
+	launcher.HandleInput(onInput, onEmptyInput)
 
 	// Start Launcher
 	launcher.Start()

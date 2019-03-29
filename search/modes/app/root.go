@@ -29,7 +29,7 @@ func (AppSearchMode) IsEnabled(input string) bool {
 func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	results := make([]api.Result, 0)
-	apps, _ := (*asm.db).GetAllApps(input)
+	apps, _ := (*asm.db).GetAllApps()
 
 	for _, app := range apps {
 

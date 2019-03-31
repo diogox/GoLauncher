@@ -443,6 +443,10 @@ func (l *Launcher) show() {
 	}
 
 	if keepInput == api.PreferenceFALSE {
+		// TODO: This is a hack, since `l.input.Emit("changed", l.input)` is not working as it should.
+		// It is here so that the input realizes it's been changed and procs the 'onChange' closure that brings up the most frequent apps.
+		// If this wasn't here, everytime the launcher is hidden with "" as the query, it doesn't recognize the change in input when it's brought back up.
+		l.input.SetText("...")
 		l.ClearInput()
 	}
 

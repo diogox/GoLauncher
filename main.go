@@ -143,8 +143,6 @@ func main() {
 		// Show results
 		_, _ = glib.IdleAdd(launcher.ShowResults, frequentAppsResults)
 	}
-	// Show most frequent apps at startup
-	onEmptyInput()
 
 	// Set actions for when the input is changed
 	launcher.HandleInput(onInput, onEmptyInput)

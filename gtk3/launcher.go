@@ -126,7 +126,7 @@ type Launcher struct {
 
 func (l *Launcher) HandleInput(callback func(string), onEmptyCallback func()) {
 	_, _ = l.input.Connect("changed", func(entry *gtk.Entry) {
-		
+
 		input := getTrimmedInput(entry)
 
 		if input == "" {

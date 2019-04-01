@@ -2,8 +2,7 @@ package actions
 
 import (
 	"github.com/diogox/GoLauncher/api"
-	"os/exec"
-	"strings"
+	"github.com/diogox/LinuxApps"
 )
 
 func NewLaunchApp(exec string, db *api.DB) LaunchApp {
@@ -35,11 +34,8 @@ func (a LaunchApp) Run() {
 		panic(err)
 	}
 
-	executable := strings.Split(a.Exec, " ")
-	cmd := exec.Command(executable[0], executable[1:]...)
-	err = cmd.Start()
+	err = LinuxApps.StartAppOrFocusExistingByCommand(a.Exec)
 	if err != nil {
 		panic(err)
 	}
-	_ = cmd.Process.Release()
 }

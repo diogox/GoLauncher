@@ -23,7 +23,7 @@
   branch = "master"
   name = "github.com/diogox/LinuxApps"
   packages = ["."]
-  revision = "918a9f84446b7a5d3923886484857c3bf5758dac"
+  revision = "4dd718c5076337d98a25af5843ea294dc49a4249"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -41,7 +41,7 @@
   branch = "master"
   name = "github.com/gotk3/gotk3"
   packages = ["cairo","gdk","glib","gtk","pango"]
-  revision = "770c4e769764890fa0d8a91d6690f9745a757d25"
+  revision = "e54744c4aae74e51117fd539e6710dd68541fe3a"
 
 [[projects]]
   name = "github.com/mattn/go-sqlite3"
@@ -65,7 +65,7 @@
   branch = "master"
   name = "github.com/skratchdot/open-golang"
   packages = ["open"]
-  revision = "a2dfa6d0dab6634ecf39251031a3d52db73b5c7e"
+  revision = "1a48294fa5dd09d08fc0ce8ff31fae553be6baa3"
 
 [[projects]]
   branch = "master"
@@ -77,7 +77,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "f49334f85ddcf0f08d7fb6dd7363e9e6d6b777eb"
+  revision = "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560"
 
 [[projects]]
   name = "gopkg.in/ini.v1"

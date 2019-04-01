@@ -116,6 +116,17 @@ func main() {
 	}
 	onEmptyInput := func() {
 
+		// Get preference
+		showFrequentApps, err := preferences.GetPreference(api.PreferenceShowFrequentApps)
+		if err != nil {
+			panic(err)
+		}
+
+		// Show frequent apps or not
+		if showFrequentApps == api.PreferenceFALSE {
+			return
+		}
+
 		/* TODO: Should I use the preference number?
 		// Get n of results to show by default
 		nOfResultsStr, err := preferences.GetPreference(api.PreferenceNResultsToShow)

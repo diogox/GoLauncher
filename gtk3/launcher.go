@@ -12,6 +12,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
@@ -125,10 +126,8 @@ type Launcher struct {
 
 func (l *Launcher) HandleInput(callback func(string), onEmptyCallback func()) {
 	_, _ = l.input.Connect("changed", func(entry *gtk.Entry) {
-		input, err := entry.GetText()
-		if err != nil {
-			panic(err)
-		}
+		
+		input := getTrimmedInput(entry)
 
 		if input == "" {
 			l.clearResults()
@@ -308,7 +307,7 @@ func (l *Launcher) ToggleVisibility() {
 }
 
 func (l *Launcher) ClearInput() {
-	l.input.SetText("")
+	l.input.DeleteText(0, -1)
 }
 
 func (l *Launcher) ShowResults(searchResults []api.Result) {
@@ -445,12 +444,13 @@ func (l *Launcher) show() {
 	if keepInput == api.PreferenceFALSE {
 		// TODO: This is a hack, since `l.input.Emit("changed", l.input)` is not working as it should.
 		// It is here so that the input realizes it's been changed and procs the 'onChange' closure that brings up the most frequent apps.
-		// If this wasn't here, everytime the launcher is hidden with "" as the query, it doesn't recognize the change in input when it's brought back up.
-		l.input.SetText("...")
+		// If this wasn't here, every time the launcher is hidden with "" as the query, it doesn't recognize the change in input when it's brought back up.
+		_, _ = glib.IdleAdd(l.input.SetText, " ")
 		l.ClearInput()
 	}
 
 	// Position (after clearing results - otherwise it won't center properly)
+	// TODO: Cache the position for each screen? Otherwise the position on the same screen changes when the input is kept and the launcher is toggled!
 	centerAtTopOfScreen(l.window)
 
 	// Show
@@ -458,7 +458,9 @@ func (l *Launcher) show() {
 	l.isVisible = true
 
 	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
-	l.resultsScrollableBox.Hide()
+	if isInputEmpty := len(getTrimmedInput(l.input)) == 0; isInputEmpty {
+		l.resultsScrollableBox.Hide()
+	}
 
 	// Focus
 	l.window.PresentWithTime(kb.GetCurrentEventTime())
@@ -469,4 +471,17 @@ func (l *Launcher) hide() {
 	// Hide
 	l.window.Hide()
 	l.isVisible = false
+}
+
+func getTrimmedInput(entry *gtk.Entry) string {
+	// Get input
+	input, err := entry.GetText()
+	if err != nil {
+		panic(err)
+	}
+
+	// Trim whitespace
+	input = strings.TrimSpace(input)
+
+	return input
 }

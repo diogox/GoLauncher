@@ -6,6 +6,7 @@ const PreferenceKeepInputOnHide = "keep_input_on_hide"
 const PreferenceLaunchAtStartUp = "launch_at_startup"
 const PreferenceNResultsToShow = "number_of_results_to_show"
 const PreferenceNAppResults = "max_n_app_results"
+const PreferenceShowFrequentApps = "show_frequent_apps"
 
 // For Booleans values
 const PreferenceTRUE = "true"

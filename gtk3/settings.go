@@ -15,6 +15,7 @@ const SettingsClearInputOnHideID = "keep_input_on_hide"
 const SettingsLaunchAtStartUpID = "launch_at_startup"
 const SettingsNOfResultsToShowID = "n_results_input"
 const SettingsNOfAppResultsID = "max_n_app_results"
+const SettingsShowFrequentApps = "show_frequent_apps"
 const SettingsSaveButtonID = "save"
 const SettingsCancelButtonID = "cancel"
 
@@ -68,6 +69,11 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 		panic(err)
 	}
 
+	showFrequentAppsCheckButton, err :=  glade.GetCheckButton(bldr, SettingsShowFrequentApps)
+	if err != nil {
+		panic(err)
+	}
+
 	saveButton, err :=  glade.GetButton(bldr, SettingsSaveButtonID)
 	if err != nil {
 		panic(err)
@@ -109,6 +115,12 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 		panic(err)
 	}
 	launchAtStartupCheckButton.SetActive(api.AssertPreferenceBool(isLaunchAtStartup))
+
+	isShowFrequentApps, err := (*preferences).GetPreference(api.PreferenceShowFrequentApps)
+	if err != nil {
+		panic(err)
+	}
+	showFrequentAppsCheckButton.SetActive(api.AssertPreferenceBool(isShowFrequentApps))
 
 	// Save new preferences
 	_, _ = saveButton.Connect("clicked", func(btn *gtk.Button) {
@@ -160,6 +172,17 @@ func buildSettingsWindow(preferences *api.Preferences) *gtk.Window {
 			err = (*preferences).SetPreference(api.PreferenceLaunchAtStartUp, api.PreferenceTRUE)
 		} else {
 			err = (*preferences).SetPreference(api.PreferenceLaunchAtStartUp, api.PreferenceFALSE)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		// Set `PreferenceShowFrequentApps`
+		isShowFrequentApps := showFrequentAppsCheckButton.GetActive()
+		if isShowFrequentApps {
+			err = (*preferences).SetPreference(api.PreferenceShowFrequentApps, api.PreferenceTRUE)
+		} else {
+			err = (*preferences).SetPreference(api.PreferenceShowFrequentApps, api.PreferenceFALSE)
 		}
 		if err != nil {
 			panic(err)

@@ -41,6 +41,11 @@ func (ldb *LauncherDB) LoadDefaultPreferences() []error {
 		errors = append(errors, err)
 	}
 
+	err = ldb.AddPreference(api.PreferenceShowFrequentApps, api.PreferenceTRUE)
+	if err != nil {
+		errors = append(errors, err)
+	}
+
 	return nil
 }
 

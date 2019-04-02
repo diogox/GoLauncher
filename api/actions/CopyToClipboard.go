@@ -6,7 +6,7 @@ var copyToClipboardInstance *CopyToClipboard
 
 // Copying text to the clipboard may rely on the GUI framework.
 // To keep the action platform-agnostic, we need to set it up before using it.
-func SetupCopyToClipboard(copyToClipboardCallback func(string)) {
+func SetupCopyToClipboard(copyToClipboardCallback func(string) error) {
 	copyToClipboardInstance = &CopyToClipboard {
 		Type: api.COPY_TO_CLIPBOARD_ACTION,
 		copyToClipboardCallback: copyToClipboardCallback,
@@ -25,7 +25,7 @@ func NewCopyToClipboard(text string) CopyToClipboard {
 
 type CopyToClipboard struct {
 	Type string
-	copyToClipboardCallback func(string)
+	copyToClipboardCallback func(string) error
 	Text string
 }
 
@@ -37,7 +37,7 @@ func (CopyToClipboard) KeepAppOpen() bool {
 	return false
 }
 
-func (c CopyToClipboard) Run() {
-	c.copyToClipboardCallback(c.Text)
+func (c CopyToClipboard) Run() error {
+	return c.copyToClipboardCallback(c.Text)
 }
 

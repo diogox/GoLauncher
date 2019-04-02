@@ -25,10 +25,7 @@ func (OpenUrl) KeepAppOpen() bool {
 	return false
 }
 
-func (ou OpenUrl) Run() {
-	err := open.Start(ou.Url)
-	if err != nil {
-		panic(err)
-	}
+func (ou OpenUrl) Run() error {
+	return open.Start(ou.Url)
 }
 

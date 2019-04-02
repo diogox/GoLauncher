@@ -20,6 +20,6 @@ func (DoNothing) KeepAppOpen() bool {
 	return true
 }
 
-func (DoNothing) Run() {
-	return
+func (DoNothing) Run() error {
+	return nil
 }

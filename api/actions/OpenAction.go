@@ -25,7 +25,11 @@ func (Open) KeepAppOpen() bool {
 	return false
 }
 
-func (o Open) Run() {
+func (o Open) Run() error {
 	fmt.Println("Opening file: " + o.Filepath)
+
+	// TODO
+
+	return nil
 }
 

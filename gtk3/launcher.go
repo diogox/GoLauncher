@@ -215,7 +215,10 @@ func (l *Launcher) Start() {
 					prevItem.Unselect()
 
 					// Run Action
-					currentItem.OnEnterAction().Run()
+					err = currentItem.OnEnterAction().Run()
+					if err != nil {
+						panic(err)
+					}
 				}
 			}
 			return
@@ -239,30 +242,57 @@ func (l *Launcher) Start() {
 	})
 
 	l.navigation.SetOnItemEnter(func(action api.Action) {
-		action.Run()
+		err := action.Run()
+		if err != nil {
+			panic(err)
+		}
+
 		if !action.KeepAppOpen() {
 			l.hide()
 		}
 	})
 
 	// Setup actions
-	actions.SetupCopyToClipboard(func(text string) {
+	actions.SetupCopyToClipboard(func(text string) error {
+		var err error
+
 		_, _ = glib.IdleAdd(func(text string) {
-			clipboard, err := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
-			if err != nil {
-				panic("Failed to get clipboard!")
+			clipboard, e := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
+			if e != nil {
+				// TODO: Log error
+				err = e
+				return
 			}
 
 			clipboard.SetText(text)
 			clipboard.Store()
 		}, text)
+
+		return err
 	})
-	actions.SetupSetUserQuery(func(query string) {
-		_, _ = glib.IdleAdd(l.input.SetText, query)
-		_, _ = glib.IdleAdd(l.input.SetPosition, len(query))
+	actions.SetupSetUserQuery(func(query string) error {
+
+		// Set the user query
+		_, err := glib.IdleAdd(l.input.SetText, query)
+		if err != nil {
+			return err
+		}
+
+		// Set the cursor's position to the end of the query
+		_, err = glib.IdleAdd(l.input.SetPosition, len(query))
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
-	actions.SetupRenderResultList(func(results []api.Result) {
-		_, _ = glib.IdleAdd(l.ShowResults, results)
+	actions.SetupRenderResultList(func(results []api.Result) error {
+		_, err := glib.IdleAdd(l.ShowResults, results)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	})
 
 	// Show everything in the app

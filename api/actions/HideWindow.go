@@ -20,7 +20,7 @@ func (HideWindow) KeepAppOpen() bool {
 	return false
 }
 
-func (HideWindow) Run() {
-	return
+func (HideWindow) Run() error {
+	return nil
 }
 

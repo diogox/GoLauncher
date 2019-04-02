@@ -27,15 +27,21 @@ func (LaunchApp) KeepAppOpen() bool {
 	return false
 }
 
-func (a LaunchApp) Run() {
+func (la LaunchApp) Run() error {
 	// Increment access counter
-	err := (*a.db).IncrementAppAccessCounter(a.Exec)
+	err := (*la.db).IncrementAppAccessCounter(la.Exec)
 	if err != nil {
-		panic(err)
+
+		// TODO: Log the error
+		// If we can't increment the counter, we probably shouldn't return the error either, since it's not a critical functionality
+		// TODO: I'll return the error for now, for testing purposes
+		return err
 	}
 
-	err = LinuxApps.StartAppOrFocusExistingByCommand(a.Exec)
+	err = LinuxApps.StartAppOrFocusExistingByCommand(la.Exec)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package api
 type Action interface {
 	GetType() string
 	KeepAppOpen() bool
-	Run()
+	Run() error
 }
 
 const ACTION_LIST_ACTION = "ACTION_LIST_ACTION"

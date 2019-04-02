@@ -33,9 +33,18 @@ func (al ActionList) KeepAppOpen() bool {
 	return false
 }
 
-func (al ActionList) Run() {
+func (al ActionList) Run() error {
 	for _, action := range al.Actions {
-		action.Run()
+
+		// Run each action
+		err := action.Run()
+		if err != nil {
+
+			// Return the first error encountered
+			return err
+		}
 	}
+
+	return nil
 }
 

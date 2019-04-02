@@ -23,7 +23,7 @@
   branch = "master"
   name = "github.com/diogox/LinuxApps"
   packages = ["."]
-  revision = "4dd718c5076337d98a25af5843ea294dc49a4249"
+  revision = "240d9ca2d162212bdb94988928dc34c9c527c41b"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -77,7 +77,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560"
+  revision = "baf5eb976a8cd65845293cd814ea151018552292"
 
 [[projects]]
   name = "gopkg.in/ini.v1"

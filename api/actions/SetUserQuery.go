@@ -6,7 +6,7 @@ var setQueryInstance *SetUserQuery
 
 // Copying text to the clipboard may rely on the GUI framework.
 // To keep the action platform-agnostic, we need to set it up before using it.
-func SetupSetUserQuery(setQueryCallback func(string)) {
+func SetupSetUserQuery(setQueryCallback func(string) error) {
 	setQueryInstance = &SetUserQuery {
 		Type: api.SET_USER_QUERY_ACTION,
 		setQueryCallback: setQueryCallback,
@@ -26,7 +26,7 @@ func NewSetUserQuery(query string) SetUserQuery {
 type SetUserQuery struct {
 	Type string
 	Query string
-	setQueryCallback func(string)
+	setQueryCallback func(string) error
 }
 
 func (suq SetUserQuery) GetType() string {
@@ -37,7 +37,7 @@ func (SetUserQuery) KeepAppOpen() bool {
 	return true
 }
 
-func (s SetUserQuery) Run() {
-	s.setQueryCallback(s.Query)
+func (s SetUserQuery) Run() error {
+	return s.setQueryCallback(s.Query)
 }
 

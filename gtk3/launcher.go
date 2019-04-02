@@ -7,6 +7,7 @@ import (
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/diogox/GoLauncher/navigation"
+	"github.com/diogox/GoLauncher/pkg/screen"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -450,8 +451,10 @@ func (l *Launcher) show() {
 	}
 
 	// Position (after clearing results - otherwise it won't center properly)
-	// TODO: Cache the position for each screen? Otherwise the position on the same screen changes when the input is kept and the launcher is toggled!
-	centerAtTopOfScreen(l.window)
+	err = screen.CenterAtTopOfScreen(l.window)
+	if err != nil {
+		panic(err)
+	}
 
 	// Show
 	l.window.ShowAll()

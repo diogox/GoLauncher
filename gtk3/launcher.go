@@ -458,8 +458,11 @@ func (l *Launcher) show() {
 	l.isVisible = true
 
 	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
+	// TODO: Fix this mess by removing the need to hide the ScrolledWindow!!
 	if isInputEmpty := len(getTrimmedInput(l.input)) == 0; isInputEmpty {
 		l.resultsScrollableBox.Hide()
+		_, _ = glib.IdleAdd(l.input.SetText, " ")
+		l.ClearInput()
 	}
 
 	// Focus

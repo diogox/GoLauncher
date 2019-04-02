@@ -224,8 +224,10 @@ func (l *Launcher) Start() error {
 					}
 				}
 			}
+			return
 		}
 
+		// TODO: Pressing Ctrl seems to cause a nil reference related panic here!!
 		res, ok := (*result).(*ResultItem)
 		if !ok {
 			panic("Error in navigation logic!")

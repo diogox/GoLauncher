@@ -1,7 +1,7 @@
 package api
 
 type Launcher interface {
-	Start()
+	Start() error
 	Stop()
 	BindHotkey(hotkey string)
 	ToggleVisibility()

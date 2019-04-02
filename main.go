@@ -159,7 +159,11 @@ func main() {
 	launcher.HandleInput(onInput, onEmptyInput)
 
 	// Start Launcher
-	launcher.Start()
+	err := launcher.Start()
+	if err != nil {
+		// TODO: Log
+		panic(err)
+	}
 
 	// Make main function wait
 	wg.Wait()

@@ -140,7 +140,7 @@ func (l *Launcher) HandleInput(callback func(string), onEmptyCallback func()) {
 	})
 }
 
-func (l *Launcher) Start() {
+func (l *Launcher) Start() error {
 
 	// Keep the launcher above everything
 	l.window.SetKeepAbove(true)
@@ -149,22 +149,25 @@ func (l *Launcher) Start() {
 	screenChanged(l.window)
 
 	// When the monitor/screen changes, check for transparency support
-	_, _ = l.window.Connect("screen-changed", func(window *gtk.Window, oldScreen *gdk.Screen, userData ...interface{}) {
+	_, err := l.window.Connect("screen-changed", func(window *gtk.Window, oldScreen *gdk.Screen, userData ...interface{}) {
 		screenChanged(window)
 	})
+	if err != nil { return err }
 
 	// Set transparency on draw
-	_, _ = l.window.Connect("draw", func(window *gtk.Window, context *cairo.Context) {
+	_, err = l.window.Connect("draw", func(window *gtk.Window, context *cairo.Context) {
 		setTransparent(window, context)
 	})
+	if err != nil { return err }
 
 	// When the window loses focus, hide it
-	_, _ = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
+	_, err = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
 		_, _ = glib.IdleAdd(l.hide)
 	})
+	if err != nil { return err }
 
 	// Detect navigation ('Up', 'Down', 'Enter')
-	_, _ = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {
+	_, err = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {
 		keyEvent := &gdk.EventKey{
 			Event: event,
 		}
@@ -221,7 +224,6 @@ func (l *Launcher) Start() {
 					}
 				}
 			}
-			return
 		}
 
 		res, ok := (*result).(*ResultItem)
@@ -236,10 +238,12 @@ func (l *Launcher) Start() {
 		prevRes.Unselect()
 		res.Select()
 	})
+	if err != nil { return err }
 
-	_, _ = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
+	_, err = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
 		_, _ = glib.IdleAdd(ShowSettingsWindow, l.preferences)
 	})
+	if err != nil { return err }
 
 	l.navigation.SetOnItemEnter(func(action api.Action) {
 		err := action.Run()
@@ -300,6 +304,8 @@ func (l *Launcher) Start() {
 
 	// Start loop
 	go gtk.Main()
+
+	return nil
 }
 
 func (l *Launcher) Stop() {

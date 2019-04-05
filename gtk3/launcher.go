@@ -6,6 +6,8 @@ import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/gtk3/glade"
+	"github.com/diogox/GoLauncher/gtk3/result"
+	"github.com/diogox/GoLauncher/gtk3/utils"
 	"github.com/diogox/GoLauncher/navigation"
 	"github.com/diogox/GoLauncher/pkg/screen"
 	"github.com/gotk3/gotk3/cairo"
@@ -41,7 +43,7 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 	}
 
 	// Get CSS provider
-	_, err = setCssProvider(CssFile)
+	_, err = utils.SetCssProvider(CssFile)
 	if err != nil {
 		panic(err)
 	}
@@ -146,25 +148,31 @@ func (l *Launcher) Start() error {
 	l.window.SetKeepAbove(true)
 
 	// Set the groundwork for transparency
-	screenChanged(l.window)
+	utils.ScreenChanged(l.window)
 
 	// When the monitor/screen changes, check for transparency support
 	_, err := l.window.Connect("screen-changed", func(window *gtk.Window, oldScreen *gdk.Screen, userData ...interface{}) {
-		screenChanged(window)
+		utils.ScreenChanged(window)
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	// Set transparency on draw
 	_, err = l.window.Connect("draw", func(window *gtk.Window, context *cairo.Context) {
-		setTransparent(window, context)
+		utils.SetTransparent(window, context)
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	// When the window loses focus, hide it
 	_, err = l.window.Connect("focus-out-event", func(widget *gtk.Window, event *gdk.Event) {
 		_, _ = glib.IdleAdd(l.hide)
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	// Detect navigation ('Up', 'Down', 'Enter')
 	_, err = l.window.Connect("key-press-event", func(widget *gtk.Window, event *gdk.Event) {
@@ -172,20 +180,20 @@ func (l *Launcher) Start() error {
 			Event: event,
 		}
 
-		var result, prevResult *api.Result
+		var item, prevResult *api.Result
 
 		// Resolve action
 		const KEY_Enter = 65293
 		key := keyEvent.KeyVal()
 		switch key {
 		case gdk.KEY_Up:
-			result, prevResult = l.navigation.Up()
-			if result == nil {
+			item, prevResult = l.navigation.Up()
+			if item == nil {
 				return
 			}
 		case gdk.KEY_Down:
-			result, prevResult = l.navigation.Down()
-			if result == nil {
+			item, prevResult = l.navigation.Down()
+			if item == nil {
 				return
 			}
 		case KEY_Enter:
@@ -209,12 +217,12 @@ func (l *Launcher) Start() error {
 				r, err := l.navigation.At(int(index) - 1)
 				if err == nil {
 					// Select new item
-					currentItem := (*r).(*ResultItem)
+					currentItem := (*r).(*result.ResultItem)
 					currentItem.Select()
 
 					// Unselect previous item
 					prev := l.navigation.SetSelected(r)
-					prevItem, _ := (*prev).(*ResultItem)
+					prevItem, _ := (*prev).(*result.ResultItem)
 					prevItem.Unselect()
 
 					// Run Action
@@ -228,11 +236,11 @@ func (l *Launcher) Start() error {
 		}
 
 		// TODO: Pressing Ctrl seems to cause a nil reference related panic here!!
-		res, ok := (*result).(*ResultItem)
+		res, ok := (*item).(*result.ResultItem)
 		if !ok {
 			panic("Error in navigation logic!")
 		}
-		prevRes, ok := (*prevResult).(*ResultItem)
+		prevRes, ok := (*prevResult).(*result.ResultItem)
 		if !ok {
 			panic("Error in navigation logic!")
 		}
@@ -240,12 +248,16 @@ func (l *Launcher) Start() error {
 		prevRes.Unselect()
 		res.Select()
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	_, err = l.prefsBtn.Connect("clicked", func(btn *gtk.Button) {
 		_, _ = glib.IdleAdd(ShowSettingsWindow, l.preferences)
 	})
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	l.navigation.SetOnItemEnter(func(action api.Action) {
 		err := action.Run()
@@ -350,31 +362,39 @@ func (l *Launcher) ClearInput() {
 }
 
 func (l *Launcher) ShowResults(searchResults []api.Result) {
-	results := make([]*ResultItem, 0)
+	results := make([]*result.ResultItem, 0)
 
 	// Convert results
 	for i, r := range searchResults {
-		var result ResultItem
-		if i < 9 {
-			position := fmt.Sprintf("%d", i+1)
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), r.IsDefaultSelect(), position, r.OnEnterAction(), r.OnAltEnterAction())
-		} else {
-			position := fmt.Sprintf("%s", string(rune(97 + i - 9)))
-			result = NewResultItem(r.Title(), r.Description(), r.IconPath(), r.IsDefaultSelect(), position, r.OnEnterAction(), r.OnAltEnterAction())
+		position := fmt.Sprintf("%d", i+1)
+		if i > 9 {
+			position = fmt.Sprintf("%s", string(rune(97+i-9)))
 		}
-		result.BindMouseHover(func() {
+
+		opts := result.ResultItemOptions{
+			Title:            r.Title(),
+			Description:      r.Description(),
+			IconPath:         r.IconPath(),
+			IsDefaultSelect:  r.IsDefaultSelect(),
+			OnEnterAction:    r.OnEnterAction(),
+			OnAltEnterAction: r.OnAltEnterAction(),
+		}
+
+		resultItem := result.NewResultItem(position, opts)
+
+		resultItem.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
-				res := api.Result(&result)
+				res := api.Result(&resultItem)
 				prevSelected := l.navigation.SetSelected(&res)
-				prevRes, _ := (*prevSelected).(*ResultItem)
+				prevRes, _ := (*prevSelected).(*result.ResultItem)
 				prevRes.Unselect()
-				result.Select()
+				resultItem.Select()
 			})
 		})
-		result.BindMouseClick(func() {
+		resultItem.BindMouseClick(func() {
 			_, _ = glib.IdleAdd(l.navigation.Enter)
 		})
-		results = append(results, &result)
+		results = append(results, &resultItem)
 	}
 
 	l.clearResults()
@@ -402,8 +422,8 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	}
 
 	// Show New Results
-	for _, result := range results {
-		l.resultsBox.Add(result.frame)
+	for _, r := range results {
+		l.resultsBox.Add(r.Frame)
 	}
 
 	// Update Launcher
@@ -420,7 +440,7 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	// Set ScrolledWindow height
 	resultItemHeight := float64(0)
 	if len(results) != 0 {
-		_, height := results[0].frame.GetPreferredHeight()
+		_, height := results[0].Frame.GetPreferredHeight()
 		resultItemHeight = float64(height)
 	}
 

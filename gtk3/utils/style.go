@@ -1,4 +1,4 @@
-package gtk3
+package utils
 
 import (
 	"github.com/gotk3/gotk3/cairo"
@@ -6,7 +6,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-func setCssProvider(cssPath string) (*gtk.CssProvider, error) {
+func SetCssProvider(cssPath string) (*gtk.CssProvider, error) {
 	cssProvider, err := gtk.CssProviderNew()
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func setCssProvider(cssPath string) (*gtk.CssProvider, error) {
 	return cssProvider, nil
 }
 
-func setStyleClass(obj *gtk.Widget, className string) {
+func SetStyleClass(obj *gtk.Widget, className string) {
 
 	// Get object style context
 	styleCtx, err := obj.GetStyleContext()
@@ -39,7 +39,7 @@ func setStyleClass(obj *gtk.Widget, className string) {
 	styleCtx.AddClass(className)
 }
 
-func removeStyleClass(obj *gtk.Widget, className string) {
+func RemoveStyleClass(obj *gtk.Widget, className string) {
 
 	// Get object style context
 	styleCtx, err := obj.GetStyleContext()
@@ -56,7 +56,7 @@ func removeStyleClass(obj *gtk.Widget, className string) {
 var alphaSupported bool
 
 // TODO: Sometimes, the screen will flicker when we type too fast because this is quite heavy
-func setTransparent(w *gtk.Window, ctx *cairo.Context) {
+func SetTransparent(w *gtk.Window, ctx *cairo.Context) {
 
 	if alphaSupported {
 
@@ -71,7 +71,7 @@ func setTransparent(w *gtk.Window, ctx *cairo.Context) {
 	ctx.SetOperator(cairo.OPERATOR_OVER)
 }
 
-func screenChanged(window *gtk.Window) {
+func ScreenChanged(window *gtk.Window) {
 	screen, _ := window.GetScreen()
 	visual, _ := screen.GetRGBAVisual()
 

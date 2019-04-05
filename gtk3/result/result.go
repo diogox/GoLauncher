@@ -1,9 +1,10 @@
-package gtk3
+package result
 
 import (
 	"fmt"
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/gtk3/glade"
+	"github.com/diogox/GoLauncher/gtk3/utils"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"os"
@@ -19,7 +20,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(title string, description string, iconName string, isDefaultSelect bool, position string, onEnterAction api.Action, onAltEnterAction api.Action) ResultItem {
+func NewResultItem(position string, opts ResultItemOptions) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -55,27 +56,27 @@ func NewResultItem(title string, description string, iconName string, isDefaultS
 		panic(err)
 	}
 
-	nameLabel.SetText(title)
-	descrLabel.SetText(description)
+	nameLabel.SetText(opts.Title)
+	descrLabel.SetText(opts.Description)
 
 	shortcut := fmt.Sprintf("Alt+%s", position)
 	shortcutLabel.SetText(shortcut)
 
-	if strings.Contains(iconName, string(os.PathSeparator)) {
+	if strings.Contains(opts.IconPath, string(os.PathSeparator)) {
 		// It's not an icon name, it's an icon path
-		pix, _ := gdk.PixbufNewFromFileAtScale(iconName, 40, 40, true)
+		pix, _ := gdk.PixbufNewFromFileAtScale(opts.IconPath, 40, 40, true)
 		iconImg.SetFromPixbuf(pix)
 	} else {
-		iconImg.SetFromIconName(iconName, gtk.ICON_SIZE_DND)
+		iconImg.SetFromIconName(opts.IconPath, gtk.ICON_SIZE_DND)
 		iconImg.SetPixelSize(40)
 	}
 
 	resultItem := ResultItem{
-		onEnterAction:    onEnterAction,
-		onAltEnterAction: onAltEnterAction,
-		isDefaultSelect: isDefaultSelect,
+		onEnterAction:    opts.OnEnterAction,
+		onAltEnterAction: opts.OnAltEnterAction,
+		isDefaultSelect:  opts.IsDefaultSelect,
 
-		frame:       resultEventFrame,
+		Frame:       resultEventFrame,
 		box:         resultEventBox,
 		icon:        iconImg,
 		label:       nameLabel,
@@ -91,7 +92,7 @@ type ResultItem struct {
 	onAltEnterAction api.Action
 	isDefaultSelect  bool
 
-	frame       *gtk.EventBox
+	Frame       *gtk.EventBox
 	box         *gtk.EventBox
 	icon        *gtk.Image
 	label       *gtk.Label
@@ -127,21 +128,21 @@ func (r *ResultItem) OnAltEnterAction() api.Action {
 }
 
 func (r *ResultItem) Select() {
-	setStyleClass(&r.box.Widget, "selected")
+	utils.SetStyleClass(&r.box.Widget, "selected")
 }
 
 func (r *ResultItem) Unselect() {
-	removeStyleClass(&r.box.Widget, "selected")
+	utils.RemoveStyleClass(&r.box.Widget, "selected")
 }
 
 func (r *ResultItem) BindMouseHover(callback func()) {
-	_, _ = r.frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+	_, _ = r.Frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
 }
 
 func (r *ResultItem) BindMouseClick(callback func()) {
-	_, _ = r.frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+	_, _ = r.Frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
 }

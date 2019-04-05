@@ -6,7 +6,6 @@ import (
 	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/api/actions"
 	"github.com/diogox/GoLauncher/gtk3/glade"
-	"github.com/diogox/GoLauncher/gtk3/result"
 	"github.com/diogox/GoLauncher/gtk3/utils"
 	"github.com/diogox/GoLauncher/navigation"
 	"github.com/diogox/GoLauncher/pkg/screen"
@@ -93,7 +92,8 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 
 	// Update ScrollController every time a change is made to the preference 'PreferenceNResultsToShow'
 	(*preferences).BindCallback(api.PreferenceNResultsToShow, func(arg interface{}) {
-		nOfResultsToShow, _ := arg.(int)
+		argString, _ := arg.(string)
+		nOfResultsToShow, _ := strconv.Atoi(argString)
 		scrollController.SetNOfItemsToShow(nOfResultsToShow)
 	})
 
@@ -116,6 +116,7 @@ func NewLauncher(preferences *api.Preferences) *Launcher {
 // TODO: Probably better to make a LauncherOptions object
 type Launcher struct {
 	hotkey               *string
+	isVisible            bool
 	preferences          *api.Preferences
 	window               *gtk.Window
 	body                 *gtk.Box
@@ -124,7 +125,6 @@ type Launcher struct {
 	resultsBox           *gtk.Box
 	resultsScrollableBox *gtk.ScrolledWindow
 	navigation           *navigation.Navigation
-	isVisible            bool
 }
 
 func (l *Launcher) HandleInput(callback func(string), onEmptyCallback func()) {
@@ -180,19 +180,19 @@ func (l *Launcher) Start() error {
 			Event: event,
 		}
 
-		var item, prevResult *api.Result
+		var item, prevItem *navigation.NavigationItem
 
 		// Resolve action
 		const KEY_Enter = 65293
 		key := keyEvent.KeyVal()
 		switch key {
 		case gdk.KEY_Up:
-			item, prevResult = l.navigation.Up()
+			item, prevItem = l.navigation.Up()
 			if item == nil {
 				return
 			}
 		case gdk.KEY_Down:
-			item, prevResult = l.navigation.Down()
+			item, prevItem = l.navigation.Down()
 			if item == nil {
 				return
 			}
@@ -214,19 +214,22 @@ func (l *Launcher) Start() error {
 				}
 
 				// Get result at that index
-				r, err := l.navigation.At(int(index) - 1)
+				current, err := l.navigation.At(int(index) - 1)
 				if err == nil {
+
+					currentSearchItem := current.SearchResult
+					currentResultItem := current.ResulItem
+
 					// Select new item
-					currentItem := (*r).(*result.ResultItem)
-					currentItem.Select()
+					currentResultItem.Select()
 
 					// Unselect previous item
-					prev := l.navigation.SetSelected(r)
-					prevItem, _ := (*prev).(*result.ResultItem)
+					prev := l.navigation.SetSelected(&currentSearchItem)
+					prevItem := prev.ResulItem
 					prevItem.Unselect()
 
 					// Run Action
-					err = currentItem.OnEnterAction().Run()
+					err = currentSearchItem.OnEnterAction().Run()
 					if err != nil {
 						panic(err)
 					}
@@ -235,18 +238,8 @@ func (l *Launcher) Start() error {
 			return
 		}
 
-		// TODO: Pressing Ctrl seems to cause a nil reference related panic here!!
-		res, ok := (*item).(*result.ResultItem)
-		if !ok {
-			panic("Error in navigation logic!")
-		}
-		prevRes, ok := (*prevResult).(*result.ResultItem)
-		if !ok {
-			panic("Error in navigation logic!")
-		}
-
-		prevRes.Unselect()
-		res.Select()
+		prevItem.ResulItem.Unselect()
+		item.ResulItem.Select()
 	})
 	if err != nil {
 		return err
@@ -304,7 +297,7 @@ func (l *Launcher) Start() error {
 
 		return nil
 	})
-	actions.SetupRenderResultList(func(results []api.Result) error {
+	actions.SetupRenderResultList(func(results []api.SearchResult) error {
 		_, err := glib.IdleAdd(l.ShowResults, results)
 		if err != nil {
 			return err
@@ -361,43 +354,41 @@ func (l *Launcher) ClearInput() {
 	l.input.DeleteText(0, -1)
 }
 
-func (l *Launcher) ShowResults(searchResults []api.Result) {
-	results := make([]*result.ResultItem, 0)
+func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
+
+	l.clearResults()
+
+	// Update Navigation
+	l.navigation.SetItems(searchResults)
+
+	items := l.navigation.GetItems()
+	results := make([]api.ResultItem, 0)
 
 	// Convert results
-	for i, r := range searchResults {
+	for i, item := range items {
+		// Get results
+		searchResult := item.SearchResult
+		resultItem := item.ResulItem
+
 		position := fmt.Sprintf("%d", i+1)
 		if i > 9 {
 			position = fmt.Sprintf("%s", string(rune(97+i-9)))
 		}
 
-		opts := result.ResultItemOptions{
-			Title:            r.Title(),
-			Description:      r.Description(),
-			IconPath:         r.IconPath(),
-			IsDefaultSelect:  r.IsDefaultSelect(),
-			OnEnterAction:    r.OnEnterAction(),
-			OnAltEnterAction: r.OnAltEnterAction(),
-		}
-
-		resultItem := result.NewResultItem(position, opts)
+		resultItem.SetPosition(position)
 
 		resultItem.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
-				res := api.Result(&resultItem)
-				prevSelected := l.navigation.SetSelected(&res)
-				prevRes, _ := (*prevSelected).(*result.ResultItem)
-				prevRes.Unselect()
+				prevSelected := l.navigation.SetSelected(&searchResult)
+				prevSelected.ResulItem.Unselect()
 				resultItem.Select()
 			})
 		})
 		resultItem.BindMouseClick(func() {
 			_, _ = glib.IdleAdd(l.navigation.Enter)
 		})
-		results = append(results, &resultItem)
+		results = append(results, resultItem)
 	}
-
-	l.clearResults()
 
 	// Set Margins
 	if len(results) != 0 {
@@ -408,14 +399,14 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 		results[0].Select()
 
 		// Check if any of the results should be the automatic default
-		for _, r := range results {
-			if r.IsDefaultSelect() {
+		for i, searchResult := range searchResults {
+			if searchResult.IsDefaultSelect() {
 
 				// Unselect the first item that was automatically selected
 				results[0].Unselect()
 
 				// Select default item
-				r.Select()
+				results[i].Select()
 				break
 			}
 		}
@@ -423,16 +414,14 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 
 	// Show New Results
 	for _, r := range results {
-		l.resultsBox.Add(r.Frame)
-	}
+		r.AccessInternals(func(args... interface{}) {
+			// get frame
+			frame, _ := args[0].(*gtk.EventBox)
 
-	// Update Launcher
-	resultItems := make([]*api.Result, 0)
-	for _, r := range results {
-		res := api.Result(r)
-		resultItems = append(resultItems, &res)
+			// Add it to the results box
+			l.resultsBox.Add(frame)
+		})
 	}
-	l.navigation.SetItems(resultItems)
 
 	// Show ScrolledWindow here (Had to hide it, initially, to keep from showing an awkward whitespace. Couldn't find another way to fix that...)
 	l.resultsScrollableBox.Show()
@@ -440,8 +429,16 @@ func (l *Launcher) ShowResults(searchResults []api.Result) {
 	// Set ScrolledWindow height
 	resultItemHeight := float64(0)
 	if len(results) != 0 {
-		_, height := results[0].Frame.GetPreferredHeight()
-		resultItemHeight = float64(height)
+		results[0].AccessInternals(func(args... interface{}) {
+			// Get frame
+			frame, _ := args[0].(*gtk.EventBox)
+
+			// Get height of the item
+			_, height := frame.GetPreferredHeight()
+
+			// Return it
+			resultItemHeight = float64(height)
+		})
 	}
 
 	newScrolledHeight := resultItemHeight * float64(len(results))
@@ -471,7 +468,7 @@ func (l *Launcher) clearResults() {
 	l.resultsScrollableBox.Hide()
 
 	// Clear navigation
-	l.navigation.SetItems(make([]*api.Result, 0))
+	l.navigation.SetItems(make([]api.SearchResult, 0))
 
 	// Get Children
 	previousResults := l.resultsBox.GetChildren()

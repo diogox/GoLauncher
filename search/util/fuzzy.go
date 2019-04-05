@@ -8,7 +8,7 @@ import (
 )
 
 type resultWithScore struct {
-	result api.Result
+	result api.SearchResult
 	score float64
 }
 
@@ -25,7 +25,7 @@ func (s sortableResults) Less(i, j int) bool {
 	return s[i].score > s[j].score
 }
 
-func GetBestMatches(query string, results []api.Result, minScore float64) []api.Result {
+func GetBestMatches(query string, results []api.SearchResult, minScore float64) []api.SearchResult {
 
 	// Get Scores
 	scores := make([]resultWithScore, 0)
@@ -51,7 +51,7 @@ func GetBestMatches(query string, results []api.Result, minScore float64) []api.
 	sort.Sort(sortableResults(scores))
 
 	// Turn into []api.Result
-	results = make([]api.Result, 0)
+	results = make([]api.SearchResult, 0)
 	for _, s := range scores {
 		results = append(results, s.result)
 	}
@@ -59,7 +59,7 @@ func GetBestMatches(query string, results []api.Result, minScore float64) []api.
 	return results
 }
 
-func getScore(query string, result api.Result) float64 {
+func getScore(query string, result api.SearchResult) float64 {
 	query = strings.ToLower(query)
 	title := strings.ToLower(result.Title())
 	//descr := strings.ToLower(result.Description())

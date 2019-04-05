@@ -87,7 +87,7 @@ func InferActionType(jsonObj []byte) (*api.Action, error) {
 		panic(err)
 	}
 
-	var renderResultList []api.Result
+	var renderResultList []api.SearchResult
 	for _, r := range results {
 		name, _ := r["Title_"].MarshalJSON()
 		descr, _ := r["Description_"].MarshalJSON()

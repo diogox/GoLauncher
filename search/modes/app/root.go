@@ -28,7 +28,7 @@ func (AppSearchMode) IsEnabled(input string) bool {
 
 func (asm AppSearchMode) HandleInput(input string) api.Action {
 
-	results := make([]api.Result, 0)
+	results := make([]api.SearchResult, 0)
 	apps, _ := (*asm.db).GetAllApps()
 
 	for _, app := range apps {
@@ -74,6 +74,6 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	return actions.NewRenderResultList(results)
 }
 
-func (AppSearchMode) DefaultItems(input string) []api.Result {
+func (AppSearchMode) DefaultItems(input string) []api.SearchResult {
 	return nil
 }

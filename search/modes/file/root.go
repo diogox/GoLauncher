@@ -64,11 +64,11 @@ func (fb *FileBrowserMode) HandleInput(input string) api.Action {
 	return actions.NewRenderResultList(getN(renderResults(files, absPath), nOfResults))
 }
 
-func (*FileBrowserMode) DefaultItems(input string) []api.Result {
+func (*FileBrowserMode) DefaultItems(input string) []api.SearchResult {
 	return nil
 }
 
-func showSuggestions(_path string, nOfResults int) []api.Result {
+func showSuggestions(_path string, nOfResults int) []api.SearchResult {
 	fileName := path.Base(_path)
 	basePath := _path[:len(_path)-len(fileName)]
 
@@ -77,7 +77,7 @@ func showSuggestions(_path string, nOfResults int) []api.Result {
 		return renderNoMatch()
 	}
 
-	allResults := make([]api.Result, 0)
+	allResults := make([]api.SearchResult, 0)
 	for _, r := range renderResults(files, basePath) {
 		// Check if matches search
 		if strings.HasPrefix(strings.ToLower(r.Title()), strings.ToLower(fileName)) {
@@ -92,8 +92,8 @@ func showSuggestions(_path string, nOfResults int) []api.Result {
 	return getN(allResults, nOfResults)
 }
 
-func renderResults(files []os.FileInfo, basePath string) []api.Result {
-	results := make([]api.Result, 0)
+func renderResults(files []os.FileInfo, basePath string) []api.SearchResult {
+	results := make([]api.SearchResult, 0)
 	for _, f := range files {
 
 		// Get item's full path
@@ -136,7 +136,7 @@ func renderResults(files []os.FileInfo, basePath string) []api.Result {
 	return results
 }
 
-func renderNoMatch() []api.Result {
+func renderNoMatch() []api.SearchResult {
 
 	opts := result.SearchResultOptions{
 		Title:            "No match found!",
@@ -147,7 +147,7 @@ func renderNoMatch() []api.Result {
 		OnAltEnterAction: actions.NewDoNothing(),
 	}
 
-	return []api.Result{
+	return []api.SearchResult{
 		result.NewSearchResult(opts),
 	}
 }

@@ -2,12 +2,12 @@ package result
 
 import (
 	"github.com/diogox/GoLauncher/api"
+	"github.com/diogox/GoLauncher/gtk3/result"
 )
 
 func NewSearchResult(opts SearchResultOptions) SearchResult {
 
 	return SearchResult{
-
 		title:            opts.Title,
 		description:      opts.Description,
 		iconPath:         opts.IconPath,
@@ -48,4 +48,16 @@ func (r SearchResult) OnEnterAction() api.Action {
 
 func (r SearchResult) OnAltEnterAction() api.Action {
 	return r.onAltEnterAction
+}
+
+func (r SearchResult) ToResultItem() api.ResultItem {
+	opts := result.ResultItemOptions{
+		Title:       r.title,
+		Description: r.description,
+		IconPath:    r.iconPath,
+	}
+
+	resultItem := result.NewResultItem(opts)
+
+	return api.ResultItem(&resultItem)
 }

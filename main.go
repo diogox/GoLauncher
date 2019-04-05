@@ -144,7 +144,7 @@ func main() {
 
 		// Generate results
 		// TODO: Implement ResultMaker interface (also TODO) to turn apps into results
-		frequentAppsResults := make([]api.Result, 0)
+		frequentAppsResults := make([]api.SearchResult, 0)
 		for _, app := range frequentApps {
 
 			opts := result.SearchResultOptions{
@@ -157,7 +157,7 @@ func main() {
 			}
 
 			r := result.NewSearchResult(opts)
-			frequentAppsResults = append(frequentAppsResults, api.Result(&r))
+			frequentAppsResults = append(frequentAppsResults, api.SearchResult(&r))
 		}
 
 		// Show results

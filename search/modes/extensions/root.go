@@ -33,7 +33,7 @@ func (esm *ExtensionSearchMode) IsEnabled(input string) bool {
 
 func (esm *ExtensionSearchMode) HandleInput(input string) api.Action {
 	// TODO
-	results := make([]api.Result, 0)
+	results := make([]api.SearchResult, 0)
 	keyword, args := getKeywordArgs(input)
 	if strings.Contains(input, *keyword + " ") {
 		controller := esm.extensionsServer.GetControllerByKeyword(*keyword)
@@ -42,8 +42,8 @@ func (esm *ExtensionSearchMode) HandleInput(input string) api.Action {
 	return actions.NewRenderResultList(results)
 }
 
-func (*ExtensionSearchMode) DefaultItems(input string) []api.Result {
-	return make([]api.Result, 0)
+func (*ExtensionSearchMode) DefaultItems(input string) []api.SearchResult {
+	return make([]api.SearchResult, 0)
 }
 
 // TODO: Create a 'query' type for this?

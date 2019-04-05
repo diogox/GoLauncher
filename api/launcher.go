@@ -7,5 +7,5 @@ type Launcher interface {
 	ToggleVisibility()
 	ClearInput()
 	HandleInput(func(input string))
-	ShowResults([]Result)
+	ShowResults([]SearchResult)
 }

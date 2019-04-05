@@ -33,7 +33,7 @@ func (c *CalcSearchMode) IsEnabled(input string) bool {
 }
 
 func (c *CalcSearchMode) HandleInput(input string) api.Action {
-	results := make([]api.Result, 0)
+	results := make([]api.SearchResult, 0)
 
 	calcResult, err := c.calculate(input)
 	if err != nil {
@@ -83,6 +83,6 @@ func (*CalcSearchMode) calculate(input string) (string, error) {
 	return resultStr, nil
 }
 
-func (*CalcSearchMode) DefaultItems(input string) []api.Result {
+func (*CalcSearchMode) DefaultItems(input string) []api.SearchResult {
 	return nil
 }

@@ -6,14 +6,14 @@ var renderResultListInstance *RenderResultList
 
 // Rendering results relies on the GUI framework.
 // To keep the action platform-agnostic, we need to set it up before using it.
-func SetupRenderResultList(renderResultsCallback func([]api.Result) error) {
+func SetupRenderResultList(renderResultsCallback func([]api.SearchResult) error) {
 	renderResultListInstance = &RenderResultList {
 		Type: api.RENDER_RESULT_LIST_ACTION,
 		renderCallback: renderResultsCallback,
 	}
 }
 
-func NewRenderResultList(resultList []api.Result) RenderResultList {
+func NewRenderResultList(resultList []api.SearchResult) RenderResultList {
 	if renderResultListInstance == nil {
 		panic("You need to setup this action before you can use it!")
 	}
@@ -25,8 +25,8 @@ func NewRenderResultList(resultList []api.Result) RenderResultList {
 
 type RenderResultList struct {
 	Type string
-	ResultList []api.Result `json:"result_list"`
-	renderCallback func([]api.Result) error
+	ResultList []api.SearchResult `json:"result_list"`
+	renderCallback func([]api.SearchResult) error
 }
 
 func (rrl RenderResultList) GetType() string {

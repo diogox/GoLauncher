@@ -9,7 +9,7 @@ func NewNavigation(scrollController *ScrollController) Navigation {
 	return Navigation{
 		onItemEnter:  func(api.Action) {},
 		currentIndex: -1,
-		items:        make([]*api.Result, 0),
+		items:        make([]*NavigationItem, 0),
 		ScrollController: scrollController,
 	}
 }
@@ -17,7 +17,7 @@ func NewNavigation(scrollController *ScrollController) Navigation {
 type Navigation struct {
 	onItemEnter      func(api.Action)
 	currentIndex     int
-	items            []*api.Result
+	items            []*NavigationItem
 	ScrollController *ScrollController
 }
 
@@ -25,9 +25,18 @@ func (n *Navigation) SetOnItemEnter(onItemEnter func(api.Action)) {
 	n.onItemEnter = onItemEnter
 }
 
-func (n *Navigation) SetItems(items []*api.Result) {
+func (n *Navigation) SetItems(searchResults []api.SearchResult) {
+	items := make([]*NavigationItem, 0)
+
+	// Convert to entries
+	for _, searchResult := range searchResults {
+		items = append(items, newNavigationItem(searchResult))
+	}
+
+	// Set current items
 	n.items = items
 
+	// Set current index
 	if len(items) == 0 {
 		n.currentIndex = -1
 	} else {
@@ -35,7 +44,7 @@ func (n *Navigation) SetItems(items []*api.Result) {
 	}
 }
 
-func (n *Navigation) Up() (*api.Result, *api.Result) {
+func (n *Navigation) Up() (*NavigationItem, *NavigationItem) {
 	// No items to navigate through
 	if len(n.items) == 0 {
 		return nil, nil
@@ -45,7 +54,7 @@ func (n *Navigation) Up() (*api.Result, *api.Result) {
 	n.ScrollController.SignalMoveUp()
 
 	// There's only a previous item if a current index exists
-	var prevItem *api.Result
+	var prevItem *NavigationItem
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
@@ -65,7 +74,7 @@ func (n *Navigation) Up() (*api.Result, *api.Result) {
 	return n.items[lastIndex], prevItem
 }
 
-func (n *Navigation) Down() (*api.Result, *api.Result) {
+func (n *Navigation) Down() (*NavigationItem, *NavigationItem) {
 	// No items to navigate through
 	if len(n.items) == 0 {
 		return nil, nil
@@ -75,7 +84,7 @@ func (n *Navigation) Down() (*api.Result, *api.Result) {
 	n.ScrollController.SignalMoveDown()
 
 	// There's only a previous item if a current index exists
-	var prevItem *api.Result
+	var prevItem *NavigationItem
 	if n.currentIndex != -1 {
 		prevItem = n.items[n.currentIndex]
 	}
@@ -97,23 +106,23 @@ func (n *Navigation) Down() (*api.Result, *api.Result) {
 
 func (n *Navigation) Enter() {
 	if n.currentIndex != -1 {
-		item := n.items[n.currentIndex]
-		n.onItemEnter((*item).OnEnterAction())
+		item := n.items[n.currentIndex].SearchResult
+		n.onItemEnter(item.OnEnterAction())
 	}
 }
 
 func (n *Navigation) AltEnter() {
 	if n.currentIndex != -1 {
-		item := n.items[n.currentIndex]
-		n.onItemEnter((*item).OnAltEnterAction())
+		item := n.items[n.currentIndex].SearchResult
+		n.onItemEnter(item.OnAltEnterAction())
 	}
 }
 
-func (n *Navigation) SetSelected(item *api.Result) *api.Result {
+func (n *Navigation) SetSelected(item *api.SearchResult) *NavigationItem {
 	prevSelected := n.items[n.currentIndex]
 
 	for i, it := range n.items {
-		if *it == *item {
+		if it.SearchResult == *item {
 			// Save current item's index
 			n.currentIndex = i
 			break
@@ -126,10 +135,20 @@ func (n *Navigation) SetSelected(item *api.Result) *api.Result {
 	return prevSelected
 }
 
-func (n *Navigation) At(index int) (*api.Result, error) {
+func (n *Navigation) At(index int) (*NavigationItem, error) {
 	if index >= 0 && index < len(n.items) {
 		return n.items[index], nil
 	}
 
 	return nil, errors.New("index not in range")
+}
+
+func (n *Navigation) GetItems() []NavigationItem {
+	items := make([]NavigationItem, 0)
+
+	for _, item := range n.items {
+		items = append(items, *item)
+	}
+
+	return items
 }

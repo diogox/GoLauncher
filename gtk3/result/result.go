@@ -2,7 +2,6 @@ package result
 
 import (
 	"fmt"
-	"github.com/diogox/GoLauncher/api"
 	"github.com/diogox/GoLauncher/gtk3/glade"
 	"github.com/diogox/GoLauncher/gtk3/utils"
 	"github.com/gotk3/gotk3/gdk"
@@ -20,7 +19,7 @@ const NameLabelID = "item-name"
 const DescriptionLabelID = "item-descr"
 const ShortcutLabelID = "item-shortcut"
 
-func NewResultItem(position string, opts ResultItemOptions) ResultItem {
+func NewResultItem(opts ResultItemOptions) ResultItem {
 	bldr, err := glade.BuildFromFile(GladeResultFile)
 	if err != nil {
 		panic(err)
@@ -59,9 +58,6 @@ func NewResultItem(position string, opts ResultItemOptions) ResultItem {
 	nameLabel.SetText(opts.Title)
 	descrLabel.SetText(opts.Description)
 
-	shortcut := fmt.Sprintf("Alt+%s", position)
-	shortcutLabel.SetText(shortcut)
-
 	if strings.Contains(opts.IconPath, string(os.PathSeparator)) {
 		// It's not an icon name, it's an icon path
 		pix, _ := gdk.PixbufNewFromFileAtScale(opts.IconPath, 40, 40, true)
@@ -72,11 +68,7 @@ func NewResultItem(position string, opts ResultItemOptions) ResultItem {
 	}
 
 	resultItem := ResultItem{
-		onEnterAction:    opts.OnEnterAction,
-		onAltEnterAction: opts.OnAltEnterAction,
-		isDefaultSelect:  opts.IsDefaultSelect,
-
-		Frame:       resultEventFrame,
+		frame:       resultEventFrame,
 		box:         resultEventBox,
 		icon:        iconImg,
 		label:       nameLabel,
@@ -88,11 +80,7 @@ func NewResultItem(position string, opts ResultItemOptions) ResultItem {
 }
 
 type ResultItem struct {
-	onEnterAction    api.Action
-	onAltEnterAction api.Action
-	isDefaultSelect  bool
-
-	Frame       *gtk.EventBox
+	frame       *gtk.EventBox
 	box         *gtk.EventBox
 	icon        *gtk.Image
 	label       *gtk.Label
@@ -115,16 +103,9 @@ func (r *ResultItem) IconPath() string {
 	return iconName
 }
 
-func (r *ResultItem) IsDefaultSelect() bool {
-	return r.isDefaultSelect
-}
-
-func (r *ResultItem) OnEnterAction() api.Action {
-	return r.onEnterAction
-}
-
-func (r *ResultItem) OnAltEnterAction() api.Action {
-	return r.onAltEnterAction
+func (r *ResultItem) SetPosition(position string) {
+	shortcut := fmt.Sprintf("Alt+%s", position)
+	r.shortcut.SetText(shortcut)
 }
 
 func (r *ResultItem) Select() {
@@ -135,14 +116,18 @@ func (r *ResultItem) Unselect() {
 	utils.RemoveStyleClass(&r.box.Widget, "selected")
 }
 
+func (r *ResultItem) AccessInternals(callback func(args... interface{})) {
+	callback(r.frame)
+}
+
 func (r *ResultItem) BindMouseHover(callback func()) {
-	_, _ = r.Frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+	_, _ = r.frame.Connect("enter-notify-event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
 }
 
 func (r *ResultItem) BindMouseClick(callback func()) {
-	_, _ = r.Frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
+	_, _ = r.frame.Connect("button_press_event", func(eventBox *gtk.EventBox, event *gdk.Event) {
 		callback()
 	})
 }

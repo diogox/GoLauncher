@@ -49,7 +49,7 @@ func (ssm ShortcutSearchMode) HandleInput(input string) api.Action {
 		input = strings.Replace(input, shortcut.Keyword+" ", "", 1)
 	}
 
-	results := make([]api.Result, 0)
+	results := make([]api.SearchResult, 0)
 
 	url := strings.Replace(shortcut.Cmd, "%s", input, -1)
 
@@ -82,13 +82,13 @@ func (ssm ShortcutSearchMode) getActiveShortcut(input string) *models.ShortcutIn
 	return nil
 }
 
-func (ssm ShortcutSearchMode) DefaultItems(input string) []api.Result {
+func (ssm ShortcutSearchMode) DefaultItems(input string) []api.SearchResult {
 	shortcuts, err := (*ssm.db).GetAllShortcuts()
 	if err != nil {
 		panic(err)
 	}
 
-	results := make([]api.Result, 0)
+	results := make([]api.SearchResult, 0)
 	for _, shortcut := range shortcuts {
 		if shortcut.IsDefaultSearch {
 			cmd := strings.Replace(shortcut.Cmd, "%s", input, -1)

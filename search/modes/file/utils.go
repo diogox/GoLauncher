@@ -40,8 +40,8 @@ func getAbsPath(pathStr string) (string, error) {
 	return pathStr, nil
 }
 
-func getN(results []api.Result, nOfResults int) []api.Result {
-	_results := make([]api.Result, 0)
+func getN(results []api.SearchResult, nOfResults int) []api.SearchResult {
+	_results := make([]api.SearchResult, 0)
 	for i, r := range results {
 
 		// Ensure maximum number of results

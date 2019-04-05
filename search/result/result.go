@@ -4,47 +4,48 @@ import (
 	"github.com/diogox/GoLauncher/api"
 )
 
-func NewSearchResult(title string, descr string, iconPath string, isDefaultSelect bool, onEnterAction api.Action, onAltEnterAction api.Action) SearchResult {
+func NewSearchResult(opts SearchResultOptions) SearchResult {
+
 	return SearchResult{
 
-		Title_:            title,
-		Description_:      descr,
-		IconPath_:         iconPath,
-		IsDefaultSelect_:   isDefaultSelect,
-		OnEnterAction_:    onEnterAction,
-		OnAltEnterAction_: onAltEnterAction,
+		title:            opts.Title,
+		description:      opts.Description,
+		iconPath:         opts.IconPath,
+		isDefaultSelect:  opts.IsDefaultSelect,
+		onEnterAction:    opts.OnEnterAction,
+		onAltEnterAction: opts.OnAltEnterAction,
 	}
 }
 
 type SearchResult struct {
-	Title_            string
-	Description_      string
-	IconPath_         string
-	IsDefaultSelect_   bool
-	OnEnterAction_    api.Action
-	OnAltEnterAction_ api.Action
+	title            string
+	description      string
+	iconPath         string
+	isDefaultSelect  bool
+	onEnterAction    api.Action
+	onAltEnterAction api.Action
 }
 
 func (r SearchResult) Title() string {
-	return r.Title_
+	return r.title
 }
 
 func (r SearchResult) Description() string {
-	return r.Description_
+	return r.description
 }
 
 func (r SearchResult) IconPath() string {
-	return r.IconPath_
+	return r.iconPath
 }
 
 func (r SearchResult) IsDefaultSelect() bool {
-	return r.IsDefaultSelect_
+	return r.isDefaultSelect
 }
 
 func (r SearchResult) OnEnterAction() api.Action {
-	return r.OnEnterAction_
+	return r.onEnterAction
 }
 
 func (r SearchResult) OnAltEnterAction() api.Action {
-	return r.OnAltEnterAction_
+	return r.onAltEnterAction
 }

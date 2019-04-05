@@ -46,14 +46,22 @@ func (ssm ShortcutSearchMode) HandleInput(input string) api.Action {
 	}
 
 	if isMatch {
-		input = strings.Replace(input, shortcut.Keyword + " ", "", 1)
+		input = strings.Replace(input, shortcut.Keyword+" ", "", 1)
 	}
 
 	results := make([]api.Result, 0)
 
-	descr := strings.Replace(shortcut.Cmd, "%s", input, -1)
-	action := actions.NewOpenUrl(descr)
-	r := result.NewSearchResult(shortcut.Name, descr, shortcut.IconName, false, action, action)
+	url := strings.Replace(shortcut.Cmd, "%s", input, -1)
+
+	opts := result.SearchResultOptions{
+		Title:            shortcut.Name,
+		Description:      url,
+		IconPath:         shortcut.IconName,
+		IsDefaultSelect:  false,
+		OnEnterAction:    actions.NewOpenUrl(url),
+		OnAltEnterAction: actions.NewOpenUrl(url),
+	}
+	r := result.NewSearchResult(opts)
 
 	results = append(results, r)
 	return actions.NewRenderResultList(results)
@@ -66,7 +74,7 @@ func (ssm ShortcutSearchMode) getActiveShortcut(input string) *models.ShortcutIn
 	}
 
 	for _, shortcut := range shortcuts {
-		if shortcut.IsActive && strings.HasPrefix(input, shortcut.Keyword + " ") {
+		if shortcut.IsActive && strings.HasPrefix(input, shortcut.Keyword+" ") {
 			return &shortcut
 		}
 	}
@@ -84,8 +92,17 @@ func (ssm ShortcutSearchMode) DefaultItems(input string) []api.Result {
 	for _, shortcut := range shortcuts {
 		if shortcut.IsDefaultSearch {
 			cmd := strings.Replace(shortcut.Cmd, "%s", input, -1)
-			action := actions.NewOpenUrl(cmd)
-			r := result.NewSearchResult(shortcut.Name, cmd, shortcut.IconName, false, action, action)
+
+			opts := result.SearchResultOptions{
+				Title:            shortcut.Name,
+				Description:      cmd,
+				IconPath:         shortcut.IconName,
+				IsDefaultSelect:  false,
+				OnEnterAction:    actions.NewOpenUrl(cmd),
+				OnAltEnterAction: actions.NewOpenUrl(cmd),
+			}
+
+			r := result.NewSearchResult(opts)
 			results = append(results, r)
 		}
 	}

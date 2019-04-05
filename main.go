@@ -146,8 +146,17 @@ func main() {
 		// TODO: Implement ResultMaker interface (also TODO) to turn apps into results
 		frequentAppsResults := make([]api.Result, 0)
 		for _, app := range frequentApps {
-			action := actions.NewLaunchApp(app.Exec, &db)
-			r := result.NewSearchResult(app.Name, app.Description, app.IconName, false, action, action)
+
+			opts := result.SearchResultOptions{
+				Title: app.Name,
+				Description: app.Description,
+				IconPath: app.IconName,
+				IsDefaultSelect: false,
+				OnEnterAction: actions.NewLaunchApp(app.Exec, &db),
+				OnAltEnterAction: actions.NewLaunchApp(app.Exec, &db),
+			}
+
+			r := result.NewSearchResult(opts)
 			frequentAppsResults = append(frequentAppsResults, api.Result(&r))
 		}
 

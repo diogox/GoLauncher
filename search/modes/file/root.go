@@ -12,6 +12,7 @@ import (
 )
 
 const pathRegex = "^((\\/|~)[^/ ]*)+\\/?$"
+
 var _INPUT_ string
 
 func NewFileBrowserMode() *FileBrowserMode {
@@ -60,7 +61,7 @@ func (fb *FileBrowserMode) HandleInput(input string) api.Action {
 		return actions.NewRenderResultList(renderNoMatch())
 	}
 
-	return actions.NewRenderResultList( getN(renderResults(files, absPath), nOfResults))
+	return actions.NewRenderResultList(getN(renderResults(files, absPath), nOfResults))
 }
 
 func (*FileBrowserMode) DefaultItems(input string) []api.Result {
@@ -69,7 +70,7 @@ func (*FileBrowserMode) DefaultItems(input string) []api.Result {
 
 func showSuggestions(_path string, nOfResults int) []api.Result {
 	fileName := path.Base(_path)
-	basePath := _path[:len(_path) - len(fileName)]
+	basePath := _path[:len(_path)-len(fileName)]
 
 	files, err := ioutil.ReadDir(basePath)
 	if err != nil {
@@ -100,21 +101,32 @@ func renderResults(files []os.FileInfo, basePath string) []api.Result {
 
 		// Get relative path, if it was typed by the user
 		fileName := path.Base(_INPUT_)
-		basePath := _INPUT_[:len(_INPUT_) - len(fileName)]
-
-		// Create actions
-		enterAction := actions.NewSetUserQuery(path.Join(basePath, f.Name()) + string(os.PathSeparator))
-		altAction := actions.NewOpen(itemPath)
+		basePath := _INPUT_[:len(_INPUT_)-len(fileName)]
 
 		// Create result
-		r := result.NewSearchResult(f.Name(), "See what's inside", DIR_ICON, false, enterAction, altAction)
+		opts := result.SearchResultOptions{
+			Title:            f.Name(),
+			Description:      "See what's inside",
+			IconPath:         DIR_ICON,
+			IsDefaultSelect:  false,
+			OnEnterAction:    actions.NewSetUserQuery(path.Join(basePath, f.Name()) + string(os.PathSeparator)),
+			OnAltEnterAction: actions.NewOpen(itemPath),
+		}
+
+		r := result.NewSearchResult(opts)
 
 		// In case the item is a file
 		if !f.IsDir() {
-			r.IconPath_ = FILE_ICON
-			r.Description_ = "Open in finder"
-			r.OnEnterAction_ = actions.NewOpen(itemPath)
-			r.OnAltEnterAction_ = actions.NewDoNothing()
+			opts := result.SearchResultOptions{
+				Title:            r.Title(),
+				Description:      "Open in finder",
+				IconPath:         FILE_ICON,
+				IsDefaultSelect:  r.IsDefaultSelect(),
+				OnEnterAction:    actions.NewOpen(itemPath),
+				OnAltEnterAction: actions.NewDoNothing(),
+			}
+
+			r = result.NewSearchResult(opts)
 		}
 
 		// Add result
@@ -125,7 +137,17 @@ func renderResults(files []os.FileInfo, basePath string) []api.Result {
 }
 
 func renderNoMatch() []api.Result {
-	return []api.Result {
-		result.NewSearchResult("No match found!", "Try another path...", "warning", false, actions.NewDoNothing(), actions.NewDoNothing()),
+
+	opts := result.SearchResultOptions{
+		Title:            "No match found!",
+		Description:      "Try another path...",
+		IconPath:         "warning",
+		IsDefaultSelect:  false,
+		OnEnterAction:    actions.NewDoNothing(),
+		OnAltEnterAction: actions.NewDoNothing(),
+	}
+
+	return []api.Result{
+		result.NewSearchResult(opts),
 	}
 }

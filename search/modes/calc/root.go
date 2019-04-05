@@ -37,14 +37,31 @@ func (c *CalcSearchMode) HandleInput(input string) api.Action {
 
 	calcResult, err := c.calculate(input)
 	if err != nil {
-		action := actions.NewDoNothing()
-		r := result.NewSearchResult("Error!", err.Error(), "calc", true, action, action)
+
+		opts := result.SearchResultOptions{
+			Title:            "Error!",
+			Description:      err.Error(),
+			IconPath:         "calc",
+			IsDefaultSelect:  true,
+			OnEnterAction:    actions.NewDoNothing(),
+			OnAltEnterAction: actions.NewDoNothing(),
+		}
+
+		r := result.NewSearchResult(opts)
 		results = append(results, r)
 		return actions.NewRenderResultList(results)
 	}
 
-	action := actions.NewCopyToClipboard(calcResult)
-	r := result.NewSearchResult(calcResult, "Copy to Clipboard", "calc", true, action, action)
+	opts := result.SearchResultOptions{
+		Title:            calcResult,
+		Description:      "Copy to Clipboard",
+		IconPath:         "calc",
+		IsDefaultSelect:  true,
+		OnEnterAction:    actions.NewCopyToClipboard(calcResult),
+		OnAltEnterAction: actions.NewCopyToClipboard(calcResult),
+	}
+
+	r := result.NewSearchResult(opts)
 	results = append(results, r)
 
 	return actions.NewRenderResultList(results)

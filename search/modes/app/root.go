@@ -33,9 +33,17 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	for _, app := range apps {
 
-		action := actions.NewLaunchApp(app.Exec, asm.db)
-		// TODO: Get isDefaultSelect from the statistics
-		r := result.NewSearchResult(app.Name, app.Description, app.IconName, false, action, action)
+		opts := result.SearchResultOptions{
+			Title:            app.Name,
+			Description:      app.Description,
+			IconPath:         app.IconName,
+			IsDefaultSelect:  false,
+			OnEnterAction:    actions.NewLaunchApp(app.Exec, asm.db),
+			OnAltEnterAction: actions.NewLaunchApp(app.Exec, asm.db),
+		}
+
+		// TODO: Get isDefaultSelect from the session logs
+		r := result.NewSearchResult(opts)
 		results = append(results, r)
 	}
 
@@ -60,7 +68,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	// If results exceed maximum number allowed, remove the ones less likely to be useful
 	// (the ones at the end of the slice)
 	if len(results) > maxNOfApps {
-		results = results[:maxNOfApps - 1]
+		results = results[:maxNOfApps-1]
 	}
 
 	return actions.NewRenderResultList(results)

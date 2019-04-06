@@ -64,13 +64,23 @@ func main() {
 			}
 			//	fmt.Println(queryEvent.Query)
 
-			actions.SetupRenderResultList(func(results []api.Result) {
+			actions.SetupRenderResultList(func(results []api.SearchResult) error {
 				fmt.Println("Sending: ", results)
+				return nil
 			})
 
-			results := make([]api.Result, 0)
-			act := actions.NewOpenUrl("http://news.ycombinator.com/")
-			results = append(results, result.NewSearchResult("Story 1", "Click here to read more about story 1!", "google", act, act))
+			results := make([]api.SearchResult, 0)
+
+			opts := result.SearchResultOptions{
+				Title: "Story 1",
+				Description: "Click here to read more about story 1!",
+				IconPath: "google",
+				IsDefaultSelect: false,
+				OnEnterAction: actions.NewOpenUrl("http://news.ycombinator.com/"),
+				OnAltEnterAction: actions.NewOpenUrl("http://news.ycombinator.com/"),
+			}
+
+			results = append(results, result.NewSearchResult(opts))
 			event := events.KeywordQueryNew(string(message))
 			action := actions.NewRenderResultList(results)
 			res := api.ResponseNew(event, action)

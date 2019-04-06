@@ -3,7 +3,7 @@ package gtk3
 import (
 	"errors"
 	"github.com/diogox/GoLauncher/api"
-	"github.com/diogox/GoLauncher/autostart"
+	"github.com/diogox/GoLauncher/pkg/autostart"
 	"strconv"
 )
 

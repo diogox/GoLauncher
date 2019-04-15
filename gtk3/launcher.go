@@ -356,6 +356,7 @@ func (l *Launcher) ClearInput() {
 
 func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 
+	// Clear previous results
 	l.clearResults()
 
 	// Update Navigation
@@ -423,8 +424,8 @@ func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 		})
 	}
 
-	// Show ScrolledWindow here (Had to hide it, initially, to keep from showing an awkward whitespace. Couldn't find another way to fix that...)
-	l.resultsScrollableBox.Show()
+	// Enable ScrolledWindow's vertical scroll (had to disable, otherwise an extra padding would show up)
+	l.resultsScrollableBox.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_ALWAYS)
 
 	// Set ScrolledWindow height
 	resultItemHeight := float64(0)
@@ -464,8 +465,8 @@ func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 }
 
 func (l *Launcher) clearResults() {
-	// Need to hide ScrolledWindow, otherwise it shows an awkward whitespace...
-	l.resultsScrollableBox.Hide()
+	// Need to disable ScrolledWindow's vertical scroll, otherwise it shows an awkward whitespace...
+	l.resultsScrollableBox.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
 
 	// Clear navigation
 	l.navigation.SetItems(make([]api.SearchResult, 0))
@@ -518,7 +519,7 @@ func (l *Launcher) show() {
 	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
 	// TODO: Fix this mess by removing the need to hide the ScrolledWindow!!
 	if isInputEmpty := len(getTrimmedInput(l.input)) == 0; isInputEmpty {
-		l.resultsScrollableBox.Hide()
+		//l.resultsScrollableBox.Hide()
 		_, _ = glib.IdleAdd(l.input.SetText, " ")
 		l.ClearInput()
 	}

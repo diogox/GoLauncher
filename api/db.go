@@ -14,6 +14,10 @@ type DB interface {
 	FindAppByID(exec string) (models.AppInfo, error)
 	FindAppByName(name string) ([]models.AppInfo, error)
 
+	// Sessions
+	AddSession(input string, appExec string) error
+	GetSession(input string) (string, error)
+
 	// Preferences
 	LoadDefaultPreferences() []error
 	AddPreference(preference string, value string) error

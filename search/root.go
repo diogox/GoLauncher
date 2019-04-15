@@ -11,7 +11,7 @@ import (
 	"github.com/diogox/GoLauncher/search/modes/shortcut"
 )
 
-func NewSearch(db *api.DB) Search {
+func NewSearch(db api.DB) Search {
 
 	// Define available search modes
 	searchModes := []modes.SearchMode {

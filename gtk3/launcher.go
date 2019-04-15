@@ -402,12 +402,14 @@ func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 		// Check if any of the results should be the automatic default
 		for i, searchResult := range searchResults {
 			if searchResult.IsDefaultSelect() {
+				defaultItem := items[i]
 
 				// Unselect the first item that was automatically selected
-				results[0].Unselect()
+				prev := l.navigation.SetSelected(&defaultItem.SearchResult)
+				prev.ResulItem.Unselect()
 
 				// Select default item
-				results[i].Select()
+				defaultItem.ResulItem.Select()
 				break
 			}
 		}
@@ -519,7 +521,6 @@ func (l *Launcher) show() {
 	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
 	// TODO: Fix this mess by removing the need to hide the ScrolledWindow!!
 	if isInputEmpty := len(getTrimmedInput(l.input)) == 0; isInputEmpty {
-		//l.resultsScrollableBox.Hide()
 		_, _ = glib.IdleAdd(l.input.SetText, " ")
 		l.ClearInput()
 	}

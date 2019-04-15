@@ -98,7 +98,7 @@ func startLauncher() {
 	}()
 
 	// Instantiate Search
-	search := search.NewSearch(&db)
+	search := search.NewSearch(db)
 
 	// Instantiate Launcher
 	launcher = gtk3.NewLauncher(&prefs)
@@ -143,13 +143,19 @@ func startLauncher() {
 		frequentAppsResults := make([]api.SearchResult, 0)
 		for _, app := range frequentApps {
 
+			launchAppOptions := actions.LaunchAppOptions{
+				Db: db,
+				Exec: app.Exec,
+				SearchTermUsed: "",
+			}
+
 			opts := result.SearchResultOptions{
 				Title: app.Name,
 				Description: app.Description,
 				IconPath: app.IconName,
 				IsDefaultSelect: false,
-				OnEnterAction: actions.NewLaunchApp(app.Exec, &db),
-				OnAltEnterAction: actions.NewLaunchApp(app.Exec, &db),
+				OnEnterAction: actions.NewLaunchApp(launchAppOptions),
+				OnAltEnterAction: actions.NewLaunchApp(launchAppOptions),
 			}
 
 			r := result.NewSearchResult(opts)

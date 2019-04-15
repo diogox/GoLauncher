@@ -11,9 +11,9 @@ import (
 	"strings"
 )
 
-func NewShortcutSearchMode(db *api.DB) ShortcutSearchMode {
+func NewShortcutSearchMode(db api.DB) ShortcutSearchMode {
 
-	sqlite.LoadDefaultShortcuts(db)
+	sqlite.LoadDefaultShortcuts(&db)
 
 	return ShortcutSearchMode{
 		db: db,
@@ -21,7 +21,7 @@ func NewShortcutSearchMode(db *api.DB) ShortcutSearchMode {
 }
 
 type ShortcutSearchMode struct {
-	db *api.DB
+	db api.DB
 }
 
 func (ssm ShortcutSearchMode) IsEnabled(input string) bool {
@@ -68,7 +68,7 @@ func (ssm ShortcutSearchMode) HandleInput(input string) api.Action {
 }
 
 func (ssm ShortcutSearchMode) getActiveShortcut(input string) *models.ShortcutInfo {
-	shortcuts, err := (*ssm.db).GetAllShortcuts()
+	shortcuts, err := ssm.db.GetAllShortcuts()
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +83,7 @@ func (ssm ShortcutSearchMode) getActiveShortcut(input string) *models.ShortcutIn
 }
 
 func (ssm ShortcutSearchMode) DefaultItems(input string) []api.SearchResult {
-	shortcuts, err := (*ssm.db).GetAllShortcuts()
+	shortcuts, err := ssm.db.GetAllShortcuts()
 	if err != nil {
 		panic(err)
 	}

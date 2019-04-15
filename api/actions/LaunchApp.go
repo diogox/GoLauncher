@@ -5,18 +5,26 @@ import (
 	"github.com/diogox/LinuxApps"
 )
 
-func NewLaunchApp(exec string, db *api.DB) LaunchApp {
+type LaunchAppOptions struct {
+	Db             api.DB
+	Exec           string
+	SearchTermUsed string
+}
+
+func NewLaunchApp(opts LaunchAppOptions) LaunchApp {
 	return LaunchApp{
-		Type: api.LAUNCH_APP_ACTION,
-		Exec: exec,
-		db:   db,
+		Type:           api.LAUNCH_APP_ACTION,
+		Exec:           opts.Exec,
+		db:             opts.Db,
+		searchTermUsed: opts.SearchTermUsed,
 	}
 }
 
 type LaunchApp struct {
-	Type string
-	Exec string
-	db   *api.DB
+	Type           string
+	Exec           string
+	db             api.DB
+	searchTermUsed string
 }
 
 func (la LaunchApp) GetType() string {
@@ -29,7 +37,7 @@ func (LaunchApp) KeepAppOpen() bool {
 
 func (la LaunchApp) Run() error {
 	// Increment access counter
-	err := (*la.db).IncrementAppAccessCounter(la.Exec)
+	err := la.db.IncrementAppAccessCounter(la.Exec)
 	if err != nil {
 
 		// TODO: Log the error
@@ -40,6 +48,16 @@ func (la LaunchApp) Run() error {
 
 	err = LinuxApps.StartAppOrFocusExistingByCommand(la.Exec)
 	if err != nil {
+		return err
+	}
+
+	// Add session to db
+	err = la.db.AddSession(la.searchTermUsed, la.Exec)
+	if err != nil {
+
+		// TODO: Log the error
+		// If we can't increment the counter, we probably shouldn't return the error either, since it's not a critical functionality
+		// TODO: I'll return the error for now, for testing purposes
 		return err
 	}
 

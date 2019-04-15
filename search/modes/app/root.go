@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func NewAppSearchMode(db *api.DB, searchModes []modes.SearchMode) AppSearchMode {
+func NewAppSearchMode(db api.DB, searchModes []modes.SearchMode) AppSearchMode {
 
 	return AppSearchMode{
 		db:          db,
@@ -18,7 +18,7 @@ func NewAppSearchMode(db *api.DB, searchModes []modes.SearchMode) AppSearchMode 
 }
 
 type AppSearchMode struct {
-	db          *api.DB
+	db          api.DB
 	searchModes []modes.SearchMode
 }
 
@@ -29,20 +29,39 @@ func (AppSearchMode) IsEnabled(input string) bool {
 func (asm AppSearchMode) HandleInput(input string) api.Action {
 
 	results := make([]api.SearchResult, 0)
-	apps, _ := (*asm.db).GetAllApps()
+	apps, _ := asm.db.GetAllApps()
+
+	// Get exec of the result chosen the last time this input was searched
+	execSelectedLastTime, _ := asm.db.GetSession(input)
 
 	for _, app := range apps {
+		isDefault := false
+
+		if app.Name =="Spotify" {
+			x := 1
+			x++
+		}
+
+		// If the exec is the same, it's the same result
+		if app.Exec == execSelectedLastTime {
+			isDefault = true
+		}
+
+		launchAppOptions := actions.LaunchAppOptions{
+			Db: asm.db,
+			Exec: app.Exec,
+			SearchTermUsed: input,
+		}
 
 		opts := result.SearchResultOptions{
 			Title:            app.Name,
 			Description:      app.Description,
 			IconPath:         app.IconName,
-			IsDefaultSelect:  false,
-			OnEnterAction:    actions.NewLaunchApp(app.Exec, asm.db),
-			OnAltEnterAction: actions.NewLaunchApp(app.Exec, asm.db),
+			IsDefaultSelect:  isDefault,
+			OnEnterAction:    actions.NewLaunchApp(launchAppOptions),
+			OnAltEnterAction: actions.NewLaunchApp(launchAppOptions),
 		}
 
-		// TODO: Get isDefaultSelect from the session logs
 		r := result.NewSearchResult(opts)
 		results = append(results, r)
 	}
@@ -63,7 +82,7 @@ func (asm AppSearchMode) HandleInput(input string) api.Action {
 	}
 
 	// Get maximum number of app results to show
-	maxNOfApps, _ := strconv.Atoi((*asm.db).GetPreference(api.PreferenceNAppResults))
+	maxNOfApps, _ := strconv.Atoi(asm.db.GetPreference(api.PreferenceNAppResults))
 
 	// If results exceed maximum number allowed, remove the ones less likely to be useful
 	// (the ones at the end of the slice)

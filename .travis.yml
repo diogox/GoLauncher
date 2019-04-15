@@ -1,10 +1,11 @@
 language: go
 before_install:
-- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
-- dep ensure -v
+  - dep ensure -v
 script:
-- go build -o golauncher cmd/launcher/main.go
+  - sudo apt install libkeybinder-3.0-dev
+  - go build -o golauncher cmd/launcher/main.go
 deploy:
   provider: releases
   api_key:

@@ -1,0 +1,16 @@
+language: go
+before_install:
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+install:
+- dep ensure -v
+script:
+- go build -o golauncher cmd/launcher/main.go
+deploy:
+  provider: releases
+  api_key:
+    secure: E6dRjtSkp8H+7odLCQg8sBQ5f4/nLkcVhTWluXFa/1IZFCJ/Gy9nePKplWqR5z6/Kr6jLLB4No9NtLDYAi4TqzAYnK7MkbjRaDzRs3bMoPuce3AkR+MzDPXRXUBljq5WBXJnxSaylRmATQ1hl7kr/tfM3enbe6kBNOG+5aY4JMpnsYOwmOdyxVGhgCPQG1562wIJIE+s41GAOHy4KUmeCewfYR5dnnaj1Qm641OeZZK9roEajo9nkv6K3Z0Ulbky/SpCcHUNr6PwvBfNFAp6cX3V+4HGLqQv6pYH9dXEQYgbJaXWz473yJbPVEQ9Ost5aqvPmvT9OB4kwFUHsEFPOF3/EIDL8xzPsktb8iGcM3T8OCim3xI7/j/d/aYNRVKJ+ZDFEDw24WdupfUqVjfyaWx3Hr0OKJA2BpAbbS0UOwAcWokks/DHG++d5IT8RvaOUY7R94hmSQiuhs7HnNLQfHIg0i2D4saP8Xlv0KhfjV5mqx5N/M0nandkwoQ8iS1VmnJRFFkd2Pa1gyRrUe1E1WO3vfSe2DSWI5bZx5EB4tnUaBQ1gUOgD/LBtLiFHyJ2dBsvEiNAC28nBSP9k7tl54ZOno64NzRwZKgMZxaqayg9xQ5txzzX8DqMwf35B6tC++23KU40hPvHxUEyuneLLoE3lb2Mzhrhbn2MkEXMV6I=
+  file: golauncher
+  skip_cleanup: true
+  on:
+    repo: diogox/GoLauncher
+    branch: master

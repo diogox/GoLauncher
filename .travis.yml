@@ -4,7 +4,7 @@ before_install:
 install:
   - dep ensure -v
 script:
-  - sudo apt install libkeybinder-3.0-dev
+  - sudo apt-get install -y libkeybinder-3.0-dev
   - go build -o golauncher cmd/launcher/main.go
 deploy:
   provider: releases

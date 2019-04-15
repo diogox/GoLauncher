@@ -14,7 +14,7 @@ Right now, the main advantages of **Golauncher** over [Ulauncher](https://ulaunc
 * Scrollable results
 * The number of results shown at a time is a user preference. (*And, because the results are scrollable, that doesn't limit your searches.*)
 * It's written in Go, therefore, it should be faster (maybe).
-* If an app already has an instance open, it switches focus instead of starting a new one. (This is useful for most apps, like Spotify, for example)
+* If an app already has an instance open, it switches focus instead of starting a new one. (This is useful for most apps, like Spotify, for example - Not guaranteed to work for every app. Maybe not even Spotify...)
 * The extension system (**TODO**) will use JSON to communicate with the launcher. This is an advantage because, 
 unlike Ulauncher (that uses Python specific formats), pretty much every language can use JSON, and that means that,
 provided that a library is made for that purpose, extensions can be written in any language.

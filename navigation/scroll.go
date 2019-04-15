@@ -111,7 +111,7 @@ func (sc *ScrollController) SignalMoveDown() {
 
 func (sc *ScrollController) SetSelectedIndex(index int) {
 	sc.currentIndex = index
-	sc.makeCurrentIndexVisible()
+	//sc.makeCurrentIndexVisible()
 }
 
 func (sc *ScrollController) SetNOfItemsToShow(nOfItems int) {

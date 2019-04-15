@@ -5,7 +5,7 @@ install:
   - dep ensure -v
 script:
   - sudo apt-get update
-  - sudo apt-get install -y libkeybinder-3.0-dev libgtk-3-dev libglib2.0-dev libcairo2-dev
+  - sudo apt-get install -y libkeybinder-3.0-dev libgtk-3-dev
   - go build -o golauncher cmd/launcher/main.go
 deploy:
   provider: releases

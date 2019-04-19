@@ -505,6 +505,7 @@ func (l *Launcher) show() {
 		// It is here so that the input realizes it's been changed and procs the 'onChange' closure that brings up the most frequent apps.
 		// If this wasn't here, every time the launcher is hidden with "" as the query, it doesn't recognize the change in input when it's brought back up.
 		_, _ = glib.IdleAdd(l.input.SetText, " ")
+		_, _ = glib.IdleAdd(l.input.SetText, "")
 		l.ClearInput()
 	}
 
@@ -517,13 +518,6 @@ func (l *Launcher) show() {
 	// Show
 	l.window.ShowAll()
 	l.isVisible = true
-
-	// Need to hide, otherwise it shows whitespace (Couldn't figure out why...)
-	// TODO: Fix this mess by removing the need to hide the ScrolledWindow!!
-	if isInputEmpty := len(getTrimmedInput(l.input)) == 0; isInputEmpty {
-		_, _ = glib.IdleAdd(l.input.SetText, " ")
-		l.ClearInput()
-	}
 
 	// Focus
 	l.window.PresentWithTime(kb.GetCurrentEventTime())

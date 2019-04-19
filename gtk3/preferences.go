@@ -68,6 +68,12 @@ func (p *Preferences) SetPreference(preference string, value string) error {
 
 		// Run all associated callbacks
 		p.runAllCallbacks(api.PreferenceNAppResults, value)
+
+	case api.PreferenceShowFrequentApps:
+		shouldShow := api.AssertPreferenceBool(value)
+
+		// Run all associated callbacks
+		p.runAllCallbacks(api.PreferenceShowFrequentApps, shouldShow)
 	}
 	return (*p.db).SetPreference(preference, value)
 }

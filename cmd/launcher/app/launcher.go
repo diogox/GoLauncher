@@ -119,7 +119,7 @@ func startLauncher() {
 		}
 
 		// Show frequent apps or not
-		if showFrequentApps == api.PreferenceFALSE {
+		if !api.AssertPreferenceBool(showFrequentApps) {
 			return
 		}
 

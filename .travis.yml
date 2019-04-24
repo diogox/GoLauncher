@@ -1,12 +1,22 @@
 language: go
+
+os:
+  - linux
+
 before_install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+
 install:
   - dep ensure -v
+
 script:
-  - sudo apt-get update
-  - sudo apt-get install -y libkeybinder-3.0-dev libgtk-3-dev libgdk-pixbuf2.0-dev
+  # Linux
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libgtk-3-dev libkeybinder-3.0-dev ; fi
+  
+  # Build
   - go build -o golauncher cmd/launcher/main.go
+
 deploy:
   provider: releases
   api_key:

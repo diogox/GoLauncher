@@ -12,7 +12,7 @@ install:
 script:
   # Linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libgtk-3-dev libkeybinder-3.0-dev ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libgtk-3-dev libkeybinder-3.0-dev libglib2.0-dev libcairo2-dev xvfb; fi
   
   # Build
   - go build -o golauncher cmd/launcher/main.go

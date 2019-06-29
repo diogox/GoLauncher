@@ -217,7 +217,7 @@ func (l *Launcher) Start() error {
 				current, err := l.navigation.At(int(index) - 1)
 				if err == nil {
 
-					currentSearchItem := current.SearchResult
+					currentSearchItem := *current.SearchResult
 					currentResultItem := current.ResulItem
 
 					// Select new item
@@ -380,7 +380,7 @@ func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 
 		resultItem.BindMouseHover(func() {
 			_, _ = glib.IdleAdd(func() {
-				prevSelected := l.navigation.SetSelected(&searchResult)
+				prevSelected := l.navigation.SetSelected(searchResult)
 				prevSelected.ResulItem.Unselect()
 				resultItem.Select()
 			})
@@ -405,7 +405,7 @@ func (l *Launcher) ShowResults(searchResults []api.SearchResult) {
 				defaultItem := items[i]
 
 				// Unselect the first item that was automatically selected
-				prev := l.navigation.SetSelected(&defaultItem.SearchResult)
+				prev := l.navigation.SetSelected(defaultItem.SearchResult)
 				prev.ResulItem.Unselect()
 
 				// Select default item

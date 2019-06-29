@@ -107,14 +107,14 @@ func (n *Navigation) Down() (*NavigationItem, *NavigationItem) {
 func (n *Navigation) Enter() {
 	if n.currentIndex != -1 {
 		item := n.items[n.currentIndex].SearchResult
-		n.onItemEnter(item.OnEnterAction())
+		n.onItemEnter((*item).OnEnterAction())
 	}
 }
 
 func (n *Navigation) AltEnter() {
 	if n.currentIndex != -1 {
 		item := n.items[n.currentIndex].SearchResult
-		n.onItemEnter(item.OnAltEnterAction())
+		n.onItemEnter((*item).OnAltEnterAction())
 	}
 }
 
@@ -122,7 +122,7 @@ func (n *Navigation) SetSelected(item *api.SearchResult) *NavigationItem {
 	prevSelected := n.items[n.currentIndex]
 
 	for i, it := range n.items {
-		if &it.SearchResult == item {
+		if it.SearchResult == item {
 			// Save current item's index
 			n.currentIndex = i
 			break

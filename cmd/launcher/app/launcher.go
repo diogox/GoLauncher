@@ -8,6 +8,7 @@ import (
 	"github.com/diogox/GoLauncher/search"
 	"github.com/diogox/GoLauncher/search/result"
 	"github.com/diogox/GoLauncher/sqlite"
+	"github.com/diogox/GoLauncher/websockets"
 	"github.com/diogox/LinuxApps"
 	"github.com/gotk3/gotk3/glib"
 	"sync"
@@ -34,8 +35,8 @@ func startLauncher() {
 	prefs := api.Preferences(&preferences)
 	_ = prefs.SetPreference(api.PreferenceHotkey, db.GetPreference(api.PreferenceHotkey))
 
-	// TODO: Start Extension Server
-	//go websockets.StartExtensions(&db)
+	// Start Extension Server
+	go websockets.StartExtensions(&db)
 
 	// Get All Apps
 	apps := LinuxApps.GetApps()

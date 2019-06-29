@@ -122,7 +122,7 @@ func (n *Navigation) SetSelected(item *api.SearchResult) *NavigationItem {
 	prevSelected := n.items[n.currentIndex]
 
 	for i, it := range n.items {
-		if it.SearchResult == *item {
+		if &it.SearchResult == item {
 			// Save current item's index
 			n.currentIndex = i
 			break
